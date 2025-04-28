@@ -1,0 +1,29 @@
+#!/bin/sh
+
+if [ "${ATP_INTERNAL_GATEWAY_ENABLED}" = "true" ]; then
+  echo "Internal gateway integration is enabled."
+  FEIGN_ATP_CATALOGUE_NAME=$ATP_INTERNAL_GATEWAY_NAME
+  FEIGN_ATP_USERS_NAME=$ATP_INTERNAL_GATEWAY_NAME
+  FEIGN_ATP_DATASETS_NAME=$ATP_INTERNAL_GATEWAY_NAME
+  FEIGN_ATP_BV_NAME=$ATP_INTERNAL_GATEWAY_NAME
+  FEIGN_ATP_ENVIRONMENTS_NAME=$ATP_INTERNAL_GATEWAY_NAME
+  FEIGN_ATP_ITF_EXECUTOR_NAME=$ATP_INTERNAL_GATEWAY_NAME
+else
+  echo "Internal gateway integration is disabled."
+  FEIGN_ATP_CATALOGUE_ROUTE=
+  FEIGN_ATP_USERS_ROUTE=
+  FEIGN_ATP_DATASETS_ROUTE=
+  FEIGN_ATP_BV_ROUTE=
+  FEIGN_ATP_ENVIRONMENTS_ROUTE=
+  FEIGN_ATP_ITF_EXECUTOR_ROUTE=
+fi
+
+# *** Set JVM options
+JAVA_OPTIONS="${JAVA_OPTIONS} -Dspring.config.location=application.properties"
+JAVA_OPTIONS="${JAVA_OPTIONS} -Dlogging.config=logback-spring.xml"
+JAVA_OPTIONS="${JAVA_OPTIONS} -Dlog.graylog.on=$GRAYLOG_ON"
+JAVA_OPTIONS="${JAVA_OPTIONS} -Dlog.graylog.host=$GRAYLOG_HOST"
+JAVA_OPTIONS="${JAVA_OPTIONS} -Dlog.graylog.port=$GRAYLOG_PORT"
+JAVA_OPTIONS="${JAVA_OPTIONS} -Dhostname=$(hostname)"
+
+/usr/bin/java -Xverify:none -Xms128m -XX:MaxRAM="${MAX_RAM_SIZE:-3000m}" -XX:MaxRAMPercentage=75.0 ${JAVA_OPTIONS} -cp "./:./lib/*" org.qubership.automation.itf.Main

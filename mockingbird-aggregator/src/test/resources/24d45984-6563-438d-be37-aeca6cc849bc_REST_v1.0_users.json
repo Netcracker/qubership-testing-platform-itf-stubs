@@ -1,0 +1,655 @@
+{
+    "projectUuid": "24d45984-6563-438d-be37-aeca6cc849bc",
+    "transportConfigs": [{
+            "transportType": "REST",
+            "endpoints": [{
+                    "configuredEndpoint": "/v1.0/users/",
+                    "operationDefinitionScript": "#if($sp.method.contains(\"GET\") && $sp.incoming_url.contains(\"/attachments/\"))\r\n     get_attachment\r\n#elseif($sp.method.contains(\"GET\") && $sp.incoming_url.contains(\"mailFolders\"))\r\n     list_messages\r\n#elseif($sp.method.contains(\"GET\"))\r\n     get_MIME\r\n#elseif ($sp.method.contains(\"PATCH\"))\r\n    patch_messages\r\n#elseif ($sp.method.contains(\"POST\") && $sp.incoming_url.contains(\"/oauth2/v2.0/token\") )\r\n    oauth2_0_token\r\n#end",
+                    "defaultResponse": null,
+                    "conditionalResponses": [{
+                            "name": "9173212125911751501_[Microsoft Outlook Server] Get MIME | Success",
+                            "body": "Some text response",
+                            "responseCode": "200",
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "get_MIME",
+                                "conditionParameters": []
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 0
+                        }, {
+                            "name": "9173212125911751501_[Microsoft Outlook Server] List messages | Succeed [OLD]",
+                            "body": "#set($tc.saved.top=$sp.top)\n#set($tc.email_escaped = $esc.url($tc.saved.fullEmailAddress))\n#set($tc.link_odata = 'https://graph.microsoft.com/v1.0/$metadata#users' + \"('\" + $tc.email_escaped + \"')}",
+                            "responseCode": "200",
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "list_messages",
+                                "conditionParameters": []
+                            },
+                            "skipReporting": true,
+                            "disabled": false,
+                            "priority": 1
+                        }, {
+                            "name": "9173212125911751501_[Microsoft Outlook Server] Patch messages | Positive",
+                            "body": "Some text response-1",
+                            "responseCode": "200",
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "patch_messages",
+                                "conditionParameters": []
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 1
+                        }, {
+                            "name": "9173212125911751501_[Microsoft Outlook Server] Get Attachment Succeed",
+                            "body": "Some text response-2",
+                            "responseCode": "200",
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "get_attachment",
+                                "conditionParameters": []
+                            },
+                            "skipReporting": true,
+                            "disabled": false,
+                            "priority": 0
+                        }
+                    ],
+                    "parsingRules": [{
+                            "multiple": false,
+                            "paramName": "method",
+                            "expression": "CamelHttpMethod",
+                            "parsingType": "REGEX_HEADER"
+                        }, {
+                            "multiple": false,
+                            "paramName": "incoming_url",
+                            "expression": "(.*)",
+                            "parsingType": "REGEX_URI"
+                        }, {
+                            "multiple": false,
+                            "paramName": "emailName",
+                            "expression": "\\/users\\/\\w{1,}@(\\w{1,}.\\w{1,})",
+                            "parsingType": "REGEX_URI"
+                        }, {
+                            "multiple": false,
+                            "paramName": "fullEmailAddress",
+                            "expression": "\\/users\\/(\\w{1,}@\\w{1,}.\\w{1,})",
+                            "parsingType": "REGEX_URI"
+                        }, {
+                            "multiple": false,
+                            "paramName": "top",
+                            "expression": "top=([0-9]{1,})",
+                            "parsingType": "REGEX_URI"
+                        }, {
+                            "multiple": false,
+                            "paramName": "emailUserName",
+                            "expression": "\\/users\\/(\\w{1,})",
+                            "parsingType": "REGEX_URI"
+                        }
+                    ],
+                    "operationParsingRules": {},
+                    "skipReporting": true,
+                    "disabled": false
+                }, {
+                    "configuredEndpoint": "/v1/stock/bulk-availability",
+                    "operationDefinitionScript": "#if($sp.incomming_url.contains(\"/v1/stock/soft-reservation/refresh\"))\n    refresh_soft_reservation_DUPLICATE\n\n#elseif ($sp.incomming_url.contains(\"/v1/stock/stock-item\"))\n    package_collection_notification_DUPLICATE\n\n#elseif ($sp.incomming_url.contains(\"/v1/stock/hard-reservation\"))\n    create_hard_reservation_DUPLICATE\n\n#elseif ($sp.incomming_url.contains(\"/v1/stock/soft-reservation\"))\n    create_soft_reservation_DUPLICATE\n\n#elseif($sp.incomming_url.contains(\"/v1/stock/availability\"))\n    check_availability_DUPLICATE\n\n#elseif($sp.incomming_url.contains(\"/v1/shipping/shipment/customer?shipmentTrackingId\"))\n    cancel_shipment\n\n#elseif($sp.incomming_url.contains(\"/v1/shipping/shipment/customer\"))\n    create_shipment_DUPLICATE\n\n#elseif($sp.incomming_url.contains(\"/stockservice/v1/update-shipment\"))\n    update_shipment_DUPLICATE\n\n#elseif($sp.incomming_url.contains(\"/v1/soft-reservation/refresh\"))\n    refresh_soft_reservation\n\n#elseif ($sp.incomming_url.contains(\"/v1/package-collected\"))\n    package_collection_notification\n\n#elseif ($sp.incomming_url.contains(\"/v1/hard-reservation\"))\n    create_hard_reservation\n\n#elseif ($sp.incomming_url.contains(\"/v1/soft-reservation\"))\n    create_soft_reservation\n\n#elseif($sp.incomming_url.contains(\"/v1/availability\"))\n    check_availability\n\n#elseif($sp.incomming_url.contains(\"/v1/shipment\"))\n    create_shipment\n\n#elseif($sp.incomming_url.contains(\"/sm/updateShipment\"))\n    update_shipment\n\n#elseif($sp.incomming_url.contains(\"/v1/stores\"))\n    get_stores\n\n#elseif($sp.incomming_url.contains(\"/v1/stock/cancel-reservation\"))\n    cancel_reservation\n\n#elseif($sp.incomming_url.contains(\"/v1/stock/return-item-status\"))\n    deviceReturnStatusNotification\n\n#elseif($sp.incomming_url.contains(\"/v1/stock/return-item\"))\n    device_return_notification\n\n#elseif($sp.incomming_url.contains(\"/v1/stock/bulk-availability\"))\n    bulk_availability_check\n\n#elseif($sp.incomming_url.contains(\"/v1/stock/item/barcode\"))\n    item_number_lookup\n\n#elseif($sp.incomming_url.contains(\"/v1/stock/item-lookup\"))\n    item_number_lookup\n#end",
+                    "defaultResponse": null,
+                    "conditionalResponses": [{
+                            "name": "Bulk-Availability Check (With StoreId - Error)",
+                            "body": "{\r\n  \"message\": \"Internal Server Error\",\r\n  \"result\": \"INPUT_ERROR\",\r\n  \"itemsAvailabilities\": [],\r\n  \"trackingId\": \"66288aaebf207a34\"\r\n}",
+                            "responseCode": "500",
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "bulk_availability_check",
+                                "conditionParameters": [{
+                                        "name": "sp.storeId",
+                                        "condition": "EXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 1
+                                    }, {
+                                        "name": "sp.warehouseId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 2
+                                    }, {
+                                        "name": "sp.storeId",
+                                        "condition": "MATCHES",
+                                        "value": ".*9991.*",
+                                        "etc": null,
+                                        "orderId": 3
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 0
+                        }, {
+                            "name": "Bulk-Availability Check (With StoreId - No itemNumbers Available)",
+                            "body": "{\r\n  \"message\": \"None of the provided itemNumbers are available.\",\r\n  \"result\": \"SUCCESS\",\r\n  \"itemsAvailabilities\": [],\r\n  \"trackingId\": \"0011c0f30ac97b28\"\r\n}",
+                            "responseCode": null,
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "bulk_availability_check",
+                                "conditionParameters": [{
+                                        "name": "sp.storeId",
+                                        "condition": "EXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 1
+                                    }, {
+                                        "name": "sp.warehouseId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 2
+                                    }, {
+                                        "name": "sp.storeId",
+                                        "condition": "MATCHES",
+                                        "value": ".*9990.*",
+                                        "etc": null,
+                                        "orderId": 3
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 1
+                        }, {
+                            "name": "Bulk-Availability Check (With WarehouseId - Error)",
+                            "body": "{\r\n  \"message\": \"Internal Server Error\",\r\n  \"result\": \"INPUT_ERROR\",\r\n  \"itemsAvailabilities\": [],\r\n  \"trackingId\": \"66288aaebf207a34\"\r\n}",
+                            "responseCode": "500",
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "bulk_availability_check",
+                                "conditionParameters": [{
+                                        "name": "sp.storeId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 1
+                                    }, {
+                                        "name": "sp.warehouseId",
+                                        "condition": "EXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 2
+                                    }, {
+                                        "name": "sp.warehouseId",
+                                        "condition": "MATCHES",
+                                        "value": ".*9991.*",
+                                        "etc": null,
+                                        "orderId": 3
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 2
+                        }, {
+                            "name": "Bulk-Availability Check (With WarehouseId - No itemNumbers Available)",
+                            "body": "{\r\n  \"message\": \"None of the provided itemNumbers are available.\",\r\n  \"result\": \"SUCCESS\",\r\n  \"itemsAvailabilities\": [],\r\n  \"trackingId\": \"0011c0f30ac97b28\"\r\n}",
+                            "responseCode": null,
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "bulk_availability_check",
+                                "conditionParameters": [{
+                                        "name": "sp.storeId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 1
+                                    }, {
+                                        "name": "sp.warehouseId",
+                                        "condition": "EXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 2
+                                    }, {
+                                        "name": "sp.warehouseId",
+                                        "condition": "MATCHES",
+                                        "value": ".*9990.*",
+                                        "etc": null,
+                                        "orderId": 3
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 3
+                        }, {
+                            "name": "Bulk-Availability Check (Without Store/ WarehouseId - Error)",
+                            "body": "{\r\n  \"message\": \"Internal Server Error\",\r\n  \"result\": \"INPUT_ERROR\",\r\n  \"trackingId\": \"66288aaebf207a34\"\r\n}",
+                            "responseCode": "500",
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "bulk_availability_check",
+                                "conditionParameters": [{
+                                        "name": "sp.storeId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 1
+                                    }, {
+                                        "name": "sp.warehouseId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 2
+                                    }, {
+                                        "name": "sp.itemNumbers",
+                                        "condition": "MATCHES",
+                                        "value": ".*99991.*",
+                                        "etc": null,
+                                        "orderId": 3
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 4
+                        }, {
+                            "name": "Bulk-Availability Check (Without Store/ WarehouseId - NO itemNumbers Available)",
+                            "body": "{\r\n  \"message\": \"None of the provided itemNumbers are available.\",\r\n  \"result\": \"SUCCESS\",\r\n  \"itemsAvailabilities\": [],\r\n  \"trackingId\": \"0011c0f30ac97b28\"\r\n}",
+                            "responseCode": null,
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "bulk_availability_check",
+                                "conditionParameters": [{
+                                        "name": "sp.storeId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 1
+                                    }, {
+                                        "name": "sp.warehouseId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 2
+                                    }, {
+                                        "name": "sp.itemNumbers",
+                                        "condition": "MATCHES",
+                                        "value": ".*99990.*",
+                                        "etc": null,
+                                        "orderId": 3
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 5
+                        }, {
+                            "name": "Bulk-Availability Check (Without Store/ Warehouse - No Items available)",
+                            "body": "{\r\n  \"message\": \"None of the provided itemNumbers are available.\",\r\n  \"result\": \"SUCCESS\",\r\n  \"itemsAvailabilities\": [],\r\n  \"trackingId\": \"0011c0f30ac97b28\"\r\n}",
+                            "responseCode": null,
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "bulk_availability_check",
+                                "conditionParameters": [{
+                                        "name": "sp.storeId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 1
+                                    }, {
+                                        "name": "sp.warehouseId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 2
+                                    }, {
+                                        "name": "sp.itemNumbers",
+                                        "condition": "MATCHES",
+                                        "value": ".*60086.0.*",
+                                        "etc": "OR",
+                                        "orderId": 3
+                                    }, {
+                                        "name": "sp.itemNumbers",
+                                        "condition": "MATCHES",
+                                        "value": ".*60099.6.*",
+                                        "etc": null,
+                                        "orderId": 4
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 13
+                        }
+                    ],
+                    "parsingRules": [{
+                            "multiple": false,
+                            "paramName": "warehouseId",
+                            "expression": "$.stockItems[0].warehouseId",
+                            "parsingType": "JSON_PATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "deliveryMethod",
+                            "expression": "$.deliveryMethod",
+                            "parsingType": "JSON_PATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "Request",
+                            "expression": "(.*)",
+                            "parsingType": "REGEX_URI"
+                        }, {
+                            "multiple": false,
+                            "paramName": "incoming_request_client",
+                            "expression": "client",
+                            "parsingType": "REGEX_HEADER"
+                        }, {
+                            "multiple": false,
+                            "paramName": "storeId",
+                            "expression": "$.stockItems.storeId",
+                            "parsingType": "JSON_PATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "itemNumber",
+                            "expression": "$.items..itemNumber",
+                            "parsingType": "JSON_PATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "URL",
+                            "expression": "(?s)(.*)",
+                            "parsingType": "REGEX_URI"
+                        }, {
+                            "multiple": false,
+                            "paramName": "storeId",
+                            "expression": "$.items[0].storeId",
+                            "parsingType": "JSON_PATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "rootReference",
+                            "expression": "$.rootReference",
+                            "parsingType": "JSON_PATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "shipmentTrackingId",
+                            "expression": "shipmentTrackingId=(.*)",
+                            "parsingType": "REGEX_URI"
+                        }, {
+                            "multiple": false,
+                            "paramName": "warehouseId",
+                            "expression": "$.items[0].warehouseId",
+                            "parsingType": "JSON_PATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "incomming_url",
+                            "expression": "(.*)",
+                            "parsingType": "REGEX_URI"
+                        }
+                    ],
+                    "operationParsingRules": {
+                        "bulk_availability_check": [{
+                                "multiple": false,
+                                "paramName": "warehouseId",
+                                "expression": "$.stockItems[0].warehouseId",
+                                "parsingType": "JSON_PATH"
+                            }, {
+                                "multiple": true,
+                                "paramName": "old1_itemNumbers",
+                                "expression": "$.stockItems.itemNumber",
+                                "parsingType": "JSON_PATH"
+                            }, {
+                                "multiple": false,
+                                "paramName": "storeId",
+                                "expression": "$.stockItems[0].storeId",
+                                "parsingType": "JSON_PATH"
+                            }, {
+                                "multiple": true,
+                                "paramName": "old_itemNumbers",
+                                "expression": "$.stockItems.itemNumber",
+                                "parsingType": "JSON_PATH"
+                            }, {
+                                "multiple": true,
+                                "paramName": "items",
+                                "expression": "$.stockItems[0].itemNumber",
+                                "parsingType": "JSON_PATH"
+                            }, {
+                                "multiple": false,
+                                "paramName": "Request",
+                                "expression": "(?s)(.*)",
+                                "parsingType": "REGEX"
+                            }, {
+                                "multiple": false,
+                                "paramName": "seconditem",
+                                "expression": "$.stockItems[1].itemNumber",
+                                "parsingType": "JSON_PATH"
+                            }, {
+                                "multiple": true,
+                                "paramName": "itemNumbers_array",
+                                "expression": "$..itemNumber.array",
+                                "parsingType": "JSON_PATH"
+                            }, {
+                                "multiple": false,
+                                "paramName": "firstitem",
+                                "expression": "$.stockItems[0].itemNumber",
+                                "parsingType": "JSON_PATH"
+                            }, {
+                                "multiple": false,
+                                "paramName": "incoming_validation",
+                                "expression": "(?s)(.*)",
+                                "parsingType": "REGEX"
+                            }, {
+                                "multiple": true,
+                                "paramName": "itemNumbers",
+                                "expression": "$.stockItems.itemNumber",
+                                "parsingType": "JSON_PATH"
+                            }, {
+                                "multiple": false,
+                                "paramName": "storeId",
+                                "expression": "$.stockItems.storeId",
+                                "parsingType": "JSON_PATH"
+                            }
+                        ]
+                    },
+                    "skipReporting": false,
+                    "disabled": true
+                }, {
+                    "configuredEndpoint": "/EDA/CAI3G1.2/services/CAI3G1.2",
+                    "operationDefinitionScript": "#if(${sp.login_logout_operation}==\"Logout\" || ${sp.login_logout_operation}==\"Login\")\n      ${sp.login_logout_operation}\n\n#elseif($sp.MOType.contains(\"Subscription@http://schemas.ericsson.com/ema/UserProvisioning/GsmHlr/\"))\n     #if(${sp.login_logout_operation} == \"Get\")\n          getSubscription\n     #elseif(${sp.login_logout_operation} == \"Set\")\n          setSubscription\n     #elseif(${sp.login_logout_operation} == \"Delete\")\n          deleteSubscription\n     #elseif(${sp.login_logout_operation} == \"Create\")\n          createSubscription\n     #end\n\n#elseif($sp.MOType.contains(\"IMSAssociation@http://schemas.ericsson.com/ma/HSS/\"))\n     #if(${sp.login_logout_operation} == \"Get\")\n          getIMSAssociation\n     #elseif(${sp.login_logout_operation} == \"Set\")\n          SetIMSAssociation\n     #elseif(${sp.login_logout_operation} == \"Delete\")\n          deleteIMSAssociation\n     #elseif(${sp.login_logout_operation} == \"Create\")\n          CreateIMSAssociation\n     #end\n\n#elseif($sp.MOType.contains(\"EPSMultiSC@http://schemas.ericsson.com/ma/HSS/\"))\n     #if(${sp.login_logout_operation} == \"Get\")\n          getEPSMultiSC\n     #elseif(${sp.login_logout_operation} == \"Set\")\n          SetEPSMultiSC\n     #elseif(${sp.login_logout_operation} == \"Delete\")\n          deleteEPSMultiSC\n     #elseif(${sp.login_logout_operation} == \"Create\")\n          CreateEPSMultiSC\n     #end\n\n#elseif($sp.MOType.contains(\"Subscription@http://schemas.ericsson.com/ema/UserProvisioning/MTAS/\"))\n     #if(${sp.login_logout_operation} == \"Get\")\n          getMMTelSubscription\n     #elseif(${sp.login_logout_operation} == \"Set\")\n          setMMTelSubscription\n     #elseif(${sp.login_logout_operation} == \"Delete\")\n          \n     #elseif(${sp.login_logout_operation} == \"Create\")\n          createSubscriptionMMTel\n     #end\n#elseif($sp.MOType.contains(\"DNSSubscription@http://schemas.ericsson.com/ema/UserProvisioning/IPWorks/5.0\"))\n     #if(${sp.login_logout_operation} == \"Get\")\n          \n     #elseif(${sp.login_logout_operation} == \"Set\")\n          \n     #elseif(${sp.login_logout_operation} == \"Delete\")\n          deleteDNSSubcription\n     #elseif(${sp.login_logout_operation} == \"Create\")\n          createDNSSubscription\n     #end\n\n#elseif($sp.MOType.contains(\"IMSIChangeover@http://schemas.ericsson.com/pg/cudb/1.0/\"))\n     #if(${sp.login_logout_operation} == \"Create\")\n         CreateIMSIChangeOverEPS\n\n    #elseif(${sp.login_logout_operation} == \"Get\")\n          get_IMSI_Changeover\n    #end\n\n#elseif($sp.MOType.contains(\"IMSIChangeoverRemoval@http://schemas.ericsson.com/pg/cudb/1.0/\"))\n     #if(${sp.login_logout_operation} == \"Create\")\n         create_IMSI_Changeover_Removal\n    #end\n\n#elseif($sp.MOType.contains(\"IMSIChangeover@http://schemas.ericsson.com/ema/UserProvisioning/GsmHlr/\"))\n     #if(${sp.login_logout_operation} == \"Create\")\n         CreateIMSIChangeOverHLR\n    #end\n\n#end",
+                    "defaultResponse": null,
+                    "conditionalResponses": [{
+                            "name": "Logout succeed",
+                            "body": "<S:Envelope\r\n    xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n    <S:Body>\r\n        <LogoutResponse\r\n            xmlns=\"http://schemas.ericsson.com/cai3g1.2/\"/>\r\n    </S:Body>\r\n</S:Envelope>",
+                            "responseCode": null,
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "Logout",
+                                "conditionParameters": []
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 0
+                        }, {
+                            "name": "Logout error",
+                            "body": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cai3=\"http://schemas.ericsson.com/cai3g1.2/\">\r\n  <soapenv:Body>\r\n    <soapenv:Fault>\r\n      <faultcode>3015</faultcode>\r\n      <faultstring>com.ericsson.schemas.cai3g1_2.sessioncontrol.Cai3G12FaultException</faultstring> \r\n      <detail>\r\n        <cai3:Cai3gFault>\r\n          <cai3:faultcode>3015</cai3:faultcode>\r\n          <cai3:faultreason>\r\n            <cai3:reasonText>Logout Failure</cai3:reasonText>\r\n          </cai3:faultreason>\r\n          <cai3:faultrole>MF</cai3:faultrole>\r\n        </cai3:Cai3gFault>   \r\n      </detail>\r\n    </soapenv:Fault>\r\n  </soapenv:Body>\r\n</soapenv:Envelope>",
+                            "responseCode": "200",
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "Logout",
+                                "conditionParameters": [{
+                                        "name": "sp.sessionId",
+                                        "condition": "MATCHES",
+                                        "value": "845.*",
+                                        "etc": null,
+                                        "orderId": 1
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 1
+                        }, {
+                            "name": "Login succeed",
+                            "body": "#set($tc.sessionId1 = $math.random(\"1000\",\"9999\"))\r\n#set($tc.sessionId2 = $math.random(\"1000\",\"9999\"))\r\n#set($tc.baseSequenceId = $math.random(\"0\",\"231\"))\r\n<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n   <S:Body>\r\n      <LoginResponse xmlns =\"http://schemas.ericsson.com/cai3g1.2/\">\r\n         <sessionId>${tc.sessionId1}fkde${tc.sessionId2}ogls</sessionId>\r\n         <baseSequenceId>${tc.baseSequenceId}</baseSequenceId>\r\n      </LoginResponse>\r\n   </S:Body>\r\n</S:Envelope>",
+                            "responseCode": null,
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "Login",
+                                "conditionParameters": [{
+                                        "name": "sp.userId",
+                                        "condition": "EXISTS",
+                                        "value": "",
+                                        "etc": "AND",
+                                        "orderId": 1
+                                    }, {
+                                        "name": "sp.pwd",
+                                        "condition": "EXISTS",
+                                        "value": "",
+                                        "etc": null,
+                                        "orderId": 2
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 0
+                        }, {
+                            "name": "Login error",
+                            "body": "#set($tc.sessionId1 = $math.random(\"1000\",\"9999\"))\r\n#set($tc.sessionId2 = $math.random(\"1000\",\"9999\"))\r\n#set($tc.baseSequenceId = $math.random(\"0\",\"231\"))\r\n<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n   <S:Header>\r\n      <SequenceId xmlns =\"http://schemas.ericsson.com/cai3g1.2/\">${tc.baseSequenceId}</SequenceId>\r\n      <SessionId xmlns:cai3=\"http://schemas.ericsson.com/cai3g1.2/\">${tc.sessionId1}fkde${tc.sessionId2}ogls</SessionId>\r\n   </S:Header>\r\n   <S:Body>\r\n      <S:Fault xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n         <faultcode>S:Server</faultcode>\r\n         <faultstring>com.ericsson.schemas.cai3g1_2.sessioncontrol.Cai3G12FaultException</faultstring>\r\n         <detail>\r\n            <Cai3gFault xmlns=\"http://schemas.ericsson.com/cai3g1.2/\">\r\n               <faultcode>3004</faultcode>\r\n               <faultreason>\r\n                  <reasonText>Invalid User Id</reasonText>\r\n               </faultreason>\r\n               <faultrole>MF</faultrole>\r\n            </Cai3gFault>\r\n         </detail>\r\n      </S:Fault>\r\n   </S:Body>\r\n</S:Envelope>",
+                            "responseCode": null,
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "Login",
+                                "conditionParameters": [{
+                                        "name": "sp.userId",
+                                        "condition": "NOTEXISTS",
+                                        "value": "",
+                                        "etc": null,
+                                        "orderId": 1
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 1
+                        }, {
+                            "name": "Login error 3014",
+                            "body": "<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cai3g=\"http://schemas.ericsson.com/cai3g1.2/\">\r\n<S:Body>\r\n<ns2:Fault xmlns:ns2=\" http: schemas.xmlsoap.org soap envelope\" xmlns:ns3=\"http://www.w3.org/2003/05/soap-envelope\">\r\n    <faultcode>ns2:Client</faultcode>\r\n    <faultstring>This is a client fault</faultstring>\r\n    <detail>\r\n        <Cai3gFault:Cai3gFault xmlns=\"http://schemas.ericsson.com/cai3g1.2/\" xmlns:Cai3gFault=\"http://schemas.ericsson.com/cai3g1.2/\">\r\n            <faultcode>1001</faultcode>\r\n            <faultreason>\r\n                <reasonText>Invalid sessionId.</reasonText>\r\n            </faultreason>\r\n            <faultrole>MF</faultrole>\r\n            <details>\r\n                <PGFault:PGFault xmlns=\" http://schemas.ericsson.com/pg/1.0\" xmlns:PGFault=\"http://schemas.ericsson.com/pg/1.0\">\r\n                    <errorcode>1010</errorcode>\r\n                    <errormessage>Invalid sessionId.</errormessage>\r\n                    <errordetails>Invalid session id. - [Processed by PG Node: node1]</errordetails>\r\n                </PGFault:PGFault>\r\n            </details>\r\n        </Cai3gFault:Cai3gFault>\r\n    </detail>\r\n</ns2:Fault>\r\n</S:Body>\r\n</S:Envelope>",
+                            "responseCode": null,
+                            "headers": {},
+                            "responseCondition": {
+                                "operationDefinitionKey": "Login",
+                                "conditionParameters": [{
+                                        "name": "sp.userId",
+                                        "condition": "NOTMATCHES",
+                                        "value": "^[aA-zZ].*",
+                                        "etc": null,
+                                        "orderId": 1
+                                    }
+                                ]
+                            },
+                            "skipReporting": false,
+                            "disabled": false,
+                            "priority": 2
+                        }
+                    ],
+                    "parsingRules": [{
+                            "multiple": false,
+                            "paramName": "SessionId",
+                            "expression": "//*[local-name()='SessionId']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "TransactionId",
+                            "expression": "//*[local-name()='TransactionId']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "MOType",
+                            "expression": "//*[local-name()='MOType']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "publicId",
+                            "expression": "//*[local-name()='publicId']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "epsExtendedAccessRestriction",
+                            "expression": "//*[local-name()='epsExtendedAccessRestriction']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "imsi",
+                            "expression": "//*[local-name()='imsi'[1]]/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "nimsi",
+                            "expression": "//*[local-name()='nimsi']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "SequenceId",
+                            "expression": "//*[local-name()='SequenceId']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "profileId",
+                            "expression": "//*[local-name()='profileId']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "TransactionId",
+                            "expression": "//*[local-name()='TransactionId']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "login_logout_operation",
+                            "expression": "local-name(//*[local-name()='Body']/*[1])",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "associationId",
+                            "expression": "//*[local-name()='associationId']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "msisdn",
+                            "expression": "//*[local-name()='msisdn']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "epsRegionalRoamingServiceAreaId",
+                            "expression": "//*[local-name()='epsRegionalRoamingServiceAreaId']/text()",
+                            "parsingType": "XPATH"
+                        }, {
+                            "multiple": false,
+                            "paramName": "main_operation",
+                            "expression": "local-name(//*[local-name()='MOAttributes']/*[1])",
+                            "parsingType": "XPATH"
+                        }
+                    ],
+                    "operationParsingRules": {
+                        "Logout": [{
+                                "multiple": false,
+                                "paramName": "sessionId",
+                                "expression": "//*[local-name()='sessionId']/text()",
+                                "parsingType": "XPATH"
+                            }
+                        ],
+                        "Login": [{
+                                "multiple": false,
+                                "paramName": "userId",
+                                "expression": "//*[local-name()='userId']/text()",
+                                "parsingType": "XPATH"
+                            }, {
+                                "multiple": false,
+                                "paramName": "pwd",
+                                "expression": "//*[local-name()='pwd']/text()",
+                                "parsingType": "XPATH"
+                            }
+                        ]
+                    },
+                    "skipReporting": false,
+                    "disabled": false
+                }
+            ]
+        }
+    ]
+}

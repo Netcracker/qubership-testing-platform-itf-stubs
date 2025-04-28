@@ -1,0 +1,14 @@
+working.directory=Working directory for Excel datasets and configurational xml-files (Can be relative path from the ITF root directory)
+start.triggers.at.startup=Activate transport and situation triggers at ITF startup or not. Values: true/false (Default: false)
+start.transport.triggers.at.startup=Activate transport triggers at ITF startup or not. Values: true/false (Default: false)
+max.connection.timeout=Max thread timeout to wait while activating triggers at ITF startup (milliseconds)
+tc.timeout.fail=Max time to wait in case tcContext execution inactivity. After specified time the context will be failed by timeout. Default: 20 (minutes)
+tc.timeout.fail.timeunit=Timeout units (milliseconds, seconds, minutes, hours, days). Default: minutes
+log.level=Specifies logging level for ITF (Some classes use the logger with dynamically changeable level). Value: one of TRACE, DEBUG, INFO, WARN, ERROR
+keystore.source=A path to KeyStore directory (It's needed for Tomcat to support TLS/SSL)
+keystore.password=Specifies KeyStore password (It's needed for Tomcat to support TLS/SSL)
+trigger.folder=Specifies trigger's folder (Relative path from the ITF root directory)
+transport.isRMI=Specifies are transports RMI or not. Values: true/false. (Default: false). 'true' is currently not supported
+runningUrl=Server URL to identify the instance of ITF
+load.transports.at.startup=Allows to deploy not all transports in order to minimize resources. Values: all or a list of transport modules delimited by comma, for example: mockingbird-transport-rest,mockingbird-transport-soap-http
+conditions.style.legacy=Setting to switch condition evaluation algorithm. Values: true/false. (Default: false).

@@ -1,0 +1,76 @@
+@startuml
+
+enum Condition {
+    MATCHES
+    NOTMATCHES
+    EXISTS
+    NOTEXISTS
+    EQUALS
+    NOTEQUALS
+    LESS
+    GREATER
+}
+enum Etc {
+    OR
+    AND
+    null
+}
+enum ParsingRuleType {
+    REGEX
+    XPATH
+    JSON_PATH
+    REGEX_HEADER
+}
+class ConditionParameter {
+    name: String
+    condition: Condition
+    value: String
+    etc: Etc
+    orderId: int
+}
+class FastResponseCondition {
+   conditionParameters: List<ConditionParameter>
+}
+class FastResponseConfig {
+   transportConfigs: List<TransportConfig>
+   projectUuid: String
+}
+class ResponseDescription {
+   responseCondition: FastResponseCondition
+   headers: Map<String, Object>
+   body: String
+   responseCode: String
+}
+class SimpleParsingRule {
+    paramName: String
+    expression: String
+    parsingType: ParsingRuleType
+    multiple: boolean
+}
+class StubEndpointConfig {
+   conditionalResponses: List<ResponseDescription>
+   configuredEndpoint: String
+   defaultResponse: ResponseDescription
+   parsingRules: List<SimpleParsingRule>
+}
+class TransportConfig {
+   endpoints: List<StubEndpointConfig>
+   transportType: String
+}
+
+FastResponseConfig    "1" *- "*" TransportConfig
+ResponseDescription   "1" *--> "responseCondition\n1" FastResponseCondition
+StubEndpointConfig    "1" *--> ResponseDescription: conditionalResponses*
+StubEndpointConfig    "1" o-> ResponseDescription: defaultResponse  1
+StubEndpointConfig    "1" *--> "parsingRules\n*" SimpleParsingRule
+TransportConfig       "1" *--> "endpoints\n*" StubEndpointConfig
+FastResponseCondition "1" *--> "conditionParameters\n*" ConditionParameter
+ConditionParameter - "etc" Etc
+Condition - ConditionParameter: condition
+SimpleParsingRule - ParsingRuleType: parsingType
+
+note top of ResponseDescription
+    responseCondition required for conditionalResponses
+    and should <b>not</b> be set for defaultResponse
+end note
+@enduml

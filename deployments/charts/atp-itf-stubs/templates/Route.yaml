@@ -1,0 +1,38 @@
+{{- if eq .Values.PAAS_PLATFORM "OPENSHIFT" }}
+    {{- $ports := .Values.defaultPorts -}}
+    {{- $additionalPorts := .Values.additionalPorts -}}
+    {{- if $additionalPorts }}
+      {{- $ports := merge $ports $additionalPorts }}
+    {{- end }}
+    {{- range $key, $value := $ports }}
+        {{- with $ }}
+            {{- if $value.ingress }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: '{{ .Values.SERVICE_NAME }}{{- if ne $value.ingress "default" -}}-{{ $value.ingress }}{{- end -}}'
+  labels:
+    portName: "{{ $key }}"
+  annotations:
+    haproxy.router.openshift.io/timeout: 10h
+spec:
+  host: '{{- if ne $value.ingress "default" -}}{{ $value.ingress }}-{{- end -}}{{ include "env.host" . }}'
+  port:
+    targetPort: {{ $key }}
+  tls:
+    insecureEdgeTerminationPolicy: '{{ .Values.TERMINATION_POLICY }}'
+    termination: edge
+  to:
+    kind: Service
+    name: '{{ .Values.SERVICE_NAME }}'
+    weight: 100
+status:
+  ingress:
+  - conditions:
+    host: '{{- if ne $value.ingress "default" -}}{{ $value.ingress }}-{{- end -}}{{ include "env.host" . }}'
+
+            {{- end }}
+       {{- end }}
+    {{- end }}
+{{- end }}

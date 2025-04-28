@@ -1,0 +1,215 @@
+<configuration scan="true" debug="true">
+    <!--You can use attribute debug="true" to output the config location to console, or packagingData="true" to add packages info to stacktrace output-->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator"/>
+    <springProperty name="GRAYLOG_ON" source="log.graylog.on"/>
+    <springProperty name="GRAYLOG_HOST" source="log.graylog.host"/>
+    <springProperty name="GRAYLOG_PORT" source="log.graylog.port"/>
+    <springProperty name="LOG_LEVEL_ROOT" source="logging.level.root"/>
+    <if condition='property("GRAYLOG_ON").equals("true")'>
+        <then>
+            <appender name="GELF"
+                      class="org.qubership.atp.integration.configuration.logging.gelf.logback.FailSafeGelfLogbackAppender">
+                <host>${GRAYLOG_HOST}</host>
+                <port>${GRAYLOG_PORT}</port>
+                <version>1.1</version>
+                <facility>atp-itf-stubs</facility>
+                <extractStackTrace>true</extractStackTrace>
+                <filterStackTrace>true</filterStackTrace>
+                <mdcProfiling>true</mdcProfiling>
+                <timestampPattern>yyyy-MM-dd HH:mm:ss,SSSS</timestampPattern>
+                <maximumMessageSize>8192</maximumMessageSize>
+
+                <!-- This are static fields -->
+                <additionalFields>environment=TA,application=atp-itf-stubs</additionalFields>
+                <!-- Optional: Specify field types -->
+                <additionalFieldTypes>environment=String,application=String</additionalFieldTypes>
+
+                <mdcFields>mdc.userId,mdc.projectId,mdc.executionRequestId,mdc.testRunId,mdc.callChainId,mdc.itfSessionId,mdc.itfContextId,mdc.traceId</mdcFields>
+                <dynamicMdcFieldTypes>userId=String,projectId=String,executionRequestId=String,testRunId=String,callChainId=String,itfSessionId=String,itfContextId=String,traceId=String</dynamicMdcFieldTypes>
+                <dynamicMdcFields>mdc.*,(mdc|MDC)fields</dynamicMdcFields>
+                <includeFullMdc>true</includeFullMdc>
+                <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                    <level>${LOG_LEVEL_ROOT:-INFO}</level>
+                </filter>
+            </appender>
+
+            <appender name="ASYNC_GELF" class="ch.qos.logback.classic.AsyncAppender">
+                <appender-ref ref="GELF"/>
+                <neverBlock>true</neverBlock>
+                <queueSize>1024</queueSize>
+            </appender>
+            <logger name="org.qubership.automation.itf" level="INFO" additivity="false">
+                <appender-ref ref="ASYNC_GELF"/>
+            </logger>
+            <root level="INFO">
+                <appender-ref ref="ASYNC_GELF"/>
+            </root>
+        </then>
+        <else>
+            <!-- Appenders -->
+            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <!-- encoders are assigned the type
+                 ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+                <encoder>
+                    <!--See also https://logback.qos.ch/manual/layouts.html-->
+                    <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS}[%t][%p][%c{2}] - %xEx{0}%throwable{full}%m%n</pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+            </appender>
+            <appender name="ITFAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+                <file>./itf_logs/ITF.log</file>
+                <encoder class="org.qubership.atp.integration.configuration.logging.logback.AtpPatternLayoutEncoder">
+                    <!--See also https://logback.qos.ch/manual/layouts.html-->
+                    <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS}[%t][%p][%c{2}] - %xEx{0}%throwable{full}%m%n
+                    </pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <maxIndex>10</maxIndex>
+                    <FileNamePattern>./itf_logs/ITF.log.%i</FileNamePattern>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>10Mb</maxFileSize>
+                </triggeringPolicy>
+            </appender>
+            <appender name="ATP2FILEAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+                <file>./itf_logs/ATP_libraries.log</file>
+                <encoder class="org.qubership.atp.integration.configuration.logging.logback.AtpPatternLayoutEncoder">
+                    <!--See also https://logback.qos.ch/manual/layouts.html-->
+                    <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS}[%t][%p][%c{2}] - %xEx{0}%throwable{full}%m%n
+                    </pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <maxIndex>20</maxIndex>
+                    <FileNamePattern>./itf_logs/ATP_libraries.log.%i</FileNamePattern>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>10Mb</maxFileSize>
+                </triggeringPolicy>
+            </appender>
+            <appender name="InterceptorRegAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+                <file>./itf_logs/Interceptor_reg.log</file>
+                <encoder class="org.qubership.atp.integration.configuration.logging.logback.AtpPatternLayoutEncoder">
+                    <!--See also https://logback.qos.ch/manual/layouts.html-->
+                    <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%t][%p][%c{2}] -%xEx{0}%throwable{full}%m%n
+                    </pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <maxIndex>10</maxIndex>
+                    <FileNamePattern>./itf_logs/Interceptor_reg.log.%i</FileNamePattern>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>10Mb</maxFileSize>
+                </triggeringPolicy>
+            </appender>
+            <appender name="JMSAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+                <file>./itf_logs/jms.log</file>
+                <encoder class="org.qubership.atp.integration.configuration.logging.logback.AtpPatternLayoutEncoder">
+                    <!--See also https://logback.qos.ch/manual/layouts.html-->
+                    <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%t][%p][%c{2}] -%xEx{0}%throwable{full}%m%n
+                    </pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <maxIndex>20</maxIndex>
+                    <FileNamePattern>./itf_logs/jms.log.%i</FileNamePattern>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>10Mb</maxFileSize>
+                </triggeringPolicy>
+            </appender>
+            <appender name="RestAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+                <file>./itf_logs/rest.log</file>
+                <encoder class="org.qubership.atp.integration.configuration.logging.logback.AtpPatternLayoutEncoder">
+                    <!--See also https://logback.qos.ch/manual/layouts.html-->
+                    <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%t][%p][%c{2}] -%xEx{0}%throwable{full}%m%n
+                    </pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <maxIndex>20</maxIndex>
+                    <FileNamePattern>./itf_logs/rest.log.%i</FileNamePattern>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>10Mb</maxFileSize>
+                </triggeringPolicy>
+            </appender>
+            <appender name="SoapAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+                <file>./itf_logs/soap.log</file>
+                <encoder class="org.qubership.atp.integration.configuration.logging.logback.AtpPatternLayoutEncoder">
+                    <!--See also https://logback.qos.ch/manual/layouts.html-->
+                    <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%t][%p][%c{2}] -%xEx{0}%throwable{full}%m%n
+                    </pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <maxIndex>20</maxIndex>
+                    <FileNamePattern>./itf_logs/soap.log.%i</FileNamePattern>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>10Mb</maxFileSize>
+                </triggeringPolicy>
+            </appender>
+            <appender name="CliAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+                <file>./itf_logs/cli.log</file>
+                <encoder class="org.qubership.atp.integration.configuration.logging.logback.AtpPatternLayoutEncoder">
+                    <!--See also https://logback.qos.ch/manual/layouts.html-->
+                    <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%t][%p][%c{2}] -%xEx{0}%throwable{full}%m%n
+                    </pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <maxIndex>20</maxIndex>
+                    <FileNamePattern>./itf_logs/cli.log.%i</FileNamePattern>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>10Mb</maxFileSize>
+                </triggeringPolicy>
+            </appender>
+
+            <!-- Loggers -->
+            <logger name="org.qubership.automation" level="INFO" additivity="false">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="ITFAppender"/>
+            </logger>
+            <logger name="org.qubership.atp" level="INFO" additivity="false">
+                <!-- <appender-ref ref="STDOUT"/> -->
+                <appender-ref ref="ATP2FILEAppender"/>
+            </logger>
+            <logger name="org.qubership.automation.itf.core.interceptor" level="INFO" additivity="false">
+                <!-- <appender-ref ref="STDOUT"/> -->
+                <appender-ref ref="InterceptorRegAppender"/>
+            </logger>
+            <logger name="org.qubership.automation.itf.trigger.jms" level="INFO" additivity="false">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="JMSAppender"/>
+            </logger>
+            <logger name="org.qubership.automation.itf.trigger.rest" level="INFO" additivity="false">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="RestAppender"/>
+            </logger>
+            <logger name="org.qubership.automation.itf.trigger.soap.http" level="INFO" additivity="false">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="SoapAppender"/>
+            </logger>
+            <logger name="org.qubership.automation.itf.trigger.cli" level="INFO" additivity="false">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="CliAppender"/>
+            </logger>
+
+            <root level="${LOG_LEVEL_ROOT:-INFO}">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="ITFAppender"/>
+            </root>
+        </else>
+    </if>
+</configuration>

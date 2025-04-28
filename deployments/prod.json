@@ -1,0 +1,8 @@
+{
+  "MEMORY_REQUEST": "512Mi",
+  "MEMORY_LIMIT": "3Gi",
+  "CPU_REQUEST": "0.1",
+  "CPU_LIMIT": "2",
+  "MAX_RAM_SIZE": "3000m",
+  "NODES_COUNT": "1"
+}

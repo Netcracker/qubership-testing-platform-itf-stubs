@@ -1,0 +1,180 @@
+# Annotations for all ingresses. Example:
+#"ingress.annotations": {
+#  "nginx.ingress.kubernetes.io/limit-rpm": "100",
+#  "nginx.ingress.kubernetes.io/limit-rps": "3",
+#  "nginx.ingress.kubernetes.io/proxy-connect-timeout": "1800",
+#  "nginx.ingress.kubernetes.io/proxy-read-timeout": "1800",
+#  "nginx.ingress.kubernetes.io/proxy-send-timeout": "1800"
+#}
+ingress:
+  annotations: {}
+PAAS_PLATFORM: "KUBERNETES"
+ATP_NET: ""
+# Flag to enable HTTPS support
+EMBEDDED_HTTPS_ENABLED: "true"
+# Path to keystore file in .jks format
+KEYSTORE_FILE: "keystore.jks"
+# Password for keystore
+KEYSTORE_PASSWORD: "changeit"
+# Undertow session timeout (in minutes) before authorization is expired
+UNDERTOW_SESSION_TIMEOUT: "58m"
+# Undertow compression enabled flag.
+UNDERTOW_COMPRESSION_ENABLED: "false"
+# Undertow compression mimetypes
+UNDERTOW_COMPRESSION_MIMETYPE: "text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml"
+# Url of datasets service
+ATP_DATASET_URL: "https://atp-datasets-service-address"
+# Public gateway config
+ATP_INTEGRATION_ENABLED: "true"
+ATP_PUBLIC_GATEWAY_URL: "http://atp-public-gateway:8080"
+# Internal gateway config
+ATP_INTERNAL_GATEWAY_ENABLED: "true"
+ATP_INTERNAL_GATEWAY_URL: "https://atp-internal-gateway:8080"
+# Url of ITF Executor service for feign interaction
+FEIGN_ATP_ITF_EXECUTOR_URL: ""
+FEIGN_ATP_ITF_EXECUTOR_NAME: "atp-itf-executor"
+FEIGN_ATP_ITF_EXECUTOR_ROUTE: "api/atp-itf-executor/v1"
+# Catalogue for feign configs
+FEIGN_ATP_CATALOGUE_NAME: "ATP-CATALOGUE"
+FEIGN_ATP_CATALOGUE_ROUTE: "api/atp-catalogue/v1"
+FEIGN_ATP_CATALOGUE_URL: ""
+# User service for feign configs
+FEIGN_ATP_USERS_NAME: "ATP-USERS-BACKEND"
+FEIGN_ATP_USERS_ROUTE: "api/atp-users-backend/v1"
+FEIGN_ATP_USERS_URL: "" # TO_BE_REPLACED
+# CPU core limit
+CPU_LIMIT: "0.75"
+# CPU core request
+CPU_REQUEST: "0.1"
+# Which docker image should be used to deploy
+DOCKER_TAG: "artifactoryservice-address/path-to-image"
+# Switching-on of Eureka client
+EUREKA_CLIENT_ENABLED: "true"
+# Lock provider timeout (in ms)
+LOCK_PROVIDER_PROCESS_TIMEOUT: "60000"
+# Switching-on of start transport triggers at startup
+START_TRANSPORT_TRIGGERS_AT_STARTUP: "true"
+TRIGGERS_ACTIVATION_SYNC: "false"
+# Graylog configs
+GRAYLOG_HOST: "tcp:graylog-service-address"
+GRAYLOG_ON: "false"
+GRAYLOG_PORT: "12201"
+# Keycloak configs
+KEYCLOAK_ENABLED: "true"
+KEYCLOAK_CLIENT_NAME: "atp-itf"
+KEYCLOAK_REALM: "atp2"
+KEYCLOAK_SECRET: "71b6a213-e3b0-4bf4-86c8-dfe11ce9e248"
+KEYCLOAK_AUTH_URL: "https://atp-keycloak-service-address/auth"
+# Size of MaxRAM
+MAX_RAM_SIZE: "3000m"
+# Memory limit
+MEMORY_LIMIT: "3Gi"
+# Memory request
+MEMORY_REQUEST: "1Gi"
+# Service nodes (replicas) count.
+NODES_COUNT: "1"
+# OpenShift project.
+OPENSHIFT_PROJECT: "devci"
+# enabling profiler option
+PROFILER_ENABLED: "false"
+# Rest end point for projects
+PROJECT_INFO_ENDPOINT: "/api/v1/users/projects"
+# host of profiler collector
+REMOTE_DUMP_HOST: "profiler-collector-service.profiler.svc"
+# port of profiler collector
+REMOTE_DUMP_PORT: "1710"
+# Custom hostname for Route
+SERVICE_HOSTNAME: "atp-itf-stubs-service-address"
+# Name tool.
+SERVICE_NAME: "atp-itf-stubs"
+# Register to public gateway in eureka
+ATP_SERVICE_PUBLIC: "true"
+# Security profile: default or disable-security
+SPRING_PROFILES: "default"
+# Url of registry service
+SERVICE_REGISTRY_URL: "http://atp-registry-service:8761/eureka"
+#tcp Url of ActiveMQ broker
+ATP_ITF_BROKER_URL_TCP: "tcp://atp-activemq:61616?wireFormat.maxInactivityDuration=0"
+ATP_ITF_STUBS_URL: "http://atp-itf-stubs-service-address"
+TLS_ENABLED: "true"
+#=JMS connection properties
+TEST_SERVER_AVAILABILITY: "false"
+# GridsFs Settings
+EDS_GRIDFS_ENABLED: "true"
+EDS_GRIDFS_DB: "ci_itf_eds_gridfs"
+EDS_GRIDFS_USER: "ci_itf_eds_gridfs"
+EDS_GRIDFS_PASSWORD: "ci_itf_eds_gridfs"
+MONGO_DB_ADDR: "mongos.mongocluster.svc"
+MONGO_DB_PORT: "27017"
+SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: "256MB"
+SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: "256MB"
+# Swagger
+SWAGGER_ENABLED: "false"
+# Set Undertow parameters
+SERVER_UNDERTOW_IO_THREADS: "20"
+SERVER_UNDERTOW_WORKER_THREADS: "160"
+SERVER_UNDERTOW_ACCESSLOG_ENABLED: "true"
+JBOSS_THREADS_EQE_STATISTICS: "true"
+# Set to ATP2 to enable Prometheus scrapping
+SERVICE_TYPE: "ATP2"
+JMX_ENABLE: "true"
+JMX_PORT: "3000"
+JMX_RMI_PORT: "3001"
+# insecure Edge Termination Policy
+TERMINATION_POLICY: "Allow"
+# ActiveMQ topics/queues names (finally calculated in helpers.tpl)
+EXECUTOR_STUBS_SYNC_TOPIC: ""
+CONFIGURATOR_STUBS_TOPIC: ""
+STUBS_CONFIGURATOR_TOPIC: ""
+EDS_UPDATE_TOPIC: ""
+STUBS_EXECUTOR_INCOMING_QUEUE: ""
+EXECUTOR_STUBS_OUTGOING_QUEUE: ""
+# ActiveMQ topics/queues TTLs
+STUBS_CONFIGURATOR_TOPIC_MESSAGES_TTL: "180000"
+STUBS_EXECUTOR_INCOMING_REQUEST_QUEUE_MESSAGES_TTL: "180000"
+BACKWARD_COMPATIBILITY: true
+# Hibernate-multi-tenancy configurations
+MULTI_TENANCY_HIBERNATE_ENABLED: "false"
+# ActiveMQ listener concurrency
+EXECUTOR_STUBS_CONCURRENCY: "120-900"
+EXECUTOR_STUBS_MAX_MESSAGES_PER_TASK: "90"
+REPORT_QUEUE: ""
+#  kubernetes.io/hostname: worker1-atpkub
+#Example:  "nodeSelector": {"kubernetes.io/hostname": "worker16-atp2k8"}
+nodeSelector: {}
+ADDITIONAL_JAVA_OPTIONS: ""
+HEAPDUMP_ENABLED: false
+TRIGGER_CUSTOM_LIB_FOLDER: ""
+HAZELCAST_CACHE_ENABLED: "true"
+HAZELCAST_ADDRESS: "atp-hazelcast:5701"
+# Zipkin
+ZIPKIN_ENABLE: "false"
+ZIPKIN_PROBABILITY: "1.0"
+ZIPKIN_URL: "http://zipkin.zipkin.svc:9411"
+#Example: "extraEnvs": [
+#    {
+#      "name": "DISABLE_INSTALL_DEMO_CONFIG",
+#      "value": "true"
+#    },
+#    {
+#      "name": "DISABLE_SECURITY_PLUGIN",
+#      "value": "true"
+#    }
+#  ]
+extraEnvs: []
+keepHookLogs: false
+HELPER_IMAGE: "artifactory-service-address/path-to-image"
+# default ports. Format:
+#"<name>": {
+#"port": "<port number>",
+#"ingress": "<name of ingress>" #will be used as prefix for host and part of ingress name. Keep empty if ingress isn't required
+#}
+defaultPorts: {
+  "web": {"port": "8080","ingress": "default"},
+  "actuator": {"port": "8090","ingress": ""},
+  "ffmq": {"port": "10002","ingress": ""},
+  "tls12-nd": {"port": "9443","ingress": "tls12"},
+  "tls13-nd": {"port": "10443","ingress": "tls13"}
+}
+# additional ports. The same format as for defaultPorts. Specify these ports in config service
+additionalPorts: {}

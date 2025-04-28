@@ -1,0 +1,108 @@
+@startuml
+
+json JSON{
+	"projectUuid": "a71d2db4-d8e4-412c-ad47-d021ba2d9c6c",
+	"transportConfigs": [
+	{
+		"transportType": "REST",
+		"endpoints": [
+		{
+			"configuredEndpoint": "/fast/rest/inbound",
+			"parsingRules": [
+				{
+					"paramName": "text_to_past",
+					"expression": "text_to_past=(.[^\\s]+)",
+					"parsingType": "REGEX",
+					"multiple": false
+				},
+				{
+					"paramName": "header_param1",
+					"expression": "header1=(.[^\\s]+)",
+					"parsingType": "REGEX",
+					"multiple": true
+				},
+				{
+					"paramName": "header_param2",
+					"expression": "header2=(.[^\\s]+)",
+					"parsingType": "REGEX",
+					"multiple": false
+				},
+				{
+					"paramName": "response_code",
+					"expression": "response_code=(.[^\\s]+)",
+					"parsingType": "REGEX",
+					"multiple": true
+				}
+				],
+			"defaultResponse":
+			{
+				"body": "Test OK! ${text_to_past} #encode_base64('text')",
+				"responseCode": "${response_code[0]}",
+				"headers": {
+					"Content-Type": "text/plain",
+					"header1_0": "${header_param1[0]}",
+					"header1_1": "${header_param1[1]}",
+					"header1_multiple": "${header_param1}",
+					"header2": "${header_param2}",
+					"header_date": " #add_date('2023-01-01 01:00:00', '5d', '4h', '3m')"
+				}
+			},
+			"conditionalResponses": [
+				{
+					"body": "Conditional Response 1",
+					"responseCode": "200",
+					"headers": {
+						"Content-Type": "text/plain"
+					},
+					"responseCondition": {
+						"conditionParameters" : [
+							{
+								"name" : "header_param1",
+								"condition" : "EXISTS",
+								"value" : "",
+								"etc" : "AND",
+								"orderId" : 0
+							},
+							{
+								"name" : "header_param1[0]",
+								"condition" : "EQUALS",
+								"value" : "conditional",
+								"etc" : null,
+								"orderId" : 1
+							}
+						]
+
+					}
+				}
+			]
+		},
+		{
+			"configuredEndpoint": "/3rd/st/token",
+			"defaultResponse":
+			{
+				"body": "Test OK!",
+				"responseCode": 200,
+				"headers": {
+					"Content-Type": "text/plain"
+				}
+			},
+			"conditionalResponses": []
+		},
+		{
+			"configuredEndpoint": "/enterprise/ePubSubEventManagement/v1/topic",
+			"defaultResponse":
+			{
+				"body": "Test OK!",
+				"responseCode": 200,
+				"headers": {
+					"Content-Type": "text/plain"
+				}
+			},
+			"conditionalResponses": []
+		}
+	]
+	}
+	]
+}
+
+@enduml

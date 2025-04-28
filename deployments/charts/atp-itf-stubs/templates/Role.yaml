@@ -1,0 +1,40 @@
+{{- if not (lookup "rbac.authorization.k8s.io/v1" "Role" .Release.Namespace "atp-configmaps-creator") }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    template: atp
+  annotations:
+   "helm.sh/hook": pre-install, pre-upgrade
+   "helm.sh/hook-weight": "1"
+   "helm.sh/hook-delete-policy": before-hook-creation
+  name: atp-configmaps-creator
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - pods
+  - pods/exec
+  - pods/portforward
+  - secrets
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  - extensions
+  resources:
+  - deployments
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+{{- end }}

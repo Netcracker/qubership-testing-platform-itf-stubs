@@ -1,0 +1,40 @@
+{{- if eq .Values.PAAS_PLATFORM "KUBERNETES" }}
+    {{- $ports := .Values.defaultPorts -}}
+    {{- $additionalPorts := .Values.additionalPorts -}}
+    {{- if $additionalPorts }}
+      {{- $ports := merge $ports $additionalPorts }}
+    {{- end }}
+    {{- range $key, $value := $ports }}
+        {{- with $ }}
+            {{- if $value.ingress }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: '{{ .Values.SERVICE_NAME }}{{- if ne $value.ingress "default" -}}-{{ $value.ingress }}{{- end -}}'
+  labels:
+    portName: "{{ $key }}"
+  annotations:
+  {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .Values.TLS_ENABLED }}
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  {{- end }}
+spec:
+  rules:
+  - host: '{{- if ne $value.ingress "default" -}}{{ $value.ingress }}-{{- end -}}{{ include "env.host" . }}'
+    http:
+      paths:
+      - path: /
+        pathType: "Prefix"
+        backend:
+          service:
+            name: '{{ .Values.SERVICE_NAME }}'
+            port:
+              number: {{ $value.port | int }}
+            {{- end }}
+        {{- end }}
+    {{- end }}
+{{- end }}

@@ -1,0 +1,80 @@
+@startuml
+title atp-stub new solution
+
+actor User
+participant Configurator
+database Config
+queue ActiveMQ
+participant Stubs
+participant Executor
+
+group initiation
+Stubs -> Stubs: activate ActiveMQListener(executor-stubs-sync)
+alt Stubs already up and running and Executor is starting
+Executor ->> ActiveMQ: toStubs (executor-stubs-sync) "Ready to synchronization"
+Stubs <<- ActiveMQ: Executor ready to synchronization
+end
+Stubs -> Executor: get list of Trigger to activate (as list of objects)\nGET /server/trigger/all (via FeignClient)
+Executor -> Executor :getListOfTriggersToActivate()
+Executor --> Stubs: ListOfTriggerConfigurations
+loop ListOfTriggerConfigurations.size()
+Stubs -> Stubs : triggerConfiguration.activate()
+end
+
+Configurator <<- Config : getActiveMQConnectionParameters()
+Configurator -> Configurator: activate ActiveMQListener(stubs-config)
+
+Stubs <<- Config: getActiveMQConnectionParameters()
+Stubs -> Stubs: activate ActiveMQListener(config-stubs)
+
+end
+User -> Configurator: open <Environment> tab
+Configurator -> Stubs: ping via http
+return status
+alt Stubs available
+   Configurator -> Configurator: isStubsAvailable = true
+else Stubs not available
+   Configurator -> Configurator: isStubsAvailable = false
+end
+Configurator --> User: TriggerStatus = isStubsAvailable ?  Model.status : "undefined"
+note over Configurator: if status = undefined activate/deactivate buttons should be disabled
+alt activate one trigger
+User ->> Configurator : click [Activate] button on Trigger
+Configurator ->> ActiveMQ : Create message 'Activate trigger' and put \nin special topic (config-stubs)\n**triggerId + User**
+else activate triggers under environment
+User ->> Configurator : click [Activate] button on Environment
+Configurator ->> ActiveMQ : Create message 'Activate trigger' and put \nin special topic (config-stubs)\n**environmentId + User**
+end
+Stubs <<- ActiveMQ : Take message from topic
+alt activate triggers under environment
+Stubs -> Executor: get list of Trigger Configurations under environment (as list of objects)\nGET /server/trigger?environmentId (via FeignClient)
+Executor -> Executor :getListOfTriggerConfigurationsUnderEnvironment(environmentId)
+Executor --> Stubs: ListOfTriggerConfigurations
+loop ListOfTriggerConfigurations.size()
+Stubs -> Stubs : triggerConfiguration.activate()
+end
+
+else activate one trigger
+Stubs -> Executor: get TriggerConfiguration by triggerId\nGET /server/trigger?id=triggerId (via FeignClient)
+    Executor -> Executor: getTriggerConfigurationByID(triggerId)
+Executor -> Stubs:  TriggerConfiguration as object
+
+    Stubs -> Stubs : triggerConfiguration.activate()
+end
+Stubs -> Executor: PATCH /server/trigger/updateStatus \nbody contains list of objects:\n[{"triggerId":"<id>", "status":"active/inactive", "description":"<text>"}]
+
+    Executor -> Executor: update trigger status
+    note over Executor
+        @RequestMapping(value = "/server/trigger/updateStatus", method = RequestMethod.PUT)
+        UIResult UpdateServerTriggerStatusController.updateTriggerStatus(@RequestBody List<UITriggerStatus> triggerStatusesList)
+    end note
+    Executor --> Stubs: UIResult - success, error or exception
+alt update failed
+
+    Stubs -> Stubs: rollback changes (activate/deactivate)
+end
+Stubs ->> ActiveMQ : Create message with status and put \nit in special topic (stubs-configurator)\nenvironmentId or triggerId + status + User
+Configurator <<- ActiveMQ :Take message about trigger activation
+Configurator -> Configurator: update trigger statuses in UI
+Configurator ->> User --: Return result to user \n who has initiated the activation
+@enduml

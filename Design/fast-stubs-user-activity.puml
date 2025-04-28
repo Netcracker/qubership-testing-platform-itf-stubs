@@ -1,0 +1,51 @@
+@startuml
+
+actor user
+participant "atp-itf-configurator" as configurator
+participant "request sender" as sender
+participant "atp-itf-stubs" as stubs
+participant "atp-itf-executor" as executor
+
+group stubs configuration
+    user -> configurator: upload configuration *.json file\nusing 'Upload files' function in web UI
+    note over user, configurator
+        File Uploader parameters:
+        1) Type of file - 'fast-stub'
+        2) Path to file destination - empty
+        3) File - *.json file with configuration
+        <b>only one file can be loaded for one project</b>
+        <b>if file already exists it will be replaced with new one</b>
+    end note
+    user -> configurator: activate trigger with endpoint that\nconfigured in *.json configuration file\nusing common ITF activation mechanism
+end
+...
+ref over configurator, executor
+    uploading configuration file
+    initializing uploaded configuration
+end
+...
+group request processing
+    sender -> stubs: send REST request\nto active endpoint
+    stubs -> stubs: search for response in configuration file
+    note right of stubs
+        1) transportConfigs.endpoints.configuredEndpoint = request endpoint
+        2) apply parsingRules to request
+        3) check conditionalResponses.responseCondition.conditionParameters
+        <b>if</b> conditions validation returns 'true' for current conditionalResponse
+            such response will be returned as answer
+        <b>else if</b> defaultResponse exists
+            return defaultResponse
+        <b>else</b>
+            response not found
+            send request to atp-itf-executor for processing
+    end note
+    alt response found
+        stubs -> sender: response
+    else response not found
+        stubs -> executor: resend incoming request for processing
+        executor -> executor: prepare response
+        executor -> stubs: response
+        stubs -> sender: response
+    end alt
+end
+@enduml

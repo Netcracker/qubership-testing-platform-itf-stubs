@@ -1,0 +1,26 @@
+@startuml
+
+participant "External System" as ext
+participant Stubs
+participant "ActiveMQ Message broker" as amq
+participant "Executor" as exo
+
+Stubs -> Stubs: register listener \nExecutorStubsOutgoingResponseListener(topic "executor-stubs-outgoing-response")
+exo -> exo: register listener \nStubsExecutorIncomingRequestListener(queue "stubs-executor-incoming-request")
+ext -> Stubs: message to trigger
+Stubs -> Stubs: prepare TriggerExecutionMessage(typeName, message, \ntriggerConfigurationDescriptor, sessionID)
+Stubs -> amq: put TriggerExecutionMessage into **queue** "stubs-executor-incoming-request"
+amq -> exo: get message from **queue** "stubs-executor-incoming-request"
+note right of exo
+**CoreCallbackImpl** should be implemented as service
+and moved to **mockingbird-aggregator**
+end note
+exo -> exo: produceEvent(TriggerExecutionMessage)
+exo -> amq: put TriggerExecutionMessage into **topic** "executor-stubs-outgoing-response"
+Stubs <- amq: get message from **topic** "executor-stubs-outgoing-response"
+group ExecutorStubsOutgoingResponseListener
+Stubs -> Stubs: SessionHandler.INSTANCE.addMessage(sessionId, message)
+Stubs -> Stubs: LockProvider.INSTANCE.notify(sessionId)
+end
+Stubs -> ext: send Response (by Camel functionality)
+@enduml

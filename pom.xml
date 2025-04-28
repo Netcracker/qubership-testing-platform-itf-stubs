@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.qubership.mockingbird</groupId>
+    <artifactId>mockingbird</artifactId>
+    <version>${atp.service.version}</version>
+    <packaging>pom</packaging>
+    <name>mockingbird</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <taRollout.skipNotify>true</taRollout.skipNotify>
+        <atp.service.version>0.0.1.LOCAL</atp.service.version>
+    </properties>
+
+    <modules>
+
+        <!--modules for building process-->
+        <module>parent/parent-dependencies</module>
+        <module>parent/parent-java</module>
+
+        <!--Module with *.yaml specifications for pact testing-->
+        <module>atp-itf-stubs-contract-test-pacts</module>
+
+        <!--ITF trigger level module-->
+        <module>mockingbird-triggers-camel</module>
+
+        <!--The module is aggregator-->
+        <module>mockingbird-aggregator</module>
+
+        <!--pom for compile ready project and some local resources-->
+        <module>common</module>
+        <module>mockingbird-communication</module>
+
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.15</version>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </pluginRepository>
+    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+    </distributionManagement>
+</project>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main" if="${triggersDirExists}">
+  <delete>
+    <fileset dir="../triggers"/>
+  </delete>
+  <echo message="Folder [../triggers] with trigger files *.jar has been cleared."/>
+</target>
+</project>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>mockingbird-triggers-camel</artifactId>
+        <groupId>org.qubership.mockingbird</groupId>
+        <version>${atp.service.version}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>mockingbird-trigger-smpp</artifactId>
+    <packaging>jar</packaging>
+
+    <build>
+        <finalName>mockingbird-trigger-smpp</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib/${project.build.finalName}</outputDirectory>
+                            <!-- <excludeTransitive>true</excludeTransitive> org.jboss,io.netty, -->
+                            <excludeGroupIds>org.springframework,org.apache.sshd,org.apache.httpcomponents,io.github.openfeign,io.zipkin.brave,io.zipkin.zipkin2,io.zipkin.reporter2,org.keycloak,io.undertow,
+                                com.netflix.archaius,org.aspectj,com.squareup.okhttp3,com.squareup.okio,jakarta.annotation,org.glassfish,
+                                jakarta.validation,io.reactivex,com.nimbusds,com.netflix.hystrix,org.qubership.atp.auth,
+                                org.bouncycastle,org.hdrhistogram,org.synchronoss.cloud,com.github.ben-manes.caffeine,
+                                com.fasterxml.jackson.datatype,com.fasterxml.jackson.module,org.reactivestreams,
+                                net.bytebuddy,org.hibernate,
+                                org.apache.cxf, org.apache.camel, org.apache.neethi, com.google.guava,
+                                org.apache.ws.xmlschema, org.postgresql, org.jdom, joda-time, com.fasterxml.woodstox,
+                                org.openclover, org.apache.activemq, org.projectlombok
+                            </excludeGroupIds>
+                            <excludeArtifactIds>querydsl-core,pcap4j-core,camel-ssh,camel-http-common,camel-http4,commons-lang,
+                                commons-fileupload,commons-configuration,snakeyaml,reactor-netty,reactor-core,jul-to-slf4j,jcip-annotations,
+                                error_prone_annotations,javax.annotation-api,antlr,dom4j,oss-parent,qubership-atp-common-logging,
+                                javax.persistence-api,clover-maven-plugin,
+                                jackson-annotations
+                            </excludeArtifactIds>
+                            <!--if you have NoClassFoundException for this trigger then  include needed dependency here-->
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.qubership.mockingbird</groupId>
+            <artifactId>mockingbird-camel-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fizzed</groupId>
+            <artifactId>ch-smpp</artifactId>
+            <version>5.0.9</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>joda-time</groupId>
+                    <artifactId>joda-time</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.cloudhopper</groupId>
+                    <artifactId>ch-commons-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.cloudhopper</groupId>
+            <artifactId>ch-commons-util</artifactId>
+            <version>6.0.2</version>
+        </dependency>
+    </dependencies>
+</project>

@@ -1,0 +1,1 @@
+    taskkill /F /PID `"/cygdrive/c/Program Files/Java/jdk1.8.0_131/bin/jps" -v | grep "ITF_CI_DEPLOY" | grep -Po "^\d+"` #for case 

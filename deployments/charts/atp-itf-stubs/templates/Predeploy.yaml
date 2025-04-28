@@ -1,0 +1,77 @@
+{{- range $flow := (list "install" "update") }}
+{{- with $ }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Values.SERVICE_NAME }}-predeploy-{{ $flow }}"
+  labels:
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": "pre-{{ replace "update" "upgrade" $flow }}"
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": {{ if not .Values.keepHookLogs }}hook-succeeded, {{ end }}before-hook-creation
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      name: "{{ .Values.SERVICE_NAME }}-job"
+      labels:
+        app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+        app.kubernetes.io/instance: "{{ .Release.Name }}"
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      containers:
+      - name: pre-deploy-job
+        image: "{{ .Values.HELPER_IMAGE }}"
+        volumeMounts:
+        - name: shared-data
+          mountPath: /shared
+        workingDir: /shared
+        command:
+        - sh
+        - -c
+        - |
+          echo "=> Starting pre-deploy scripts ..."
+          ./{{ $flow }}/predeploy.sh
+        envFrom:
+          - secretRef:
+              name: {{ .Values.SERVICE_NAME }}-predeploy-secrets
+        env:
+        {{- include "env.cloud" . | indent 8 }}
+        {{- if .Values.extraEnvs }}
+        {{- toYaml .Values.extraEnvs | nindent 8 }}
+        {{- end }}
+        - name: ENCRYPT
+          value: "{{ .Values.ENCRYPT }}"
+        - name: PAAS_PLATFORM
+          value: "{{ .Values.PAAS_PLATFORM }}"
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      initContainers:
+      - name: init-container
+        image: "{{ .Values.DOCKER_TAG }}"
+        volumeMounts:
+        - name: shared-data
+          mountPath: /shared
+        command:
+        - sh
+        - -c
+        - |
+          echo "=> Copying scripts to shared folder ..."
+          cp -rv /atp/* /shared/
+          mkdir -pv /shared/lib
+          find . -type f -regex '.*/lib/\(atp-crypt\|slf4j-api\|bcprov\|commons-lang\)-.*\.jar$' -exec cp -v "{}" /shared/lib/ \;
+      serviceAccount: atp
+      serviceAccountName: atp
+{{- end }}
+{{- end }}
+

@@ -1,0 +1,109 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: '{{ .Values.SERVICE_NAME }}'
+  labels:
+    app: '{{ .Values.SERVICE_NAME }}'
+    name: '{{ .Values.SERVICE_NAME }}'
+    servicetype: '{{ .Values.SERVICE_TYPE }}'
+spec:
+  strategy:
+    type: RollingUpdate
+  replicas: {{ .Values.NODES_COUNT }}
+  selector:
+    matchLabels:
+      name: '{{ .Values.SERVICE_NAME }}'
+      app: '{{ .Values.SERVICE_NAME }}'
+      deploymentconfig: '{{ .Values.SERVICE_NAME }}'
+  template:
+    metadata:
+      labels:
+        name: '{{ .Values.SERVICE_NAME }}'
+        app: '{{ .Values.SERVICE_NAME }}'
+        deploymentconfig: '{{ .Values.SERVICE_NAME }}'
+        servicetype: '{{ .Values.SERVICE_TYPE }}'
+    spec:
+      {{- if .Values.HEAPDUMP_ENABLED }}
+      volumes:
+        - name: heapdumps
+          emptyDir: {}
+      {{- end }}
+      terminationGracePeriodSeconds: 60
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: '{{ .Values.SERVICE_NAME }}'
+          image: '{{ .Values.DOCKER_TAG }}'
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: '{{ .Values.MEMORY_REQUEST }}'
+              cpu: '{{ .Values.CPU_REQUEST }}'
+            limits:
+              memory: '{{ .Values.MEMORY_LIMIT }}'
+              cpu: '{{ .Values.CPU_LIMIT }}'
+          {{- if .Values.HEAPDUMP_ENABLED }}
+          volumeMounts:
+            - mountPath: /tmp/diagnostic
+              name: heapdumps
+          {{- end }}
+          ports:
+          {{- $ports := .Values.defaultPorts -}}
+          {{- $additionalPorts := .Values.additionalPorts -}}
+          {{- if $additionalPorts }}
+            {{- $ports := merge $ports $additionalPorts }}
+          {{- end }}
+          {{- range $key, $value := $ports }}
+            - containerPort: {{ $value.port | int }}
+              name: {{ $key }}
+          {{- end }}
+      {{- if .Values.BACKWARD_COMPATIBILITY }}
+          livenessProbe:
+            httpGet:
+              path: /rest/deployment/liveness
+              port: 8080
+            periodSeconds: 60
+            failureThreshold: 12
+            timeoutSeconds: 30
+            initialDelaySeconds: 300
+          readinessProbe:
+            httpGet:
+              path: /rest/deployment/readiness
+              port: 8080
+            periodSeconds: 60
+            failureThreshold: 12
+            timeoutSeconds: 30
+            initialDelaySeconds: 300
+      {{- else }}
+          livenessProbe:
+            httpGet:
+              path: /rest/deployment/liveness
+              port: 8080
+            periodSeconds: 30
+            failureThreshold: 3
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /rest/deployment/readiness
+              port: 8080
+            periodSeconds: 30
+            failureThreshold: 3
+            timeoutSeconds: 30
+          startupProbe:
+            httpGet:
+              path: /rest/deployment/readiness
+              port: 8080
+            failureThreshold: 20
+            periodSeconds: 30
+            timeoutSeconds: 30
+      {{- end }}
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "/itf/pre-stop.sh" ]
+          env:
+          {{- include "env.cloud" . | indent 12 }}
+          {{- if .Values.extraEnvs }}
+          {{- toYaml .Values.extraEnvs | nindent 12 }}
+          {{- end }}

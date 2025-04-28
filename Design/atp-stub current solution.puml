@@ -1,0 +1,20 @@
+@startuml
+title atp-stub current solution
+
+actor User
+Configurator ++
+User ->> Configurator: click [Activate] button
+Configurator -> Executor ++: Send request to executor...................................
+/note right of Configurator
+**to EnvironmentSwitchController:**
+GET /environment/trigger/switch (environmentId)
+
+**to ServerConfigurationController**
+GET /server/trigger/switch (triggerId)
+end note
+
+Executor -> Executor: Activate trigger by id
+Executor -> Configurator --: status
+Configurator-> User: Return result to user \n who has initiated the activation
+
+@enduml

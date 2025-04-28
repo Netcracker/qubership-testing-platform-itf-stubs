@@ -1,0 +1,39 @@
+@startuml
+
+actor "User" as user
+agent "External System" as external
+
+agent "ITF Configurator\n (frontend)" as itfconfig #Yellow
+collections "ITF Executor (backend) \n(1..n pods)" as itfexecutor #Yellow
+collections "ITF Stubs (backend)\n (1..n pods)" as itfstubs #Yellow
+
+agent "ATP Public\n Gateway" as pgw #Grey
+agent "ATP Internal\n Gateway" as igw #Grey
+queue "ActiveMq" as activemqstub #LightBlue
+collections "HazelCast" as hazel #LightBlue
+agent "GridFS" as gridfs #LightBlue
+
+itfstubs <-Down-> hazel: Get / Put\ncached data
+
+external .Down-> itfstubs: Request to stub /\nResponse from stub
+itfstubs .Down-> activemqstub: Service message to executor /\nPrepared response to stubs
+activemqstub .Down-> itfexecutor: Service message to executor /\nPrepared response to stubs
+
+user -Down-> itfconfig: Request from web-browser /\nResponse
+itfconfig -Down-> pgw: Request to ITF subservice /\nResponse
+
+itfstubs -Down-> igw: Request via Feign-client / \nResponse
+igw -Down-> itfexecutor: Request /\nResponse
+
+pgw -Down-> itfstubs: Request /\nResponse
+pgw -Down-> itfexecutor: Request /\nResponse
+
+itfexecutor .Up-> activemqstub: File event \nMessage
+activemqstub .Up-> itfexecutor: File event \nMessage
+activemqstub .Up-> itfstubs: File event \nMessage
+
+itfexecutor -Up-> activemqstub: Activate / Sync\nMessage
+activemqstub -Up-> itfstubs: Activate / Sync\nMessage
+
+itfstubs -Right-> gridfs: Get files
+@enduml
