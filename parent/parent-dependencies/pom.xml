@@ -22,7 +22,7 @@
         <activemq.version>5.15.16</activemq.version>
         <aspectj.version>1.8.10</aspectj.version>
         <atp.multitenancy.version>0.0.11-SNAPSHOT</atp.multitenancy.version>
-        <atp.common.version>0.0.42-SNAPSHOT</atp.common.version>
+        <atp.common.version>0.0.43</atp.common.version>
 
         <com.squareup.okhttp3.okhttp.version>4.9.3</com.squareup.okhttp3.okhttp.version>
         <com.squareup.okio.okio.version>3.4.0</com.squareup.okio.okio.version>
