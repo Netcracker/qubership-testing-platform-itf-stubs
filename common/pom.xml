@@ -103,9 +103,6 @@
                                     <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-smpp/target/lib"/>
                                 </copy>
                                 <mkdir dir="../triggers/lib/mockingbird-trigger-jms"/>
-                                <copy todir="../triggers/lib/mockingbird-trigger-jms">
-                                    <fileset dir="../common/trigger-jms-lib"/>
-                                </copy>
                             </target>
                         </configuration>
                         <goals>
