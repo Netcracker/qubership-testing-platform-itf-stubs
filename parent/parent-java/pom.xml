@@ -64,59 +64,42 @@
         </testResources>
         <plugins>
             <plugin>
+                <groupId>org.openclover</groupId>
+                <artifactId>clover-maven-plugin</artifactId>
+                <version>4.2.0</version>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/clover</outputDirectory>
+                    <generateHtml>true</generateHtml>
+                    <generateXml>true</generateXml>
+                    <generatePdf>true</generatePdf>
+                    <targetPercentage>0%</targetPercentage>
+                    <excludes>
+                        <exclude>**/model/**</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>clover-instrument</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>instrument-test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>clover-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>clover</goal>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
-
-
-    <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>with-analyzers</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.openclover</groupId>
-                        <artifactId>clover-maven-plugin</artifactId>
-                        <version>4.2.0</version>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/clover</outputDirectory>
-                            <generateHtml>true</generateHtml>
-                            <generateXml>true</generateXml>
-                            <generatePdf>true</generatePdf>
-                            <targetPercentage>0%</targetPercentage>
-                            <excludes>
-                                <exclude>**/model/**</exclude>
-                            </excludes>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>clover-instrument</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>instrument-test</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>clover-report</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>clover</goal>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
