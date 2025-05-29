@@ -415,11 +415,11 @@
                 <artifactId>reactor-netty</artifactId>
                 <version>0.9.8.RELEASE</version>
             </dependency>
-            <dependency>
+            <!-- <dependency>
                 <groupId>com.oracle.weblogic</groupId>
                 <artifactId>wlthint3client</artifactId>
                 <version>10.3.6.0</version>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>stax2-api</artifactId>
