@@ -88,8 +88,9 @@ public class FileHelper {
      * Build uri string options.
      *
      * @param properties  - extra endpoint properties from transports configs
-     * @param firstOption - if true '?' will be added to uri string before first uri option, else '&'
-     * @return string uri options like ?key=value&key1=value1 or &key=value&key1=value1 depends on the firstOption
+     * @param firstOption - if true '?' will be added to uri string before first uri option, else '&amp;'
+     * @return string uri options like ?key=value&amp;key1=value1
+     *  or &amp;key=value&amp;key1=value1 depends on the firstOption.
      */
     public static String setExtraProperties(Map<String, Object> properties, boolean firstOption) {
         if (properties == null || properties.isEmpty()) {
