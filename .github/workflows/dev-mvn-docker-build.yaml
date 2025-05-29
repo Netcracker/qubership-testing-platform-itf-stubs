@@ -1,0 +1,81 @@
+---
+# The workflow to deploy snapshot artifact versions to Maven Central
+# Fill free to adjust java version and additional mvn command-line parameters
+# The workflow will trigger on pushes into branches different from main and release
+# Please make sure that the version in the pom.xml file has the SNAPSHOT postfix
+
+# Please adjust pom.xml file for your project according to the instructions:
+# https://github.com/Netcracker/qubership-workflow-hub/blob/main/docs/maven-publish-pom-preparation_doc.md
+
+name: Maven deploy snapshot
+
+on:
+  push:
+    branches-ignore:
+      - "**release*"
+      - "prettier/**"
+      - "dependabot/**"
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
+      - ".github/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  TAG_NAME: ${{ github.event.release.tag_name || github.ref }}
+
+jobs:
+  mvn-snapshot-deploy:
+    uses: ./.github/workflows/re-maven-snapshot-deploy.yaml
+    with:
+      java-version: "8"
+      additional-mvn-args: ""
+      target-store: "maven-central"
+    secrets:
+      maven-username: ${{ secrets.MAVEN_USER }}
+      maven-token: ${{ secrets.MAVEN_PASSWORD }}
+      gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: mvn-snapshot-deploy
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Metadata
+        id: metadata
+        uses: netcracker/qubership-workflow-hub/actions/metadata-action@main
+        with:
+          default-template: '{{ref-name}}-{{timestamp}}'
+
+      - name: Build and Publish Docker Image For Environments
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@main
+        with:
+          ref: ${{ github.ref }}
+          dry-run: true
+          tags: ${{steps.metadata.outputs.result}}
+          download-artifact: true
+          custom-image-name: qubership-testing-platform-itf-stubs
+          download-artifact-path: build-context
+          component: '[{"name": "qubership-testing-platform-itf-stubs", "file": "./Dockerfile", "context": "."}]'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Publish Docker Image For Transfer
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@main
+        with:
+          ref: ${{ github.ref }}
+          dry-run: true
+          tags: ${{steps.metadata.outputs.result}}
+          download-artifact: false
+          custom-image-name: qubership-testing-platform-itf-stubs-transfer
+          component: '[{"name": "qubership-testing-platform-itf-stubs-transfer", "file": "docker-transfer/Dockerfile", "context": "."}]'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

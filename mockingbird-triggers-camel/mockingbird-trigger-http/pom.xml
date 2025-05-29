@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mockingbird-triggers-camel</artifactId>
         <groupId>org.qubership.mockingbird</groupId>
-        <version>${atp.service.version}</version>
+        <version>1.1.148-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <build>
