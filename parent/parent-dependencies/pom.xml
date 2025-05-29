@@ -416,7 +416,7 @@
                 <version>0.9.8.RELEASE</version>
             </dependency>
             <dependency>
-                <groupId>oracle</groupId>
+                <groupId>com.oracle.weblogic</groupId>
                 <artifactId>wlthint3client</artifactId>
                 <version>10.3.6.0</version>
             </dependency>
