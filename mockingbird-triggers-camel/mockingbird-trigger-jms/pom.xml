@@ -56,7 +56,7 @@
             <artifactId>activemq-camel</artifactId>
         </dependency>
         <dependency>
-            <groupId>oracle</groupId>
+            <groupId>com.oracle.weblogic</groupId>
             <artifactId>wlthint3client</artifactId>
         </dependency>
         <dependency>
