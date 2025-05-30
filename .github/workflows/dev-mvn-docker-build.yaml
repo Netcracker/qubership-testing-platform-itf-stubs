@@ -59,7 +59,7 @@ jobs:
         uses: netcracker/qubership-workflow-hub/actions/docker-action@main
         with:
           ref: ${{ github.ref }}
-          dry-run: true
+          dry-run: false
           tags: ${{steps.metadata.outputs.result}}
           download-artifact: true
           custom-image-name: qubership-testing-platform-itf-stubs
@@ -72,7 +72,7 @@ jobs:
         uses: netcracker/qubership-workflow-hub/actions/docker-action@main
         with:
           ref: ${{ github.ref }}
-          dry-run: true
+          dry-run: false
           tags: ${{steps.metadata.outputs.result}}
           download-artifact: false
           custom-image-name: qubership-testing-platform-itf-stubs-transfer
