@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.qubership.mockingbird</groupId>
         <artifactId>parent-java</artifactId>
-        <version>${atp.service.version}</version>
+        <version>1.1.148-SNAPSHOT</version>
         <relativePath>../parent/parent-java/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -19,13 +19,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>central</id>
-            <name>Maven Central</name>
-            <url>https://repo1.maven.org/maven2/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <build>
         <resources>
@@ -398,13 +391,5 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>central</id>
-            <name>Maven Central</name>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-    </repositories>
 
 </project>

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.qubership.mockingbird</groupId>
         <artifactId>mockingbird</artifactId>
-        <version>${atp.service.version}</version>
+        <version>1.1.148-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -17,12 +17,12 @@
         <spring.boot.version>2.7.18</spring.boot.version>
         <org.springframework.version>5.2.0.RELEASE</org.springframework.version>
         <spring.cloud.version>2021.0.8</spring.cloud.version>
-        <atp.itf.core.version>4.4.106-v5</atp.itf.core.version>
+        <atp.itf.core.version>4.106.5-SNAPSHOT</atp.itf.core.version>
         <camel.version>2.20.4</camel.version>
         <activemq.version>5.15.16</activemq.version>
         <aspectj.version>1.8.10</aspectj.version>
-        <atp.multitenancy.version>0.0.11</atp.multitenancy.version>
-        <atp.common.version>0.0.42</atp.common.version>
+        <atp.multitenancy.version>0.0.11-SNAPSHOT</atp.multitenancy.version>
+        <atp.common.version>0.0.43</atp.common.version>
 
         <com.squareup.okhttp3.okhttp.version>4.9.3</com.squareup.okhttp3.okhttp.version>
         <com.squareup.okio.okio.version>3.4.0</com.squareup.okio.okio.version>
@@ -415,11 +415,11 @@
                 <artifactId>reactor-netty</artifactId>
                 <version>0.9.8.RELEASE</version>
             </dependency>
-            <dependency>
-                <groupId>oracle</groupId>
+            <!-- <dependency>
+                <groupId>com.oracle.weblogic</groupId>
                 <artifactId>wlthint3client</artifactId>
-                <version>10.3.6</version>
-            </dependency>
+                <version>10.3.6.0</version>
+            </dependency> -->
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>stax2-api</artifactId>
@@ -672,18 +672,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <repositories>
-        <repository>
-            <id>central</id>
-            <name>Maven Central</name>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-    </repositories>
-    <distributionManagement>
-        <repository>
-            <id>central</id>
-            <name>Maven Central</name>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-    </distributionManagement>
+
 </project>

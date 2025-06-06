@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.qubership.mockingbird</groupId>
         <artifactId>parent-java</artifactId>
-        <version>${atp.service.version}</version>
+        <version>1.1.148-SNAPSHOT</version>
         <relativePath>../parent/parent-java/pom.xml</relativePath>
     </parent>
 
@@ -103,9 +103,6 @@
                                     <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-smpp/target/lib"/>
                                 </copy>
                                 <mkdir dir="../triggers/lib/mockingbird-trigger-jms"/>
-                                <copy todir="../triggers/lib/mockingbird-trigger-jms">
-                                    <fileset dir="../common/trigger-jms-lib"/>
-                                </copy>
                             </target>
                         </configuration>
                         <goals>
@@ -182,12 +179,4 @@
             <artifactId>janino</artifactId>
         </dependency>
     </dependencies>
-
-	<distributionManagement>
-        <repository>
-            <id>central</id>
-            <name>Maven Central</name>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-    </distributionManagement>
 </project>
