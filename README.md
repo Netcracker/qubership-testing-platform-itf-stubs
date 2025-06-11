@@ -1,6 +1,6 @@
-# ATP-ITF-STUBS
+# Qubership Testing Platform ITF Stubs Service
 
-**Qubership ATP-ITF-STUBS** (QS-ATP-ITF-STUBS) is a backend component `Integrations Testing Framework`
+**ITF Stubs Service** is a backend component `Integrations Testing Framework`
 
 ## Problem statement
 When some complex application systems are integrated, they are on the different life cycle stages at the moment.
@@ -11,7 +11,7 @@ Integrations of all rest systems with modified ones must be tested to ensure tha
 
 If testing process is started after all systems are fully developed, one need a lot of time to wait. So, life cycle duration is very big that entails losses.
 
-ITF can be used instead of any side of integration process, so testing process can be started much more earlier.
+ITF can be used instead of any side of integration process, so testing process can be started much earlier.
 
 This information is described in more details below.
 
@@ -19,7 +19,7 @@ This information is described in more details below.
 ITF is a tool set for QA/TA engineers testing integrations between application systems.
 
 ## Tool benefits
-ITF allows to configure integration scenarios of various complexity: from simplest stubs to dynamic call chains.
+ITF allows to configure integration scenarios of various complexity: from the simplest stubs to dynamic call chains.
 
 Just after a scenario is configured, it can be executed.
 

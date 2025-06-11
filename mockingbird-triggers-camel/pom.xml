@@ -7,9 +7,10 @@
         <relativePath>../parent/parent-java/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>mockingbird-triggers-camel</artifactId>
+    <name>mockingbird-triggers-camel</name>
     <packaging>pom</packaging>
+
     <modules>
         <module>mockingbird-camel-common</module>
         <module>mockingbird-trigger-jms</module>

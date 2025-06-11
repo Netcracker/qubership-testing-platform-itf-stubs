@@ -10,15 +10,14 @@
     </parent>
 
     <artifactId>parent-java</artifactId>
-    <packaging>pom</packaging>
     <name>parent-java</name>
+    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
     </properties>
 
     <dependencyManagement>

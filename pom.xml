@@ -9,12 +9,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <taRollout.skipNotify>true</taRollout.skipNotify>
-        <atp.service.version>0.0.1.LOCAL</atp.service.version>
     </properties>
 
     <modules>
-
         <!--modules for building process-->
         <module>parent/parent-dependencies</module>
         <module>parent/parent-java</module>
@@ -35,7 +32,7 @@
     </modules>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ATP ITF Stubs</description>
+    <description>Qubership Testing Platform ITF Stubs Service</description>
     <url>https://github.com/Netcracker/qubership-testing-platform-itf-stubs</url>
     <licenses>
         <license>

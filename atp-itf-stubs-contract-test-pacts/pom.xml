@@ -9,6 +9,7 @@
         <relativePath>../parent/parent-java/pom.xml</relativePath>
     </parent>
     <artifactId>atp-itf-stubs-contract-test-pacts</artifactId>
+    <name>atp-itf-stubs-contract-test-pacts</name>
 
     <build>
         <plugins>

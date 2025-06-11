@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>common</artifactId>
+    <name>common</name>
     <packaging>pom</packaging>
     <properties>
         <abbreviation>mockingbird</abbreviation>

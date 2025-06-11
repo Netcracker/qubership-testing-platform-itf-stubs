@@ -12,6 +12,8 @@
         <finalName>mockingbird-trigger-http</finalName>
     </build>
     <artifactId>mockingbird-trigger-http</artifactId>
+    <name>mockingbird-trigger-http</name>
+
     <dependencies>
         <dependency>
             <groupId>org.qubership.mockingbird</groupId>

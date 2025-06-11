@@ -11,6 +11,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>mockingbird-communication</artifactId>
+  <name>mockingbird-communication</name>
 
   <dependencies>
     <dependency>

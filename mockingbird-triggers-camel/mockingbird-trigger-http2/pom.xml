@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mockingbird-trigger-http2</artifactId>
+    <name>mockingbird-trigger-http2</name>
     <packaging>jar</packaging>
 
     <build>
