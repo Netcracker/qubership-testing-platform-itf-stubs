@@ -69,6 +69,7 @@ jobs:
         with:
           java-version: "8"
           version-type: ${{ github.event.inputs.version-type }}
+          ref: ${{ github.ref }}
           module: ${{ github.event.repository.name }}
           maven-args: ${{ inputs.mvn-args }}
           profile: ${{ inputs.profile }}
@@ -86,7 +87,6 @@ jobs:
       release-version: ${{ steps.build-and-publish.outputs.release-version }}
     runs-on: ubuntu-latest
     steps:
-      # This step is needed if there is a GitHub App used for authentication to bypass the protected branch rule
       - name: "Prepare app token"
         uses: actions/create-github-app-token@v1
         id: app-token
@@ -96,49 +96,89 @@ jobs:
       - name: "Build and Publish"
         id: build-and-publish
 
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@v1.0.1
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@main
         with:
           java-version: "8"
           version-type: ${{ github.event.inputs.version-type }}
+          ref: ${{ github.ref }}
           module: ${{ github.event.repository.name }}
           maven-args: ${{ inputs.mvn-args }}
           profile: ${{ inputs.profile }}
           server-id: ${{ inputs.profile }}
-          token: ${{ steps.app-token.outputs.token }} # It can be ${{ secrets.GITHUB_TOKEN }} if default branch isn't protected
+          token: ${{ steps.app-token.outputs.token }}
           maven-user: ${{ inputs.profile == 'github' && github.actor || secrets.MAVEN_USER }}
           maven-password: ${{ inputs.profile == 'github' && secrets.GITHUB_TOKEN || secrets.MAVEN_PASSWORD }}
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           dry-run: 'false'
-  check-dockerfile:
-    if: ${{ github.event.inputs.build-docker == 'true' }}
-    runs-on: ubuntu-latest
-    needs: [deploy]
-    outputs:
-      dockerfile_exists: ${{ steps.check_dockerfile.outputs.df_exists }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: "Check Dockerfile existence"
-        id: check_dockerfile
-        shell: bash
-        run: |
-          if [[ -f Dockerfile ]]; then
-            echo "df_exists=exists" >> "$GITHUB_OUTPUT"
-          else
-            echo "Dockerfile does not exist. Docker build stage will be skipped"
-            echo "df_exists=notexists" >> "$GITHUB_OUTPUT"
-          fi
-          echo "GITHUB_OUTPUT:"
-          cat "$GITHUB_OUTPUT"
 
-  docker-build-publish:
-    needs: [deploy, check-dockerfile]
-    if: ${{ github.event.inputs.build-docker == 'true' && needs.check-dockerfile.outputs.dockerfile_exists == 'exists' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/docker-publish.yml@v1.0.1
-    with:
-      ref: "v${{ needs.deploy.outputs.release-version }}"
-      artifact-id: ${{ needs.update-pom-version.outputs.artifact_id }}
-      download-artifact: true
+      - name: Upload all Maven target directories
+        uses: actions/upload-artifact@v4
+        with:
+          name: qubership-testing-platform-itf-stubs
+          path: '**/target'
+
+  load-docker-build-components:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    outputs:
+      component: ${{ steps.load_component.outputs.components }}
+      platforms: ${{ steps.load_component.outputs.platforms }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Load Docker Configuration
+        id: load_component
+        run:  |
+          verify=$(cat "$GITHUB_WORKSPACE/.github/docker-build-config.json" | jq '
+          def verify_structure:
+          .components as $components
+          | .platforms as $platforms
+          | ($components | type == "array")
+          and (all($components[]; has("name") and has("file") and has("context")))
+          and ($platforms | type == "string");
+          verify_structure
+          | if . then true else false end
+          ')
+          if [ ${verify} == 'true' ]; then
+            echo "✅ $GITHUB_WORKSPACE/.github/docker-build-config.json file is valid"
+            components=$(jq -c ".components" "$GITHUB_WORKSPACE/.github/docker-build-config.json")
+            platforms=$(jq -c ".platforms" "$GITHUB_WORKSPACE/.github/docker-build-config.json")
+          else
+            echo "❗ $GITHUB_WORKSPACE/.github/docker-build-config.json file is invalid"
+            echo "❗ $GITHUB_WORKSPACE/.github/docker-build-config.json file is invalid" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          echo "components=${components}" >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
+          echo "platforms=${platforms}" >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
+
+  docker-build:
+    permissions:
+      contents: write
+      packages: write
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        component: ${{ fromJson(needs.load-docker-build-components.outputs.component) }}
+    needs: [ load-docker-build-components, deploy ]
+    steps:
+      - name: "Docker Build"
+        id: docker_build
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@main
+        with:
+          ref: v${{ needs.deploy.outputs.release-version }}
+          download-artifact: true
+          download-artifact-path: build-context
+          custom-image-name: qubership-testing-platform-itf-stubs
+          dry-run: false
+          component: ${{ toJson(matrix.component) }}
+          platforms: ${{ needs.load-docker-build-components.outputs.platforms }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
   github-release:
     needs: [deploy]
