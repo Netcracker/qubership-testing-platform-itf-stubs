@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.qubership.mockingbird</groupId>
         <artifactId>parent-java</artifactId>
-        <version>1.1.148-SNAPSHOT</version>
+        <version>1.1.148</version>
         <relativePath>../parent/parent-java/pom.xml</relativePath>
     </parent>
 
@@ -69,41 +69,32 @@
                         <phase>package</phase>
                         <configuration>
                             <target name="generate-trigger-jars">
-                                <mkdir dir="../triggers"/>
+                                <mkdir dir="../triggers" />
                                 <copy todir="../triggers">
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-rest/target"
-                                             includes="mockingbird-trigger-rest.jar"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-soap-http/target"
-                                             includes="mockingbird-trigger-soap-http.jar"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-http2/target"
-                                             includes="mockingbird-trigger-http2.jar"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-jms/target"
-                                             includes="mockingbird-trigger-jms.jar"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-kafka/target"
-                                             includes="mockingbird-trigger-kafka.jar"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-cli/target"
-                                             includes="mockingbird-trigger-cli.jar"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-file/target"
-                                             includes="mockingbird-trigger-file.jar"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-snmp/target"
-                                             includes="mockingbird-trigger-snmp.jar"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-smpp/target"
-                                             includes="mockingbird-trigger-smpp.jar"/>
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-rest/target" includes="mockingbird-trigger-rest.jar" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-soap-http/target" includes="mockingbird-trigger-soap-http.jar" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-http2/target" includes="mockingbird-trigger-http2.jar" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-jms/target" includes="mockingbird-trigger-jms.jar" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-kafka/target" includes="mockingbird-trigger-kafka.jar" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-cli/target" includes="mockingbird-trigger-cli.jar" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-file/target" includes="mockingbird-trigger-file.jar" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-snmp/target" includes="mockingbird-trigger-snmp.jar" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-smpp/target" includes="mockingbird-trigger-smpp.jar" />
                                 </copy>
                                 <mkdir dir="../triggers/lib" />
                                 <copy todir="../triggers/lib">
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-camel-common/target/lib"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-rest/target/lib"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-soap-http/target/lib"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-http2/target/lib"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-jms/target/lib"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-kafka/target/lib"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-cli/target/lib"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-file/target/lib"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-snmp/target/lib"/>
-                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-smpp/target/lib"/>
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-camel-common/target/lib" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-rest/target/lib" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-soap-http/target/lib" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-http2/target/lib" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-jms/target/lib" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-kafka/target/lib" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-cli/target/lib" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-file/target/lib" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-snmp/target/lib" />
+                                    <fileset dir="../mockingbird-triggers-camel/mockingbird-trigger-smpp/target/lib" />
                                 </copy>
-                                <mkdir dir="../triggers/lib/mockingbird-trigger-jms"/>
+                                <mkdir dir="../triggers/lib/mockingbird-trigger-jms" />
                             </target>
                         </configuration>
                         <goals>
@@ -115,7 +106,7 @@
                         <phase>clean</phase>
                         <configuration>
                             <target>
-                                <available file="../triggers" property="triggersDirExists"/>
+                                <available file="../triggers" property="triggersDirExists" />
                             </target>
                             <exportAntProperties>true</exportAntProperties>
                         </configuration>
@@ -130,9 +121,9 @@
                             <!--suppress UnresolvedMavenProperty -->
                             <target if="${triggersDirExists}">
                                 <delete>
-                                    <fileset dir="../triggers"/>
+                                    <fileset dir="../triggers" />
                                 </delete>
-                                <echo message="Folder [../triggers] with trigger files *.jar has been cleared."/>
+                                <echo message="Folder [../triggers] with trigger files *.jar has been cleared." />
                             </target>
                         </configuration>
                         <goals>
