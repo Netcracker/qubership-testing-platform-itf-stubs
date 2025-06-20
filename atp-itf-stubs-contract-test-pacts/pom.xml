@@ -100,7 +100,7 @@
         <dependency>
             <groupId>org.qubership.mockingbird</groupId>
             <artifactId>mockingbird-aggregator</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
