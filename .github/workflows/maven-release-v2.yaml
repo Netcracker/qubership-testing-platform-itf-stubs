@@ -151,9 +151,7 @@ jobs:
             exit 1
           fi
           echo "components=${components}" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
           echo "platforms=${platforms}" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
 
   docker-build:
     permissions:
