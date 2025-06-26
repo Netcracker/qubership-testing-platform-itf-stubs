@@ -33,6 +33,7 @@ import org.qubership.automation.itf.core.model.communication.TransportType;
 import org.qubership.automation.itf.core.model.communication.message.CommonTriggerExecutionMessage;
 import org.qubership.automation.itf.core.model.jpa.message.Message;
 import org.qubership.automation.itf.core.model.transport.ConnectionProperties;
+import org.qubership.automation.itf.core.util.config.ApplicationConfig;
 import org.qubership.automation.itf.core.util.config.Config;
 import org.qubership.automation.itf.core.util.descriptor.StorableDescriptor;
 import org.qubership.automation.itf.core.util.transport.service.LockProvider;
@@ -85,9 +86,16 @@ public class Http2InboundTrigger extends AbstractTriggerImpl {
                     .getOrDefault(Http2Constants.ADD_PROJECTUUID_ENDPOINT_PREFIX, "Yes"));
             String projectUuidPrefix = addProjectUuidEndpointPrefix ? getPrefixWithProjectUuid() : StringUtils.EMPTY;
 
+            int ioThreads = Integer.parseInt(ApplicationConfig.env
+                    .getProperty("server.undertow.threads.io.transport.http2","2"));
+            int workerThreads = Integer.parseInt(ApplicationConfig.env
+                    .getProperty("server.undertow.threads.worker.transport.http2","16"));
+
             undertow = Undertow.builder()
                 .setServerOption(UndertowOptions.ENABLE_HTTP2, true)
                 .addHttpListener(port, host)
+                    .setIoThreads(ioThreads)
+                    .setWorkerThreads(workerThreads)
                 .setHandler(Handlers.path()
                         .addPrefixPath(projectUuidPrefix + configuredEndpoint,
                             exchange -> exchange.getRequestReceiver().receiveFullBytes((innerExchange, message) -> {
