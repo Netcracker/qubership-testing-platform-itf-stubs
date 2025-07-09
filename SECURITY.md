@@ -1,4 +1,6 @@
-# Security Reporting Process
+# Security Policy
+
+## Security Reporting Process
 
 Please, report any security issue to `opensourcegroup@netcracker.com` where the issue will be triaged appropriately.
 
