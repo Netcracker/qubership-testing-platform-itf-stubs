@@ -21,12 +21,12 @@
 -DKEYSTORE_FILE
 -DKEYSTORE_PASSWORD
 -DTRIGGER_FOLDER
--DSPRING_PROFILES=default                                                                                                                                                                               
+-DSPRING_PROFILES=default
 -DKEYCLOAK_ENABLED
 -DKEYCLOAK_CLIENT_NAME
 -DKEYCLOAK_SECRET
 -DKEYCLOAK_REALM
--DKEYCLOAK_AUTH_URL`
+-DKEYCLOAK_AUTH_URL
 -DEXECUTOR_STUBS_SYNC_TOPIC
 -DCONFIGURATOR_STUBS_TOPIC
 -DSTUBS_CONFIGURATOR_TOPIC
@@ -34,7 +34,7 @@
 -DSTUBS_EXECUTOR_INCOMING_QUEUE
 -DEXECUTOR_STUBS_OUTGOING_QUEUE
 -DREPORT_QUEUE
--DATP_ITF_BROKER_URL_TCP                           
+-DATP_ITF_BROKER_URL_TCP
 ```
 
 ### Full ENV VARs list per container
@@ -147,3 +147,12 @@
 
 1. Install k8s locally
 2. Install Helm
+
+## How to deploy tool
+
+1. Build snapshot (artifacts and docker image) of https://github.com/Netcracker/qubership-testing-platform-itf-stubs in GitHub
+2. Clone repository to a place, available from your openshift/kubernetes where you need to deploy the tool to
+3. Navigate to <repository-root>/deployments/charts/atp-itf-stubs folder
+4. Check/change configuration parameters in the ./values.yaml file according to your services installed
+5. Execute the command: `helm install atp-itf-stubs`
+6. After installation is completed, check deployment health

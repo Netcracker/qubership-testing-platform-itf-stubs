@@ -20,7 +20,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.21/community/" >/etc/apk/repo
         fontconfig=2.15.0-r1 \
         gcompat=1.1.0-r4 \
         gettext=0.22.5-r0 \
-        git=2.47.2-r0 \
+        git=2.47.3-r0 \
         htop=3.3.0-r0 \
         jq=1.7.1-r0 \
         libcrypto3=3.3.3-r0 \
