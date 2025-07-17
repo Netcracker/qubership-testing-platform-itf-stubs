@@ -51,7 +51,7 @@
     <scm>
         <connection>scm:git:https//github.com/Netcracker/qubership-testing-platform-itf-stubs.git</connection>
         <developerConnection>scm:git:https://github.com/Netcracker/qubership-testing-platform-itf-stubs.git</developerConnection>
-        <url>scm:git:https://github.com/Netcracker/qubership-testing-platform-itf-stubs/tree/main</url>
+        <url>scm:git:https://github.com/Netcracker/qubership-testing-platform-itf-stubs.git</url>
         <tag>HEAD</tag>
     </scm>
 
