@@ -3,7 +3,7 @@
 
     <groupId>org.qubership.mockingbird</groupId>
     <artifactId>mockingbird</artifactId>
-    <version>1.1.156-SNAPSHOT</version>
+    <version>1.1.156</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -52,7 +52,7 @@
         <connection>scm:git:https//github.com/Netcracker/qubership-testing-platform-itf-stubs.git</connection>
         <developerConnection>scm:git:https://github.com/Netcracker/qubership-testing-platform-itf-stubs.git</developerConnection>
         <url>scm:git:https://github.com/Netcracker/qubership-testing-platform-itf-stubs.git</url>
-        <tag>HEAD</tag>
+        <tag>v1.1.156</tag>
     </scm>
 
     <profiles>
