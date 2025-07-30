@@ -407,8 +407,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
-                <version>4.1.44.Final</version>
-<!--                <version>4.0.9.Final</version>-->
+                <version>4.0.9.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.projectreactor.netty</groupId>
