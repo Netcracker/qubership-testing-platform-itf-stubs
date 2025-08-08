@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Build and Publish current SNAPSHOT (dry run)"
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@v1.0.1
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@v1.0.3
         with:
           java-version: "8"
           version-type: ${{ github.event.inputs.version-type }}
@@ -96,7 +96,7 @@ jobs:
       - name: "Build and Publish"
         id: build-and-publish
 
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@main
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@v1.0.3
         with:
           java-version: "8"
           version-type: ${{ github.event.inputs.version-type }}
@@ -154,6 +154,7 @@ jobs:
           echo "platforms=${platforms}" >> $GITHUB_OUTPUT
 
   docker-build:
+    if: ${{ github.event.inputs.build-docker == 'true' && needs.check-dockerfile.outputs.dockerfile_exists == 'exists' }}
     permissions:
       contents: write
       packages: write
@@ -180,7 +181,7 @@ jobs:
   github-release:
     needs: [deploy]
     if: ${{ needs.deploy.result == 'success' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@v1.0.1
+    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@v1.0.3
     with:
       version: ${{ needs.deploy.outputs.release-version }}
       publish: true

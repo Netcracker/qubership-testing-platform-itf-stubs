@@ -16,12 +16,13 @@
         <spring.boot.version>2.7.18</spring.boot.version>
         <org.springframework.version>5.2.0.RELEASE</org.springframework.version>
         <spring.cloud.version>2021.0.8</spring.cloud.version>
-        <atp.itf.core.version>4.4.106</atp.itf.core.version>
+        <atp.itf.core.version>4.4.111</atp.itf.core.version>
         <camel.version>2.20.4</camel.version>
         <activemq.version>5.15.16</activemq.version>
         <aspectj.version>1.8.10</aspectj.version>
-        <atp.multitenancy.version>0.0.11</atp.multitenancy.version>
+        <atp.multitenancy.version>0.0.12</atp.multitenancy.version>
         <atp.common.version>0.0.43</atp.common.version>
+        <atp.auth.version>1.2.67</atp.auth.version>
 
         <com.squareup.okhttp3.okhttp.version>4.9.3</com.squareup.okhttp3.okhttp.version>
         <com.squareup.okio.okio.version>3.4.0</com.squareup.okio.okio.version>
@@ -174,6 +175,11 @@
                 <groupId>org.qubership.atp.common</groupId>
                 <artifactId>qubership-atp-common-probes</artifactId>
                 <version>${atp.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp.auth</groupId>
+                <artifactId>atp-auth-impl</artifactId>
+                <version>${atp.auth.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.nimbusds</groupId>
