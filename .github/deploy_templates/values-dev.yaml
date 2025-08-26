@@ -1,5 +1,5 @@
 # Which docker image should be used to deploy
-DOCKER_TAG: ""
+DOCKER_TAG: "ghcr.io/netcracker/qubership-testing-platform-itf-stubs:1.1.157"
 # This option turns on or off logging in graylog
 GRAYLOG_ON: "false"
 # Keycloak enabled
