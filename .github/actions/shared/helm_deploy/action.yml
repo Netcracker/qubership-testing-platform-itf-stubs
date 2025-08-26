@@ -129,14 +129,6 @@ runs:
       # language=bash
       run: echo "ERROR_FLAG=false" >> $GITHUB_ENV
 
-    - name: Install MongoDB
-      shell: bash
-      run: |
-        helm repo add bitnami https://charts.bitnami.com/bitnami
-
-        helm install my-mongo bitnami/mongodb -n namespace \
-          --set image.tag=7.0.5
-
     - name: Install/update service with helm
       shell: bash
       run: |
