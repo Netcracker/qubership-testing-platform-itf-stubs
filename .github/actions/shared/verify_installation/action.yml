@@ -1,0 +1,196 @@
+name: 'Verify Installation Action'
+description: 'A GitHub Action to verify Kubernetes deployments including status checks, log collection, and test validation.'
+inputs:
+  namespace:
+    description: |
+      Kubernetes namespace for service installation
+    required: true
+
+  max_attempts:
+    description: |
+      Maximum verification retries for test pod to be completed
+    required: true
+
+  timeout:
+    description: |
+      Delay between test pod check attempts
+    required: true
+
+  max_attempts_for_provisioner:
+    description: |
+      Maximum retries for provisioner pod to be completed
+    required: false
+
+  timeout_for_provisioner:
+    description: |
+      Delay between provisioner pod check attempts
+    required: false
+
+  service_branch:
+    description: |
+      Branch in service repository
+    required: false
+
+  cr_kind:
+    description: |
+      Kind of custom resource for checking deploy status.
+      CR is used to check the status if status provisioner is missing
+    required: false
+
+  cr_name:
+    description: |
+      Name of custom resource for checking deploy status.
+      CR is used to check the status if status provisioner is missing
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Create folder for artifacts
+      shell: bash
+      # language=bash
+      run: mkdir -p artifacts
+
+    - name: Initialize error flag
+      shell: bash
+      # language=bash
+      run: echo "ERROR_FLAG=false" >> $GITHUB_ENV
+
+    - name: Get pods
+      shell: bash
+      # language=bash
+      run: |
+        # ▶️ Get pods
+        file_name=artifacts/${{inputs.namespace}}_get_pods.txt
+        kubectl get pods -n ${{inputs.namespace}}
+        kubectl get pods -n ${{inputs.namespace}} > $file_name
+
+    - name: Get yaml from pods
+      shell: bash
+      # language=bash
+      run: |
+        # ▶️ Get yaml from pods
+        file_name=artifacts/${{inputs.namespace}}_get_pods_yaml.txt
+        IFS=' ' read -ra pods <<< $(kubectl get pods --no-headers -o custom-columns=":metadata.name" -n ${{inputs.namespace}} | tr $'\n' ' ')
+        echo "Yaml files from pods: " > $file_name
+        for pod in "${pods[@]}"; do
+            echo $pod >> $file_name
+            kubectl get pod "$pod" -n ${{inputs.namespace}} -o yaml >> $file_name
+        done
+
+    - name: Get events from namespace
+      shell: bash
+      # language=bash
+      run: |
+        # ▶️ Get events from namespace
+        file_name=artifacts/${{inputs.namespace}}_get_events.txt
+        kubectl events -n ${{inputs.namespace}} > $file_name
+
+    - name: Get yaml from PVC
+      shell: bash
+      # language=bash
+      run: |
+        # ▶️ Get yaml from PVC
+        file_name=artifacts/${{inputs.namespace}}_get_pvc_yaml.txt
+        kubectl get pvc -n ${{inputs.namespace}}
+        kubectl get pvc -n ${{inputs.namespace}} -o yaml > $file_name
+
+    - name: Get PV from namespace
+      shell: bash
+      # language=bash
+      run: |
+        # ▶️ Get PV from namespace
+        file_name=artifacts/${{inputs.namespace}}_get_pv.txt
+        kubectl get pv | grep ${{inputs.namespace}}
+        kubectl get pv | grep ${{inputs.namespace}} > $file_name
+
+
+    - name: Wait ready status for atp-environments pod
+      shell: bash
+      # language=bash
+      run: |
+        # ▶️ Get logs from test pod
+        file_name=artifacts/${{inputs.namespace}}_tests.txt
+        IFS=' ' read -ra pods <<< $(kubectl get pods --no-headers -o custom-columns=":metadata.name" -n ${{inputs.namespace}} | tr $'\n' ' ')
+        for pod in "${pods[@]}"; do
+          if [[ $pod == *"atp-environments"* && $pod != *"atp-environments-predeploy-install"* ]]; then
+            test_pod=$pod
+          fi
+        done
+        if ! [[ $test_pod ]]; then
+          echo There is no test pod
+          exit 0
+        fi
+        echo "test_pod=$test_pod"
+        for i in {1..${{inputs.max_attempts}}}; do
+          echo attempt $i
+          status=$(kubectl get pod $test_pod -n ${{inputs.namespace}} -o jsonpath="{.status.phase}")
+          echo "$status"
+          ready=$(kubectl get pod "$test_pod" -n ${{inputs.namespace}} -o jsonpath="{.status.containerStatuses[*].ready}")
+          echo "$ready"
+          if [[ "$status" == "Running" && "$ready" == "true" ]]; then
+            break
+          fi
+          sleep ${{inputs.timeout}}
+        done
+        if [[ "$status" == "Running" && "$ready" != "true" ]]; then
+            kubectl get pods -n ${{inputs.namespace}}
+            ERROR_FLAG=true
+          fi
+        
+
+    - name: Get pods
+      shell: bash
+      # language=bash
+      run: |
+        # ▶️ Get pods
+        file_name=artifacts/${{inputs.namespace}}_get_pods.txt
+        kubectl get pods -n ${{inputs.namespace}}
+        kubectl get pods -n ${{inputs.namespace}} > $file_name
+
+    - name: Get logs from all containers in pods
+      shell: bash
+      # language=bash
+      run: |
+        # ▶️ Get logs from all containers in pods
+        file_name=artifacts/${{inputs.namespace}}_log_from_containers.txt
+        IFS=' ' read -ra pods <<< $(kubectl get pods --no-headers -o custom-columns=":metadata.name" -n ${{inputs.namespace}} | tr $'\n' ' ')
+        echo "Logs from all containers in pods: " > $file_name
+        for pod in "${pods[@]}"; do
+            IFS=' ' read -ra containers <<< $(kubectl get pod "$pod" -n ${{inputs.namespace}} -o jsonpath="{.spec.containers[*].name}")
+            for container in "${containers[@]}"; do
+              echo $pod $container >> $file_name
+              kubectl logs "$pod" -n ${{inputs.namespace}} -c "$container" >> $file_name
+              echo '================================================================================' >> $file_name
+            done
+        done
+
+    - name: Generate artifact name
+      if: always()
+      shell: bash
+      # language=bash
+      run: |
+        # ▶️ Generate artifact name
+        release_name=$(echo ${{inputs.service_branch}})
+        if [[ $release_name ]]; then
+          release_name=$(echo "_$release_name" | tr '/' '_')
+        fi
+        ARTIFACT_NAME=${{github.job}}_${{inputs.namespace}}${release_name}_artifacts_$(date -u +'%Y%m%d%H%M%S')
+        echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+
+    - name: Upload artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{env.ARTIFACT_NAME}}
+        path: artifacts/
+
+    - name: Check job status
+      shell: bash
+      # language=bash
+      run: |
+        echo "${{ env.ERROR_FLAG }}"
+        if [ "${{ env.ERROR_FLAG }}" == 'true' ]; then
+          echo "Service was installed with errors!"
+          exit 1
+        fi

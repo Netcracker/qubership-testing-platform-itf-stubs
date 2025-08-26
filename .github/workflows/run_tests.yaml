@@ -1,0 +1,65 @@
+name: Run Stubs Pipeline
+
+#on:
+#  pull_request:
+#    types: [opened, synchronize, reopened]
+#    branches: [main]
+
+on:
+  workflow_dispatch:
+    inputs:
+      docker_tag:
+        required: false
+        type: string
+        description: 'Docker Image for rollout'
+      pipeline_branch:
+        description: 'Test pipeline branch name'
+        type: string
+        required: true
+        default: 'main'
+
+jobs:
+  Clean_Install_Stubs:
+    runs-on: ubuntu-latest
+    name: Clean Install
+    steps:
+      - name: Get current workflow branch
+        id: get_branch
+        run: |
+      - name: Checkout pipeline
+        uses: actions/checkout@v4
+        with:
+          ref: 'main'
+          repository: 'Netcracker/qubership-test-pipelines'
+          path: 'qubership-test-pipelines'
+      - name: Create cluster
+        uses: ./qubership-test-pipelines/actions/shared/create_cluster
+
+      - name: Checkout pipeline
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.pipeline_branch }}
+          repository: 'Netcracker/qubership-testing-platform-itf-stubs'
+          path: 'qubership-testing-platform-itf-stubs'
+
+      - name: Clean Install ITF Stubs
+        uses: ./qubership-testing-platform-itf-stubs/.github/actions/shared/helm_deploy
+        with:
+          path_to_template: './qubership-testing-platform-itf-stubs/.github/deploy_templates/values-dev.yaml'
+          service_branch: ${{ inputs.pipeline_branch }}
+          service_name: 'atp-itf-stubs'
+          repository_name: 'qubership-testing-platform-itf-stubs'
+          path_to_chart: 'deployments/charts/atp-itf-stubs'
+          namespace: 'stubs'
+          docker_tag: ${{ inputs.docker_tag }}
+
+      - name: Verify ITF Stubs installation
+        uses: ./qubership-testing-platform-itf-stubs/.github/actions/shared/verify_installation
+        with:
+          namespace: 'stubs'
+          max_attempts: 40
+          timeout: '45s'
+          service_branch: ${{ inputs.pipeline_branch }}
+
+      - name: Run tests
+        uses: ./qubership-testing-platform-itf-stubs/.github/actions/shared/running_tests
