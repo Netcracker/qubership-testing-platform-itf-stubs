@@ -3,13 +3,13 @@
 **ITF Stubs Service** is a backend component `Integrations Testing Framework`
 
 ## Problem statement
-When some complex application systems are integrated, they are on the different life cycle stages at the moment.
+When some complex application systems are integrated, they are on the different lifecycle stages at the moment.
 
 For example, some functionality of a system is under development, and/or entire system is under replacing with a new one.
 
 Integrations of all rest systems with modified ones must be tested to ensure that functionality is not broken.
 
-If testing process is started after all systems are fully developed, one need a lot of time to wait. So, life cycle duration is very big that entails losses.
+If testing process is started after all systems are fully developed, one need a lot of time to wait. So, lifecycle duration is very big that entails losses.
 
 ITF can be used instead of any side of integration process, so testing process can be started much earlier.
 
@@ -50,7 +50,7 @@ After it, ITF becomes a participant of the "network of systems", instead of the 
 
 It could really decrease a duration of the development process due to bugs are found earlier than without ITF.
 
-### To support the testing, ITF provides the following functionality:
+### To support the testing, ITF provides the following functionality
 1. To configure tests
 2. To execute tests
 3. To monitor execution results
@@ -62,7 +62,7 @@ The 1st use case is when an interaction is initiated by an external system, not 
 
 So, ITF is used as a stub, serving requests instead of some (not implemented yet or not installed) external systems or parts of systems.
 
-![](./docs/images/use_case_1st.png)
+![Use case 1](./docs/images/use_case_1st.png)
 
 The 2nd use case is when an interaction is initiated by ITF.
 
@@ -72,7 +72,7 @@ Variants, how ITF actions are invoked, include:
 2. Via ITF REST API (From Jenkins job or Postman)
 3. From ATP2 testcase via ITF action or executor-ITF action
 
-![](./docs/images/use_case_1st.png)
+![Use case 2](./docs/images/use_case_2st.png)
 
 ## To configure tests
 1. ITF provides Web user interface:
@@ -103,9 +103,9 @@ Variants, how ITF actions are invoked, include:
 
 ## High Level architecture
 
-![](./docs/images/high_level_architecture.png)
+![High Level architecture](./docs/images/high_level_architecture.png)
 
-# Documentation:
+## Documentation
 
 * ### [Installation Guide](./docs/installation-guide.md)
 * ### [Startup Guide](./docs/startup-guide.md)
