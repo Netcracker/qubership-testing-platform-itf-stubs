@@ -129,6 +129,28 @@ runs:
       # language=bash
       run: echo "ERROR_FLAG=false" >> $GITHUB_ENV
 
+    - name: Install ActiveMQ
+      shell: bash
+      run: |
+        helm repo add alfresco https://alfresco.github.io/alfresco-helm-charts/
+        helm repo update
+
+        helm install activemq alfresco/activemq \
+          --namespace reporting \
+          --create-namespace
+
+        pod=$(kubectl get pods -n ${{inputs.namespace}} -o name | grep -vE 'postgres' | head -n 1 | cut -d/ -f2)
+        kubectl wait pod "$pod" -n ${{inputs.namespace}} \
+          --for=condition=Ready \
+          --timeout=120s || {
+          echo "❌ Pod $pod did not become ready in time"
+          ERROR_FLAG=true
+          exit 1
+        }
+
+        echo "Get pods"
+        kubectl get pods -n ${{ inputs.namespace }}
+
     - name: Install/update service with helm
       shell: bash
       run: |
