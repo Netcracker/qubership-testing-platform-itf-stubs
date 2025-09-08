@@ -136,7 +136,7 @@ runs:
         helm repo update
 
         helm install activemq alfresco/activemq \
-          --namespace reporting \
+          --namespace ${{inputs.namespace}} \
           --create-namespace
 
         pod=$(kubectl get pods -n ${{inputs.namespace}} -o name | grep -vE 'postgres' | head -n 1 | cut -d/ -f2)
