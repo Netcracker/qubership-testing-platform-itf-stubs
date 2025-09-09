@@ -104,41 +104,6 @@ runs:
         kubectl get pv | grep ${{inputs.namespace}}
         kubectl get pv | grep ${{inputs.namespace}} > $file_name
 
-
-    - name: Wait ready status for atp-environments pod
-      shell: bash
-      # language=bash
-      run: |
-        # ▶️ Get logs from test pod
-        file_name=artifacts/${{inputs.namespace}}_tests.txt
-        IFS=' ' read -ra pods <<< $(kubectl get pods --no-headers -o custom-columns=":metadata.name" -n ${{inputs.namespace}} | tr $'\n' ' ')
-        for pod in "${pods[@]}"; do
-          if [[ $pod == *"atp-environments"* && $pod != *"atp-environments-predeploy-install"* ]]; then
-            test_pod=$pod
-          fi
-        done
-        if ! [[ $test_pod ]]; then
-          echo There is no test pod
-          exit 0
-        fi
-        echo "test_pod=$test_pod"
-        for i in {1..${{inputs.max_attempts}}}; do
-          echo attempt $i
-          status=$(kubectl get pod $test_pod -n ${{inputs.namespace}} -o jsonpath="{.status.phase}")
-          echo "$status"
-          ready=$(kubectl get pod "$test_pod" -n ${{inputs.namespace}} -o jsonpath="{.status.containerStatuses[*].ready}")
-          echo "$ready"
-          if [[ "$status" == "Running" && "$ready" == "true" ]]; then
-            break
-          fi
-          sleep ${{inputs.timeout}}
-        done
-        if [[ "$status" == "Running" && "$ready" != "true" ]]; then
-            kubectl get pods -n ${{inputs.namespace}}
-            ERROR_FLAG=true
-          fi
-        
-
     - name: Get pods
       shell: bash
       # language=bash
