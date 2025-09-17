@@ -18,6 +18,9 @@ on:
         required: true
         default: 'main'
 
+env:
+  RUN_TESTS: enable
+
 jobs:
   Clean_Install_Stubs:
     runs-on: ubuntu-latest
@@ -62,4 +65,5 @@ jobs:
           service_branch: ${{ inputs.pipeline_branch }}
 
       - name: Run tests
+        if: env.RUN_TESTS == 'enable'
         uses: ./qubership-testing-platform-itf-stubs/.github/actions/shared/running_tests

@@ -1,5 +1,5 @@
 # Which docker image should be used to deploy
-DOCKER_TAG: ""
+DOCKER_TAG: "ghcr.io/netcracker/qubership-testing-platform-itf-stubs:1.1.157"
 # This option turns on or off logging in graylog
 GRAYLOG_ON: "false"
 # Keycloak enabled
@@ -17,3 +17,6 @@ EUREKA_CLIENT_ENABLED: "false"
 ATP_INTEGRATION_ENABLED: "false"
 ATP_SERVICE_PUBLIC: "false"
 TLS_ENABLED: "false"
+ATP_ITF_BROKER_URL_TCP: "tcp://activemq-broker:61616"
+ACTIVEMQ_PORT_PARAM: "61616"
+ATP_INTERNAL_GATEWAY_ENABLED: "false"

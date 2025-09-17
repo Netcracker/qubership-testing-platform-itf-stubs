@@ -129,32 +129,27 @@ runs:
       # language=bash
       run: echo "ERROR_FLAG=false" >> $GITHUB_ENV
 
-    - name: Install Postgres
+    - name: Install ActiveMQ
       shell: bash
       run: |
-        helm repo add bitnami https://charts.bitnami.com/bitnami
-        
-        helm install my-postgres bitnami/postgresql -n ${{inputs.namespace}} \
-          --set image.tag=14.2.0 \
-          --set auth.username=postgres \
-          --set auth.password=postgrestest \
-          --set auth.database=postgres
+        helm repo add alfresco https://alfresco.github.io/alfresco-helm-charts/
+        helm repo update
 
-        for i in {1..10}; do
-                  echo attempt $i
-                  status=$(kubectl get pod -n ${{inputs.namespace}} -o jsonpath="{.status.phase}")
-                  echo "$status"
-                  ready=$(kubectl get pod -n ${{inputs.namespace}} -o jsonpath="{.status.containerStatuses[*].ready}")
-                  echo "$ready"
-                  if [[ "$status" == "Running" && "$ready" == "true" ]]; then
-                    break
-                  fi
-                  sleep 20
-                done
-                if [[ "$status" == "Running" && "$ready" != "true" ]]; then
-                    kubectl get pods -n ${{inputs.namespace}}
-                    ERROR_FLAG=true
-                  fi
+        helm install activemq alfresco/activemq \
+          --namespace ${{inputs.namespace}} \
+          --create-namespace
+
+        pod=$(kubectl get pods -n ${{inputs.namespace}} -o name | head -n 1 | cut -d/ -f2)
+        kubectl wait pod "$pod" -n ${{inputs.namespace}} \
+          --for=condition=Ready \
+          --timeout=120s || {
+          echo "❌ Pod $pod did not become ready in time"
+          ERROR_FLAG=true
+          exit 1
+        }
+
+        echo "Get pods"
+        kubectl get pods -n ${{ inputs.namespace }}
 
     - name: Install/update service with helm
       shell: bash
@@ -168,39 +163,20 @@ runs:
 
         if [ -n "${{ inputs.docker_tag }}" ]; then
           echo "Using docker_tag: ${{ inputs.docker_tag }}"
-          helm ${{inputs.deploy_mode}} ${{inputs.service_name}} . -f $template_name -n ${{inputs.namespace}} --set-string DOCKER_TAG=${{ inputs.docker_tag }} --debug --wait --timeout 25m
+          helm ${{inputs.deploy_mode}} ${{inputs.service_name}} . -f $template_name -n ${{inputs.namespace}} --set-string DOCKER_TAG=${{ inputs.docker_tag }}
         else
          echo "No docker_tag provided. Using value from values-dev.yaml"
-         helm ${{inputs.deploy_mode}} ${{inputs.service_name}} . -f $template_name -n ${{inputs.namespace}} --debug --wait --timeout 25m
+         helm ${{inputs.deploy_mode}} ${{inputs.service_name}} . -f $template_name -n ${{inputs.namespace}}
         fi
 
-    - name: Debug
-      shell: bash
-      if: always()
-      env:
-        NAMESPACE: ${{ inputs.namespace }}
-        JOB_PREFIX: predeploy-install
-      run: |
-        echo "Get pods"
-        kubectl get pods -n ${{ inputs.namespace }}
-        kubectl get jobs -n ${{ inputs.namespace }}
-        
-        for pod in $(kubectl get pods -n ${{inputs.namespace}} --no-headers | awk '{print $1}'); do
-          for ic in $(kubectl get pod "$pod" -n ${{inputs.namespace}} -o jsonpath="{.spec.initContainers[*].name}"); do
-            echo "🔧 Logs from initContainer: $ic"
-            kubectl logs "$pod" -c "$ic" -n ${{inputs.namespace}}
-            echo "---"
-          done
-        
-          for c in $(kubectl get pod "$pod" -n ${{inputs.namespace}} -o jsonpath="{.spec.containers[*].name}"); do
-            echo "📦 Logs from container: $c"
-            kubectl logs "$pod" -c "$c" -n ${{inputs.namespace}}
-            echo "---"
-          done
-        done
-        
-        echo "Get pods"
-        kubectl get pods -n ${{ inputs.namespace }}
+        pod=$(kubectl get pods -n ${{inputs.namespace}} -o name | grep -vE 'postgres|activemq' | head -n 1 | cut -d/ -f2)
+        kubectl wait pod "$pod" -n ${{inputs.namespace}} \
+          --for=condition=Ready \
+          --timeout=600s || {
+          echo "❌ Pod $pod did not become ready in time"
+          ERROR_FLAG=true
+          exit 1
+        }
         
 
     - name: Get docker images
