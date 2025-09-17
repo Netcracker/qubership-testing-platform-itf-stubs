@@ -6,11 +6,11 @@ runs:
     - name: Port-forward service
       shell: bash
       run: |
-        kubectl get svc atp-itf-executor -n executor
-        kubectl describe svc atp-itf-executor -n executor
+        kubectl get svc atp-itf-stubs -n stubs
+        kubectl describe svc atp-itf-stubs -n stubs
         echo "🚀 Starting kubectl port-forward in background..."
 
-        kubectl port-forward svc/atp-itf-executor 8080:8080 -n executor > port-forward.log 2>&1 &
+        kubectl port-forward svc/atp-itf-stubs 8080:8080 -n stubs > port-forward.log 2>&1 &
         echo $! > port_forward_pid.txt
 
         for i in {1..10}; do
@@ -31,5 +31,5 @@ runs:
     - name: Run Newman
       uses: matt-ball/newman-action@v2.0.0
       with:
-        collection: ./qubership-testing-platform-itf-executor/.github/actions/tests/collection.json
-        environment: ./qubership-testing-platform-itf-executor/.github/actions/tests/environment.json
+        collection: ./qubership-testing-platform-itf-stubs/.github/actions/tests/collection.json
+        environment: ./qubership-testing-platform-itf-stubs/.github/actions/tests/environment.json

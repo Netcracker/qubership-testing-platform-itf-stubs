@@ -27,7 +27,7 @@
             "type": "text/javascript",
             "exec": [
               "console.log('Status:', pm.response.code);",
-              "console.log('Response body:', pm.response.text());",
+              "console.log(\"Status text:\", pm.response.status);",
               "pm.test(\"Status is 200 or 201\", function () {",
               "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
               "});"
@@ -59,7 +59,7 @@
             "type": "text/javascript",
             "exec": [
               "console.log('Status:', pm.response.code);",
-              "console.log('Response body:', pm.response.text());",
+              "console.log(\"Status text:\", pm.response.status);",
               "pm.test(\"Status is 200 or 201\", function () {",
               "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
               "});"
