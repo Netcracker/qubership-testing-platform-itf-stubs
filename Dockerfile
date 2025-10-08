@@ -15,7 +15,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.21/community/" >/etc/apk/repo
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.21/main/" >>/etc/apk/repositories && \
     apk add --update --no-cache --no-check-certificate \
         bash=5.2.37-r0 \
-        curl=8.12.1-r1 \
+        curl=8.14.1-r2 \
         font-dejavu=2.37-r5 \
         fontconfig=2.15.0-r1 \
         gcompat=1.1.0-r4 \
@@ -23,8 +23,8 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.21/community/" >/etc/apk/repo
         git=2.47.3-r0 \
         htop=3.3.0-r0 \
         jq=1.7.1-r0 \
-        libcrypto3=3.3.4-r0 \
-        libssl3=3.3.4-r0 \
+        libcrypto3=3.3.5-r0 \
+        libssl3=3.3.5-r0 \
         net-tools=2.10-r3 \
         nss_wrapper=1.1.12-r1 \
         procps-ng=4.0.4-r2 \
@@ -36,7 +36,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.21/community/" >/etc/apk/repo
 
 COPY deployments/install deployments/install
 COPY deployments/atp-common-scripts deployments/atp-common-scripts
-COPY build-context/qubership-testing-platform-itf-stubs/qubership-testing-platform-itf-stubs/common/target/ /tmp/
+COPY build-context/common/target/ /tmp/
 
 RUN mkdir -p dist/atp deployments/update && \
     cp -r deployments/install/* deployments/update/ && \
