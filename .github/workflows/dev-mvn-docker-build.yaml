@@ -59,7 +59,7 @@ jobs:
         with:
           default-template: '{{ref-name}}-{{timestamp}}'
 
-      - name: Build and Publish Docker Image For Environments
+      - name: Build and Publish Main Docker Image
         uses: netcracker/qubership-workflow-hub/actions/docker-action@9319676b7d20b423a2e0943a0ac08da07d615998 #v1.0.6
         with:
           ref: ${{ github.ref }}
