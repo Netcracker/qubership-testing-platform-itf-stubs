@@ -16,11 +16,13 @@
         <spring.boot.version>2.7.18</spring.boot.version>
         <org.springframework.version>5.2.0.RELEASE</org.springframework.version>
         <spring.cloud.version>2021.0.8</spring.cloud.version>
-        <atp.itf.core.version>4.4.106</atp.itf.core.version>
         <camel.version>2.20.4</camel.version>
         <activemq.version>5.15.16</activemq.version>
         <aspectj.version>1.8.10</aspectj.version>
-        <atp.multitenancy.version>0.0.11</atp.multitenancy.version>
+
+        <atp.auth.version>1.2.75</atp.auth.version>
+        <atp.itf.core.version>4.4.113</atp.itf.core.version>
+        <atp.multitenancy.version>0.0.13</atp.multitenancy.version>
         <atp.common.version>0.0.43</atp.common.version>
 
         <com.squareup.okhttp3.okhttp.version>4.9.3</com.squareup.okhttp3.okhttp.version>
@@ -36,6 +38,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.qubership.atp.auth</groupId>
+                <artifactId>atp-auth-impl</artifactId>
+                <version>${atp.auth.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.qubership.atp</groupId>
                 <artifactId>atp-itf-core</artifactId>
@@ -164,11 +171,6 @@
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
                 <version>3.2.2</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
             </dependency>
             <dependency>
                 <groupId>org.qubership.atp.common</groupId>
@@ -485,7 +487,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
-                <version>1.9.0</version><!-- DF uses to 1.9.0 -->
+                <version>1.9.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -571,10 +573,6 @@
                     <exclusion>
                         <groupId>org.apache.activemq</groupId>
                         <artifactId>activemq-broker</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.qubership.atp.auth</groupId>
-                        <artifactId>atp-auth-spring-boot-starter</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
