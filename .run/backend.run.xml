@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="backend" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <envs>
+      <env name="HOSTNAME" value="${COMPUTERNAME}" />
+    </envs>
+    <module name="mockingbird-aggregator" />
+    <option name="SHORTEN_COMMAND_LINE" value="MANIFEST" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="org.qubership.automation.itf.Main" />
+    <option name="VM_PARAMETERS" value="-Dserver.port=8280 -Dconfig.file=common/application.properties -Dspring.config.location=common/application.properties -Dlogging.config=common/logback-spring.xml" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
