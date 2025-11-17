@@ -169,6 +169,7 @@ public class FileInboundTrigger extends AbstractTriggerImpl {
 
             @Override
             public void configure() throws Exception {
+                UUID projectUuid = getTriggerConfigurationDescriptor().getProjectUuid();
                 ConnectionProperties properties = getConnectionProperties();
                 String type = properties.obtain(PropertyConstants.File.TYPE);
                 String host = properties.obtain(PropertyConstants.File.HOST);
@@ -181,26 +182,23 @@ public class FileInboundTrigger extends AbstractTriggerImpl {
                         extraProperties);
                 log.debug("URI for {} trigger was built", type);
                 from(uri)
+                        .routeDescription(projectUuid.toString())
+                        .group(TransportType.FILE_INBOUND.name())
                         .idempotentConsumer(SimpleBuilder.simple("${in.body.lastModified}"),
                                 new MemoryIdempotentRepository())
                         .process(exchange -> {
                             String sessionId = UUID.randomUUID().toString();
-                            MetricsAggregateService.putCommonMetrics(
-                                    getTriggerConfigurationDescriptor().getProjectUuid(), sessionId);
+                            MetricsAggregateService.putCommonMetrics(projectUuid, sessionId);
                             log.info("Project: {}. SessionId: {}. Request is received by endpoint: {}",
-                                    getTriggerConfigurationDescriptor().getProjectUuid(), sessionId, uri);
+                                    projectUuid, sessionId, uri);
                             try {
                                 startSession(exchange, FILE_INBOUND_CLASS_NAME, properties,
                                         getTriggerConfigurationDescriptor(), sessionId);
                                 MetricsAggregateService.incrementIncomingRequestToProject(
-                                        getTriggerConfigurationDescriptor().getProjectUuid(),
-                                        TransportType.FILE_INBOUND,
-                                        true);
+                                        projectUuid, TransportType.FILE_INBOUND, true);
                             } catch (Exception e) {
                                 MetricsAggregateService.incrementIncomingRequestToProject(
-                                        getTriggerConfigurationDescriptor().getProjectUuid(),
-                                        TransportType.FILE_INBOUND,
-                                        false);
+                                        projectUuid, TransportType.FILE_INBOUND, false);
                                 throw e;
                             }
                         });

@@ -127,7 +127,9 @@ public class RestInboundTrigger extends HttpInboundTrigger {
                                 collectMetrics(projectUuid, TransportType.REST_INBOUND, currentEndPoint,
                                         true, started);
                             }
-                        }).routeId((endPointsList.size() == 1) ? getId() : getId() + (++cnt));
+                        }).routeId((endPointsList.size() == 1) ? getId() : getId() + (++cnt))
+                            .routeDescription(projectUuid.toString())
+                            .group(TransportType.REST_INBOUND.name());
                 }
             }
 

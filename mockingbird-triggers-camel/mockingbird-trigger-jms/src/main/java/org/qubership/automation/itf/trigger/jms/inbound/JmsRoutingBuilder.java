@@ -88,11 +88,16 @@ public class JmsRoutingBuilder extends ItfAbstractRouteBuilder {
         if (JmsHelper.isPathToDestination(destinationName)) { //backport for old format..
             component.getConfiguration().setSelector(selectorExpression);
             String jmsEndpoint = id + ':' + destinationType.toLowerCase(Locale.getDefault()) + ':' + destinationName;
-            from(jmsEndpoint).process(createProcessor(jmsEndpoint)).routeId(id);
+            from(jmsEndpoint).process(createProcessor(jmsEndpoint))
+                    .routeId(id)
+                    .routeDescription(triggerConfigurationDescriptor.getProjectUuid().toString())
+                    .group(TransportType.JMS_INBOUND.name());
         } else {
             JmsEndpoint jmsEndpoint = JmsEndpoint.newInstance(destination, component);
             jmsEndpoint.setSelector(selectorExpression);
-            from(jmsEndpoint).process(createProcessor(jmsEndpoint.toString())).routeId(id);
+            from(jmsEndpoint).process(createProcessor(jmsEndpoint.toString())).routeId(id)
+                    .routeDescription(triggerConfigurationDescriptor.getProjectUuid().toString())
+                    .group(TransportType.JMS_INBOUND.name());
         }
     }
 

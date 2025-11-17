@@ -47,12 +47,16 @@ import org.qubership.automation.itf.core.model.communication.message.TriggerBulk
 import org.qubership.automation.itf.core.model.communication.message.TriggerExecutionMessage;
 import org.qubership.automation.itf.core.model.jpa.message.Message;
 import org.qubership.automation.itf.core.stub.fast.FastResponseConfigsHolder;
+import org.qubership.automation.itf.core.util.config.Config;
 import org.qubership.automation.itf.core.util.eds.ExternalDataManagementService;
 import org.qubership.automation.itf.core.util.eds.model.FileInfo;
 import org.qubership.automation.itf.core.util.eds.service.EdsContentType;
 import org.qubership.automation.itf.core.util.mdc.MdcField;
 import org.qubership.automation.itf.core.util.transport.service.LockProvider;
 import org.qubership.automation.itf.core.util.transport.service.SessionHandler;
+import org.qubership.automation.itf.ui.model.RouteInfoRequest;
+import org.qubership.automation.itf.ui.model.RouteInfoDto;
+import org.qubership.automation.itf.ui.service.TriggerRouteService;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -75,6 +79,7 @@ public class StubJmsListeners {
     private final ObjectMapper jmsMessageConverterObjectMapper;
     private final ExternalDataManagementService externalDataManagementService;
     private final ThreadPoolProvider threadPoolProvider;
+    private final TriggerRouteService triggerRouteService;
 
     private final String executorStubsResponseSelectorKey = "hostname";
     private final String executorStubsResponseSelectorValue = "'${hostname}'";
@@ -89,11 +94,13 @@ public class StubJmsListeners {
                             @Qualifier(value = "jmsMessageConverterObjectMapper") ObjectMapper
                                     jmsMessageConverterObjectMapper,
                             ExternalDataManagementService externalDataManagementService,
-                            ThreadPoolProvider threadPoolProvider) {
+                            ThreadPoolProvider threadPoolProvider,
+                            TriggerRouteService triggerRouteService) {
         this.triggerServiceFactory = triggerServiceFactory;
         this.jmsMessageConverterObjectMapper = jmsMessageConverterObjectMapper;
         this.externalDataManagementService = externalDataManagementService;
         this.threadPoolProvider = threadPoolProvider;
+        this.triggerRouteService = triggerRouteService;
     }
 
     /**
@@ -198,6 +205,41 @@ public class StubJmsListeners {
                     threadPoolProvider.getAsyncTasksPool());
         } catch (JMSException | JsonProcessingException e) {
             log.error("Error while message processing: {}", e.getMessage());
+        } finally {
+            MDC.clear();
+        }
+    }
+
+    @JmsListener(destination = "${message-broker.stubs-route-info.request.topic}",
+            containerFactory = "stubsTopicJmsListenerContainerFactory")
+    public void onStubsRouteInfoRequestTopic(ActiveMQTextMessage activeMqTextMessage) {
+        try {
+            RouteInfoRequest request = jmsMessageConverterObjectMapper.readValue(
+                    activeMqTextMessage.getText(), RouteInfoRequest.class);
+            triggerRouteService.collectRouteInfo(request);
+        } catch (JMSException | JsonProcessingException e) {
+            log.error("Error while message processing: {}", e.getMessage());
+        } catch (Exception e) {
+            log.error("Error while stubs-route-info.request topic message processing: {}", e.getMessage());
+        } finally {
+            MDC.clear();
+        }
+    }
+
+    @JmsListener(destination = "${message-broker.stubs-route-info.response.topic}",
+            containerFactory = "stubsTopicJmsListenerContainerFactory")
+    public void onStubsRouteInfoResponseTopic(ActiveMQTextMessage activeMqTextMessage) {
+        try {
+            RouteInfoDto routeInfoDto = jmsMessageConverterObjectMapper.readValue(
+                    activeMqTextMessage.getText(), RouteInfoDto.class);
+            if (!routeInfoDto.getRequestPodName().equals(Config.getConfig().getRunningHostname())) {
+                return;
+            }
+            triggerRouteService.putRouteInfo(routeInfoDto);
+        } catch (JMSException | JsonProcessingException e) {
+            log.error("Error while message processing: {}", e.getMessage());
+        } catch (Exception e) {
+            log.error("Error while stubs-route-info.response topic message processing: {}", e.getMessage());
         } finally {
             MDC.clear();
         }

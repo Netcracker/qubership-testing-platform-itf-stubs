@@ -185,8 +185,8 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
                         collectMetrics(projectUuid, TransportType.SOAP_OVER_HTTP_INBOUND,
                                 currentEndPoint, true, started);
                     }
-                })
-                .routeId(getId());
+                }).routeId(getId()).routeDescription(projectUuid.toString())
+                        .group(TransportType.SOAP_OVER_HTTP_INBOUND.name());
                 cxfEndpoint.start();
             }
 

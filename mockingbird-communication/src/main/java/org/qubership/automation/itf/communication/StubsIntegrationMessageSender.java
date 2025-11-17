@@ -37,6 +37,10 @@ public class StubsIntegrationMessageSender {
     private String topic;
     @Value("${message-broker.eds-update.topic}")
     private String externalDataStorageUpdateTopic;
+    @Value("${message-broker.stubs-route-info.request.topic}")
+    private String routeInfoTopicRequest;
+    @Value("${message-broker.stubs-route-info.response.topic}")
+    private String routeInfoTopicResponse;
 
     /**
      * Send message with added X_PROJECT_ID header.
@@ -60,5 +64,29 @@ public class StubsIntegrationMessageSender {
         Map<String, Object> properties = new HashMap<>();
         properties.put(CustomHeader.X_PROJECT_ID, tenantId);
         integrationJmsTemplate.convertAndSend(externalDataStorageUpdateTopic, message, properties);
+    }
+
+    /**
+     * Send message with added X_PROJECT_ID header.
+     *
+     * @param message - message to send,
+     * @param tenantId - tenantId (project Uuid).
+     */
+    public void sendToRouteInfoRequestTopic(Object message, Object tenantId) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(CustomHeader.X_PROJECT_ID, tenantId);
+        integrationJmsTemplate.convertAndSend(routeInfoTopicRequest, message, properties);
+    }
+
+    /**
+     * Send message with added X_PROJECT_ID header.
+     *
+     * @param message - message to send,
+     * @param tenantId - tenantId (project Uuid).
+     */
+    public void sendToRouteInfoResponseTopic(Object message, Object tenantId) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(CustomHeader.X_PROJECT_ID, tenantId);
+        integrationJmsTemplate.convertAndSend(routeInfoTopicResponse, message, properties);
     }
 }

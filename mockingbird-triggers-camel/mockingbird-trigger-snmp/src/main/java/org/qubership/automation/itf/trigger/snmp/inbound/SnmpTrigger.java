@@ -59,6 +59,7 @@ public class SnmpTrigger extends AbstractCamelTrigger {
         camelContext.addRoutes(new ItfAbstractRouteBuilder() {
             @Override
             public void configure() throws Exception {
+                UUID projectUuid = getTriggerConfigurationDescriptor().getProjectUuid();
                 SnmpEndpoint endpoint = new SnmpEndpoint(resolveEndpoint(),
                         (SnmpComponent) camelContext.getComponent(SNMP_COMPONENT));
                 endpoint.setAddress(resolveEndpoint());
@@ -66,16 +67,15 @@ public class SnmpTrigger extends AbstractCamelTrigger {
                 from(endpoint)
                     .process(exchange -> {
                         String sessionId = UUID.randomUUID().toString();
-                        MetricsAggregateService.putCommonMetrics(getTriggerConfigurationDescriptor().getProjectUuid(),
-                                sessionId);
+                        MetricsAggregateService.putCommonMetrics(projectUuid,sessionId);
                         LOGGER.info("Project: {}. SessionId: {}. Request is received by endpoint: {}",
-                            getTriggerConfigurationDescriptor().getProjectUuid(), sessionId, endpoint);
+                                projectUuid, sessionId, endpoint);
                         startSession(exchange, SNMP_INBOUND_TRANSPORT_CLASS_NAME,
                             getConnectionProperties(), getTriggerConfigurationDescriptor(), sessionId);
                         MetricsAggregateService.incrementIncomingRequestToProject(
-                                getTriggerConfigurationDescriptor().getProjectUuid(), TransportType.SNMP_INBOUND,
-                                true);
-                    });
+                                projectUuid, TransportType.SNMP_INBOUND, true);
+                    }).routeDescription(projectUuid.toString())
+                        .group(TransportType.SNMP_INBOUND.name());
             }
 
             @Override
@@ -89,14 +89,14 @@ public class SnmpTrigger extends AbstractCamelTrigger {
             }
         });
         camelContext.start();
-        LOGGER.info(camelContext.toString() + " is activated successfully");
+        LOGGER.info("{} is activated successfully", camelContext.toString());
     }
 
     @Override
     protected void deactivateSpecificTrigger() throws Exception {
         if (camelContext != null) {
             camelContext.stop();
-            LOGGER.info(camelContext.toString() + " is deactivated successfully");
+            LOGGER.info("{} is deactivated successfully", camelContext.toString());
         }
     }
 

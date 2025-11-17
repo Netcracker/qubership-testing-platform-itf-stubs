@@ -104,7 +104,8 @@ public class KafkaTrigger extends AbstractCamelTrigger {
                                     KAFKA_INBOUND_TRANSPORT_CLASS_NAME);
                         }
                     }
-                }).routeId(getId());
+                }).routeId(getId()).routeDescription(projectUuid.toString())
+                        .group(TransportType.KAFKA_INBOUND.name());
             }
         });
         LOGGER.info("CAMEL_CONTEXT [{}] is activated successfully", getId());
