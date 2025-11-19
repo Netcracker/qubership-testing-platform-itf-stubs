@@ -74,7 +74,8 @@ public class SnmpTrigger extends AbstractCamelTrigger {
                             getConnectionProperties(), getTriggerConfigurationDescriptor(), sessionId);
                         MetricsAggregateService.incrementIncomingRequestToProject(
                                 projectUuid, TransportType.SNMP_INBOUND, true);
-                    }).routeDescription(projectUuid.toString())
+                    }).routeId(getId())
+                        .routeDescription(projectUuid.toString())
                         .group(TransportType.SNMP_INBOUND.name());
             }
 

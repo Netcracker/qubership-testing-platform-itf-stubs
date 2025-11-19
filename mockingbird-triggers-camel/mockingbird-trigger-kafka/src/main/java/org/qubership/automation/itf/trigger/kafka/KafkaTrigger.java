@@ -104,7 +104,8 @@ public class KafkaTrigger extends AbstractCamelTrigger {
                                     KAFKA_INBOUND_TRANSPORT_CLASS_NAME);
                         }
                     }
-                }).routeId(getId()).routeDescription(projectUuid.toString())
+                }).routeId(getId())
+                        .routeDescription(projectUuid.toString())
                         .group(TransportType.KAFKA_INBOUND.name());
             }
         });
@@ -133,7 +134,7 @@ public class KafkaTrigger extends AbstractCamelTrigger {
                 deactivateSpecificTrigger();
             } catch (Exception ex) {
                 // Do nothing. If there are errors preventing activation let them appear while activation itself
-                LOGGER.debug("Trigger {} deactivation before its activation - ignoring the exception: {}",
+                LOGGER.debug("Trigger {} deactivation before its activation - ignoring the exception: ",
                         getId(), ex);
             }
         }

@@ -69,7 +69,8 @@ public class AtpItfStubsController {
      */
     @PreAuthorize("@entityAccess.isSupport() || @entityAccess.isAdmin()")
     @RequestMapping(value = "/routes", method = RequestMethod.DELETE)
-    public String stopRoute(@RequestParam UUID projectUuid, @RequestParam String routeId,
+    public String stopRoute(@RequestParam UUID projectUuid,
+                            @RequestParam String routeId,
                             @RequestParam String podName) {
         MdcUtils.put(MdcField.PROJECT_ID.toString(), projectUuid);
         return triggerRouteService.stopRoute(projectUuid, routeId, podName);

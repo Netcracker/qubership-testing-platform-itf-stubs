@@ -150,7 +150,9 @@ public class CliTrigger extends AbstractCamelTrigger {
                                             endpointString,
                                             Duration.between(exchange.getCreated().toInstant(), OffsetDateTime.now()));
                         }
-                    }).routeDescription(projectUuid.toString()).group(TransportType.CLI_INBOUND.name());
+                    }).routeId(getId())
+                        .routeDescription(projectUuid.toString())
+                        .group(TransportType.CLI_INBOUND.name());
             }
 
             private Message composeRequestMessage(String body, CliMessageBuilder messageBuilder) {

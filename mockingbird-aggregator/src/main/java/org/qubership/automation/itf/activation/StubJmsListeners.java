@@ -217,20 +217,17 @@ public class StubJmsListeners {
             RouteEvent event = jmsMessageConverterObjectMapper.readValue(
                     activeMqTextMessage.getText(), RouteEvent.class);
             switch (event.getEventType()) {
-                case COLLECT: {
+                case COLLECT:
                     triggerRouteService.collectRouteInfo(event);
                     break;
-                }
-                case STOP: {
+                case STOP:
                     if (!event.getPodNameRouteToStop().equals(Config.getConfig().getRunningHostname())) {
                         return;
                     }
                     triggerRouteService.stopRoute(event);
                     break;
-                }
-                default: {
+                default:
                     throw new RuntimeException("Unknown route event type: " + event.getEventType());
-                }
             }
         } catch (JMSException | JsonProcessingException e) {
             log.error("Error while message processing: {}", e.getMessage());

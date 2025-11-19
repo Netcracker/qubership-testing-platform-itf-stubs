@@ -95,7 +95,8 @@ public class JmsRoutingBuilder extends ItfAbstractRouteBuilder {
         } else {
             JmsEndpoint jmsEndpoint = JmsEndpoint.newInstance(destination, component);
             jmsEndpoint.setSelector(selectorExpression);
-            from(jmsEndpoint).process(createProcessor(jmsEndpoint.toString())).routeId(id)
+            from(jmsEndpoint).process(createProcessor(jmsEndpoint.toString()))
+                    .routeId(id)
                     .routeDescription(triggerConfigurationDescriptor.getProjectUuid().toString())
                     .group(TransportType.JMS_INBOUND.name());
         }

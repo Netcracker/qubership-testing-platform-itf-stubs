@@ -7,9 +7,12 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.jetbrains.annotations.NotNull;
 import org.qubership.automation.itf.activation.impl.OnStartupTriggersActivationService;
 import org.qubership.automation.itf.communication.RoutesInformation;
 import org.qubership.automation.itf.communication.StubsIntegrationMessageSender;
@@ -24,19 +27,34 @@ import org.qubership.automation.itf.ui.model.RouteInfoResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class TriggerRouteService {
 
-    private static final Cache<UUID, List<RouteInfoDto>> routeInfoCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(3, TimeUnit.MINUTES).build();
+    private static final LoadingCache<UUID, List<RouteInfoDto>> routeInfoCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(3, TimeUnit.MINUTES)
+            .build(new CacheLoader<UUID, List<RouteInfoDto>>() {
+                @NotNull
+                @Override
+                public List<RouteInfoDto> load(@Nonnull UUID id) {
+                    return new ArrayList<>();
+                }
+            });
 
-    private static final Cache<UUID, List<String>> routeStopCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(3, TimeUnit.MINUTES).build();
+    private static final LoadingCache<UUID, List<String>> routeStopCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(3, TimeUnit.MINUTES)
+            .build(new CacheLoader<UUID, List<String>>() {
+                @NotNull
+                @Override
+                public List<String> load(@Nonnull UUID id) {
+                    return new ArrayList<>();
+                }
+            });
 
     private final OnStartupTriggersActivationService onStartupTriggersActivationService;
     private final StubsIntegrationMessageSender sender;
@@ -66,7 +84,7 @@ public class TriggerRouteService {
         routeInfoCache.put(requestId, new ArrayList<>());
 
         sender.sendToRouteInfoRequestTopic(event, projectUuid);
-        waitForCompletion(requestId, podCount, routeInfoCache.getIfPresent(requestId), collectRoutesMaxTime);
+        waitForCompletion(requestId, podCount, routeInfoCache.getUnchecked(requestId), collectRoutesMaxTime);
         return getRouteEventInfoResponse(requestId, projectUuid, transportType);
     }
 
@@ -81,9 +99,9 @@ public class TriggerRouteService {
         routeStopCache.put(requestId, new ArrayList<>(1));
 
         sender.sendToRouteInfoRequestTopic(event, projectUuid);
-        waitForCompletion(requestId, 1, routeStopCache.getIfPresent(requestId), 120000);
-        List<String> message = routeStopCache.getIfPresent(requestId);
-        return message.get(0);
+        waitForCompletion(requestId, 1, routeStopCache.getUnchecked(requestId), 120000);
+        List<String> messageList = routeStopCache.getUnchecked(requestId);
+        return messageList.isEmpty() ? null : messageList.get(0);
     }
 
     public void stopRoute(RouteEvent event) {
@@ -131,19 +149,16 @@ public class TriggerRouteService {
 
     public void putToCache(RouteInfoDto event) {
         switch (event.getEventType()) {
-            case COLLECT: {
-                List<RouteInfoDto> routeInfosDto = routeInfoCache.getIfPresent(event.getRequestId());
-                routeInfosDto.add(event);
+            case COLLECT:
+                List<RouteInfoDto> routeInfoDtos = routeInfoCache.getUnchecked(event.getRequestId());
+                routeInfoDtos.add(event);
                 break;
-            }
-            case STOP: {
-                List<String> routeInfosDto = routeStopCache.getIfPresent(event.getRequestId());
-                routeInfosDto.add(event.getMessage());
+            case STOP:
+                List<String> messages = routeStopCache.getUnchecked(event.getRequestId());
+                messages.add(event.getMessage());
                 break;
-            }
-            default: {
+            default:
                 throw new RuntimeException("Unknown route event type: " + event.getEventType());
-            }
         }
     }
 
@@ -154,7 +169,7 @@ public class TriggerRouteService {
         response.setProjectUuid(projectUuid);
         response.setTransportType(transportType);
 
-        List<RouteInfoDto> routeInfoDtoList = routeInfoCache.getIfPresent(requestId);
+        List<RouteInfoDto> routeInfoDtoList = routeInfoCache.getUnchecked(requestId);
         List<RouteInfo> routesInformation = routeInfoDtoList.stream().parallel().map(dto -> {
             RouteInfo routeInfo = new RouteInfo();
             routeInfo.setPodName(dto.getResponsePodName());

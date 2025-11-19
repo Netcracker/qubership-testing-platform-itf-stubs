@@ -34,7 +34,7 @@ import org.qubership.automation.itf.core.model.transport.ConnectionProperties;
 import org.qubership.automation.itf.core.util.constants.PropertyConstants;
 import org.qubership.automation.itf.core.util.descriptor.StorableDescriptor;
 import org.qubership.automation.itf.monitoring.metrics.MetricsAggregateService;
-import org.qubership.automation.itf.trigger.camel.AbstractTriggerImpl;
+import org.qubership.automation.itf.trigger.camel.inbound.AbstractCamelTrigger;
 import org.qubership.automation.itf.trigger.camel.route.ItfAbstractRouteBuilder;
 import org.qubership.automation.itf.trigger.file.FileHelper;
 
@@ -45,7 +45,7 @@ import com.jcraft.jsch.Session;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class FileInboundTrigger extends AbstractTriggerImpl {
+public class FileInboundTrigger extends AbstractCamelTrigger {
 
     private static final String FILE_INBOUND_CLASS_NAME =
             "org.qubership.automation.itf.transport.file.inbound.FileInbound";
@@ -182,6 +182,7 @@ public class FileInboundTrigger extends AbstractTriggerImpl {
                         extraProperties);
                 log.debug("URI for {} trigger was built", type);
                 from(uri)
+                        .routeId(getId())
                         .routeDescription(projectUuid.toString())
                         .group(TransportType.FILE_INBOUND.name())
                         .idempotentConsumer(SimpleBuilder.simple("${in.body.lastModified}"),
