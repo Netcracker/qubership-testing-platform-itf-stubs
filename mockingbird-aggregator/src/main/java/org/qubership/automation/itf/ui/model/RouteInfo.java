@@ -14,5 +14,6 @@ import lombok.Setter;
 public class RouteInfo {
 
     private String podName;
+    private int total;
     private List<RoutesInformation> routes;
 }

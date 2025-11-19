@@ -17,16 +17,11 @@
 
 package org.qubership.automation.itf.ui.controls;
 
-import java.math.BigInteger;
 import java.util.UUID;
 
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
-import org.qubership.automation.itf.activation.impl.OnStartupTriggersActivationService;
-import org.qubership.automation.itf.activation.impl.TriggerMaintainer;
 import org.qubership.automation.itf.core.model.communication.TransportType;
-import org.qubership.automation.itf.core.model.communication.TriggerSample;
 import org.qubership.automation.itf.core.util.mdc.MdcField;
-import org.qubership.automation.itf.trigger.rest.inbound.RestInboundTrigger;
 import org.qubership.automation.itf.ui.model.RouteInfoResponse;
 import org.qubership.automation.itf.ui.service.TriggerRouteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,22 +37,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AtpItfStubsController {
 
-    private final OnStartupTriggersActivationService onStartupTriggersActivationService;
-    private final TriggerMaintainer triggerMaintainer;
     private final TriggerRouteService triggerRouteService;
 
     @Autowired
-    public AtpItfStubsController(OnStartupTriggersActivationService onStartupTriggersActivationService,
-                                 TriggerMaintainer triggerMaintainer,
-                                 TriggerRouteService triggerRouteService) {
-        this.onStartupTriggersActivationService = onStartupTriggersActivationService;
-        this.triggerMaintainer = triggerMaintainer;
+    public AtpItfStubsController(
+            TriggerRouteService triggerRouteService) {
         this.triggerRouteService = triggerRouteService;
     }
 
     @RequestMapping(value = "/ping", method = RequestMethod.GET)
     public boolean ping() {
-        return onStartupTriggersActivationService.isInitialActivationCompleted();
+        return triggerRouteService.ping();
     }
 
     /**
@@ -67,11 +57,11 @@ public class AtpItfStubsController {
      */
     @PreAuthorize("@entityAccess.checkAccess(#projectUuid, \"READ\")")
     @GetMapping(value = "/routes")
-    public RouteInfoResponse getRoutes(@RequestParam UUID projectUuid,
+    public RouteInfoResponse collectRoutes(@RequestParam UUID projectUuid,
                                            @RequestParam TransportType transportType,
                                            @RequestParam int podCount) {
         MdcUtils.put(MdcField.PROJECT_ID.toString(), projectUuid);
-        return triggerRouteService.collectRoutes(UUID.randomUUID(), projectUuid, transportType, podCount);
+        return triggerRouteService.collectRoutes(projectUuid, transportType, podCount);
     }
 
     /**
@@ -79,27 +69,9 @@ public class AtpItfStubsController {
      */
     @PreAuthorize("@entityAccess.isSupport() || @entityAccess.isAdmin()")
     @RequestMapping(value = "/routes", method = RequestMethod.DELETE)
-    public String stopRoute(@RequestParam String routeId) {
-        try {
-            RestInboundTrigger trigger = (RestInboundTrigger)triggerMaintainer
-                    .createNewTrigger(createServiceTriggerSample(TransportType.REST_INBOUND));
-            trigger.getCamelContext().stopRoute(routeId);
-            trigger.getCamelContext().removeRoute(routeId);
-            trigger.getCamelContext().removeComponent(routeId);
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-        return "Route deactivated " + routeId;
-    }
-
-    /**
-     * Returns TriggerSample of specific transportType for service purposes.
-     */
-    private TriggerSample createServiceTriggerSample(TransportType transportType) {
-        TriggerSample triggerSample = new TriggerSample();
-        triggerSample.setTransportType(transportType);
-        triggerSample.setTriggerId(new BigInteger("00001"));
-        triggerSample.setTriggerName("ServiceTrigger");
-        return triggerSample;
+    public String stopRoute(@RequestParam UUID projectUuid, @RequestParam String routeId,
+                            @RequestParam String podName) {
+        MdcUtils.put(MdcField.PROJECT_ID.toString(), projectUuid);
+        return triggerRouteService.stopRoute(projectUuid, routeId, podName);
     }
 }

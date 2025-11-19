@@ -18,6 +18,7 @@
 package org.qubership.automation.itf.communication;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
@@ -59,7 +60,7 @@ public class RoutesInformation {
         this.routeProperties = route.getProperties();
         this.routeId = routeProperties.get("id");
         this.projectUuid = route.getDescription();
-        if (routeProperties.containsKey("group")) {
+        if (routeProperties.containsKey("group") && Objects.nonNull(routeProperties.get("group"))) {
             this.transportType = routeProperties.get("group").toString();
         }
     }

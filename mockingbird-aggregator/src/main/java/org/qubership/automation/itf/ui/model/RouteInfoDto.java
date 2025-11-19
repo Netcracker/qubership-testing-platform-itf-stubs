@@ -16,9 +16,11 @@ import lombok.Setter;
 public class RouteInfoDto {
 
     private UUID requestId;
+    private RouteEventType eventType;
     private UUID projectUuid;
     private TransportType transportType;
     private String requestPodName;
     private String responsePodName;
-    private List<RoutesInformation> routesInformationResponses;
+    private String message;
+    private List<RoutesInformation> routesInformation;
 }

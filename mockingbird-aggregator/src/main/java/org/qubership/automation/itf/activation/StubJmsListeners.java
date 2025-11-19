@@ -54,7 +54,7 @@ import org.qubership.automation.itf.core.util.eds.service.EdsContentType;
 import org.qubership.automation.itf.core.util.mdc.MdcField;
 import org.qubership.automation.itf.core.util.transport.service.LockProvider;
 import org.qubership.automation.itf.core.util.transport.service.SessionHandler;
-import org.qubership.automation.itf.ui.model.RouteInfoRequest;
+import org.qubership.automation.itf.ui.model.RouteEvent;
 import org.qubership.automation.itf.ui.model.RouteInfoDto;
 import org.qubership.automation.itf.ui.service.TriggerRouteService;
 import org.slf4j.MDC;
@@ -214,9 +214,24 @@ public class StubJmsListeners {
             containerFactory = "stubsTopicJmsListenerContainerFactory")
     public void onStubsRouteInfoRequestTopic(ActiveMQTextMessage activeMqTextMessage) {
         try {
-            RouteInfoRequest request = jmsMessageConverterObjectMapper.readValue(
-                    activeMqTextMessage.getText(), RouteInfoRequest.class);
-            triggerRouteService.collectRouteInfo(request);
+            RouteEvent event = jmsMessageConverterObjectMapper.readValue(
+                    activeMqTextMessage.getText(), RouteEvent.class);
+            switch (event.getEventType()) {
+                case COLLECT: {
+                    triggerRouteService.collectRouteInfo(event);
+                    break;
+                }
+                case STOP: {
+                    if (!event.getPodNameRouteToStop().equals(Config.getConfig().getRunningHostname())) {
+                        return;
+                    }
+                    triggerRouteService.stopRoute(event);
+                    break;
+                }
+                default: {
+                    throw new RuntimeException("Unknown route event type: " + event.getEventType());
+                }
+            }
         } catch (JMSException | JsonProcessingException e) {
             log.error("Error while message processing: {}", e.getMessage());
         } catch (Exception e) {
@@ -230,12 +245,12 @@ public class StubJmsListeners {
             containerFactory = "stubsTopicJmsListenerContainerFactory")
     public void onStubsRouteInfoResponseTopic(ActiveMQTextMessage activeMqTextMessage) {
         try {
-            RouteInfoDto routeInfoDto = jmsMessageConverterObjectMapper.readValue(
+            RouteInfoDto event = jmsMessageConverterObjectMapper.readValue(
                     activeMqTextMessage.getText(), RouteInfoDto.class);
-            if (!routeInfoDto.getRequestPodName().equals(Config.getConfig().getRunningHostname())) {
+            if (!event.getRequestPodName().equals(Config.getConfig().getRunningHostname())) {
                 return;
             }
-            triggerRouteService.putRouteInfo(routeInfoDto);
+            triggerRouteService.putToCache(event);
         } catch (JMSException | JsonProcessingException e) {
             log.error("Error while message processing: {}", e.getMessage());
         } catch (Exception e) {
