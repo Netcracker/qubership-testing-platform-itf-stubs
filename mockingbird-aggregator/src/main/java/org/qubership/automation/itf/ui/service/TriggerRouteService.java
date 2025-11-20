@@ -73,6 +73,7 @@ public class TriggerRouteService {
     }
 
     public RouteInfoResponse collectRoutes(UUID projectUuid, TransportType transportType, int podCount) {
+        verifyTransportType(transportType);
         UUID requestId = UUID.randomUUID();
         RouteEvent event = new RouteEvent();
         event.setRequestId(requestId);
@@ -101,7 +102,8 @@ public class TriggerRouteService {
         sender.sendToRouteInfoRequestTopic(event, projectUuid);
         waitForCompletion(requestId, 1, routeStopCache.getUnchecked(requestId), 120000);
         List<String> messageList = routeStopCache.getUnchecked(requestId);
-        return messageList.isEmpty() ? null : messageList.get(0);
+        return messageList.isEmpty()
+                ? "Route stop cache is expire or timeout response from service atp-itf-stubs." : messageList.get(0);
     }
 
     public void stopRoute(RouteEvent event) {
@@ -179,6 +181,15 @@ public class TriggerRouteService {
         }).collect(Collectors.toList());
         response.setRoutesInformation(routesInformation);
         return response;
+    }
+
+    private void verifyTransportType(TransportType transportType) {
+        if (transportType.equals(TransportType.SMPP_INBOUND) || transportType.equals(TransportType.HTTP_INBOUND)
+                || transportType.equals(TransportType.HTTP2_INBOUND)) {
+            throw new IllegalArgumentException(
+                    String.format("Transport type [%s] is not supported for operation collect route info by pod.",
+                            transportType));
+        }
     }
 
     private void waitForCompletion(UUID requestId, int totalCount, List list, int timeout) {

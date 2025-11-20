@@ -40,8 +40,7 @@ public class AtpItfStubsController {
     private final TriggerRouteService triggerRouteService;
 
     @Autowired
-    public AtpItfStubsController(
-            TriggerRouteService triggerRouteService) {
+    public AtpItfStubsController(TriggerRouteService triggerRouteService) {
         this.triggerRouteService = triggerRouteService;
     }
 
@@ -53,7 +52,7 @@ public class AtpItfStubsController {
     /**
      * Returns list of active routes by transport type.
      * @param projectUuid - list of routes will be filtered by projectUuid.
-     * @param podCount - cound active service pods.
+     * @param podCount - count active service pods.
      */
     @PreAuthorize("@entityAccess.checkAccess(#projectUuid, \"READ\")")
     @GetMapping(value = "/routes")
