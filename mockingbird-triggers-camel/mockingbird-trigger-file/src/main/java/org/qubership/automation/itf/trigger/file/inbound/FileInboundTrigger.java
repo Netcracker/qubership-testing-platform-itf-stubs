@@ -34,7 +34,7 @@ import org.qubership.automation.itf.core.model.transport.ConnectionProperties;
 import org.qubership.automation.itf.core.util.constants.PropertyConstants;
 import org.qubership.automation.itf.core.util.descriptor.StorableDescriptor;
 import org.qubership.automation.itf.monitoring.metrics.MetricsAggregateService;
-import org.qubership.automation.itf.trigger.camel.AbstractTriggerImpl;
+import org.qubership.automation.itf.trigger.camel.inbound.AbstractCamelTrigger;
 import org.qubership.automation.itf.trigger.camel.route.ItfAbstractRouteBuilder;
 import org.qubership.automation.itf.trigger.file.FileHelper;
 
@@ -45,7 +45,7 @@ import com.jcraft.jsch.Session;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class FileInboundTrigger extends AbstractTriggerImpl {
+public class FileInboundTrigger extends AbstractCamelTrigger {
 
     private static final String FILE_INBOUND_CLASS_NAME =
             "org.qubership.automation.itf.transport.file.inbound.FileInbound";
@@ -169,6 +169,7 @@ public class FileInboundTrigger extends AbstractTriggerImpl {
 
             @Override
             public void configure() throws Exception {
+                UUID projectUuid = getTriggerConfigurationDescriptor().getProjectUuid();
                 ConnectionProperties properties = getConnectionProperties();
                 String type = properties.obtain(PropertyConstants.File.TYPE);
                 String host = properties.obtain(PropertyConstants.File.HOST);
@@ -181,26 +182,24 @@ public class FileInboundTrigger extends AbstractTriggerImpl {
                         extraProperties);
                 log.debug("URI for {} trigger was built", type);
                 from(uri)
+                        .routeId(getId())
+                        .routeDescription(projectUuid.toString())
+                        .group(TransportType.FILE_INBOUND.name())
                         .idempotentConsumer(SimpleBuilder.simple("${in.body.lastModified}"),
                                 new MemoryIdempotentRepository())
                         .process(exchange -> {
                             String sessionId = UUID.randomUUID().toString();
-                            MetricsAggregateService.putCommonMetrics(
-                                    getTriggerConfigurationDescriptor().getProjectUuid(), sessionId);
+                            MetricsAggregateService.putCommonMetrics(projectUuid, sessionId);
                             log.info("Project: {}. SessionId: {}. Request is received by endpoint: {}",
-                                    getTriggerConfigurationDescriptor().getProjectUuid(), sessionId, uri);
+                                    projectUuid, sessionId, uri);
                             try {
                                 startSession(exchange, FILE_INBOUND_CLASS_NAME, properties,
                                         getTriggerConfigurationDescriptor(), sessionId);
                                 MetricsAggregateService.incrementIncomingRequestToProject(
-                                        getTriggerConfigurationDescriptor().getProjectUuid(),
-                                        TransportType.FILE_INBOUND,
-                                        true);
+                                        projectUuid, TransportType.FILE_INBOUND, true);
                             } catch (Exception e) {
                                 MetricsAggregateService.incrementIncomingRequestToProject(
-                                        getTriggerConfigurationDescriptor().getProjectUuid(),
-                                        TransportType.FILE_INBOUND,
-                                        false);
+                                        projectUuid, TransportType.FILE_INBOUND, false);
                                 throw e;
                             }
                         });
