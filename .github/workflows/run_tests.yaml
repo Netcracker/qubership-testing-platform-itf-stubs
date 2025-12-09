@@ -27,7 +27,7 @@ jobs:
         id: get_branch
         run: |
       - name: Checkout pipeline
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
         with:
           ref: 'main'
           repository: 'Netcracker/qubership-test-pipelines'
@@ -36,7 +36,7 @@ jobs:
         uses: ./qubership-test-pipelines/actions/shared/create_cluster
 
       - name: Checkout pipeline
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
         with:
           ref: ${{ inputs.pipeline_branch }}
           repository: 'Netcracker/qubership-testing-platform-itf-stubs'
