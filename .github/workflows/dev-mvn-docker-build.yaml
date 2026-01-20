@@ -51,7 +51,7 @@ jobs:
           maven-username: ${{ github.ACTOR }}
           maven-token: ${{ secrets.GITHUB_TOKEN }}
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.GPG-PASSPHRASE }}
+          gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
   load-docker-build-components:
     runs-on: ubuntu-latest
