@@ -31,6 +31,7 @@ permissions:
 
 env:
   TAG_NAME: ${{ github.event.release.tag_name || github.ref }}
+  additional-mvn-args: ""
 
 jobs:
   mvn-snapshot-deploy:
@@ -44,6 +45,25 @@ jobs:
       maven-token: ${{ secrets.MAVEN_PASSWORD }}
       gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
       gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+
+  maven-snapshot-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Maven Docker build
+        id: maven_build
+        uses: netcracker/qubership-workflow-hub/actions/maven-snapshot-deploy@9538833017019ab6bbc2138d3034778dfe3a5d1f # v2.0.6
+        with:
+          java-version: "8"
+          additional-mvn-args: ${{ env.additional-mvn-args }}
+          target-store: "github"
+          upload-artifact: 'true'
+          maven-username: ${{ github.ACTOR }}
+          maven-token: ${{ secrets.GITHUB_TOKEN }}
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
   build-and-push:
     runs-on: ubuntu-latest
