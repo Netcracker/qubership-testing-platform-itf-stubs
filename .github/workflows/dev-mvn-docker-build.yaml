@@ -63,7 +63,7 @@ jobs:
           maven-username: ${{ github.ACTOR }}
           maven-token: ${{ secrets.GITHUB_TOKEN }}
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          gpg-passphrase: ${{ secrets.GPG-PASSPHRASE }}
 
   build-and-push:
     runs-on: ubuntu-latest
