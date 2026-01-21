@@ -60,8 +60,8 @@ jobs:
           additional-mvn-args: ${{ env.additional-mvn-args }}
           target-store: "github"
           upload-artifact: 'true'
-          maven-username: ${{ github.ACTOR }}
-          maven-token: ${{ secrets.GITHUB_TOKEN }}
+          maven-username: ${{ secrets.MAVEN_USER }}
+          maven-token: ${{ secrets.MAVEN_PASSWORD }}
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG-PASSPHRASE }}
 
