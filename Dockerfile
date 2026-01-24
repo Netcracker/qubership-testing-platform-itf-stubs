@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-alpine-musl:8u402
+FROM bellsoft/liberica-openjdk-alpine-musl:8u472
 
 LABEL maintainer="opensourcegroup@netcracker.com"
 LABEL atp.service="atp-itf-stubs"
