@@ -141,5 +141,5 @@ jobs:
       service_name: 'atp-itf-stubs'
       namespace: 'stubs'
       pipeline_branch: 'test_workflow_new'
-      postgres: enable
+      activemq: enable
       enable_test: enable
