@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.qubership.mockingbird</groupId>
-    <artifactId>mockingbird</artifactId>
+    <artifactId>stubs</artifactId>
     <version>1.1.163-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -13,21 +13,21 @@
 
     <modules>
         <!--modules for building process-->
-        <module>parent/parent-dependencies</module>
-        <module>parent/parent-java</module>
+        <module>parent/stubs-parent-dependencies</module>
+        <module>parent/stubs-parent-java</module>
 
         <!--Module with *.yaml specifications for pact testing-->
-        <module>atp-itf-stubs-contract-test-pacts</module>
+        <module>stubs-contract-test-pacts</module>
 
         <!--ITF trigger level module-->
-        <module>mockingbird-triggers-camel</module>
+        <module>stubs-triggers-camel</module>
 
         <!--The module is aggregator-->
-        <module>mockingbird-aggregator</module>
+        <module>stubs-aggregator</module>
 
         <!--pom for compile ready project and some local resources-->
-        <module>common</module>
-        <module>mockingbird-communication</module>
+        <module>stubs-common</module>
+        <module>stubs-communication</module>
 
     </modules>
 
@@ -158,7 +158,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.15</version>
                 <configuration>
-                    <argLine>-Dfile.encoding=UTF-8 -Dconfig.file=${maven.multiModuleProjectDirectory}/common/application.properties -Dspring.config.location=${maven.multiModuleProjectDirectory}/common/application.properties -Dlogging.config=${maven.multiModuleProjectDirectory}/common/logback-spring.xml</argLine>
+                    <argLine>-Dfile.encoding=UTF-8 -Dconfig.file=${maven.multiModuleProjectDirectory}/stubs-common/application.properties -Dspring.config.location=${maven.multiModuleProjectDirectory}/stubs-common/application.properties -Dlogging.config=${maven.multiModuleProjectDirectory}/stubs-common/logback-spring.xml</argLine>
                 </configuration>
             </plugin>
         </plugins>
