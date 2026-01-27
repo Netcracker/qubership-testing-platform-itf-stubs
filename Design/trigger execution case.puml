@@ -13,7 +13,7 @@ Stubs -> amq: put TriggerExecutionMessage into **queue** "stubs-executor-incomin
 amq -> exo: get message from **queue** "stubs-executor-incoming-request"
 note right of exo
 **CoreCallbackImpl** should be implemented as service
-and moved to **mockingbird-aggregator**
+and moved to **stubs-aggregator**
 end note
 exo -> exo: produceEvent(TriggerExecutionMessage)
 exo -> amq: put TriggerExecutionMessage into **topic** "executor-stubs-outgoing-response"
