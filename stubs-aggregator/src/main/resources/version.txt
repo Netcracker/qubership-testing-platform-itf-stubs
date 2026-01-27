@@ -1,1 +1,1 @@
-Mockingbird build_number:${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}_${scmBranch}_${timestamp}_rev_${buildNumber}
+Stubs build_number:${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}_${timestamp}
