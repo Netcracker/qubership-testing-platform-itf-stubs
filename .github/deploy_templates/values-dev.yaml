@@ -5,7 +5,7 @@ GRAYLOG_ON: "false"
 # Keycloak enabled
 KEYCLOAK_ENABLED: "false"
 # Spring profile for security
-SPRING_PROFILES: "disable-security"
+SPRING_PROFILES: "dafault"
 keepHookLogs: true
 HELPER_IMAGE: "ghcr.io/netcracker/qubership-testing-platform-helm-hook-helper:main_latest"
 CONTENT_SECURITY_POLICY: "*"
