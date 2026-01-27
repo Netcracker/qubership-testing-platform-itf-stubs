@@ -1,5 +1,5 @@
 # Which docker image should be used to deploy
-DOCKER_TAG: "ghcr.io/netcracker/qubership-testing-platform-itf-stubs:1.1.157"
+DOCKER_TAG: ""
 # This option turns on or off logging in graylog
 GRAYLOG_ON: "false"
 # Keycloak enabled
@@ -7,7 +7,7 @@ KEYCLOAK_ENABLED: "false"
 # Spring profile for security
 SPRING_PROFILES: "disable-security"
 keepHookLogs: true
-HELPER_IMAGE: "ghcr.io/netcracker/qubership-testing-platform-helm-hook-helper:main-20250714085543"
+HELPER_IMAGE: "ghcr.io/netcracker/qubership-testing-platform-helm-hook-helper:main_latest"
 CONTENT_SECURITY_POLICY: "*"
 MONGO_DB_ADDR: ""
 EDS_GRIDFS_ENABLED: "false"
