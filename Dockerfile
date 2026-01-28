@@ -23,8 +23,8 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.21/community/" >/etc/apk/repo
         git=2.47.3-r0 \
         htop=3.3.0-r0 \
         jq=1.7.1-r0 \
-        libcrypto3=3.3.5-r0 \
-        libssl3=3.3.5-r0 \
+        libcrypto3=3.3.6-r0 \
+        libssl3=3.3.6-r0 \
         net-tools=2.10-r3 \
         nss_wrapper=1.1.12-r1 \
         procps-ng=4.0.4-r2 \
