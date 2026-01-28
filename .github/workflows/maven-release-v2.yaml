@@ -187,3 +187,15 @@ jobs:
     with:
       version: ${{ needs.deploy.outputs.release-version }}
       publish: true
+
+  run-tests:
+    needs: [ docker-build ]
+    if: ${{ needs.docker-build.result == 'success' }}
+    uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/workflows/deploy-run-tests.yaml@main
+    with:
+      repository_name: 'qubership-testing-platform-itf-stubs'
+      service_name: 'atp-itf-stubs'
+      namespace: 'stubs'
+      pipeline_branch: 'main'
+      activemq: enable
+      enable_test: enable
