@@ -16,12 +16,15 @@
         <spring.boot.version>2.7.18</spring.boot.version>
         <org.springframework.version>5.2.0.RELEASE</org.springframework.version>
         <spring.cloud.version>2021.0.8</spring.cloud.version>
-        <atp.itf.core.version>4.4.106</atp.itf.core.version>
         <camel.version>2.20.4</camel.version>
         <activemq.version>5.15.16</activemq.version>
         <aspectj.version>1.8.10</aspectj.version>
-        <atp.multitenancy.version>0.0.11</atp.multitenancy.version>
-        <atp.common.version>0.0.43</atp.common.version>
+
+        <atp.itf.core.version>4.4.114</atp.itf.core.version>
+        <atp.auth.version>1.2.75</atp.auth.version>
+        <atp.multitenancy.version>0.0.13</atp.multitenancy.version>
+        <atp.common.version>0.0.47</atp.common.version>
+        <atp.integration.version>0.2.42</atp.integration.version>
 
         <com.squareup.okhttp3.okhttp.version>4.9.3</com.squareup.okhttp3.okhttp.version>
         <com.squareup.okio.okio.version>3.4.0</com.squareup.okio.okio.version>
@@ -29,13 +32,23 @@
         <org.jboss.logging.jboss-logging.version>3.4.3.Final</org.jboss.logging.jboss-logging.version>
         <org.jetbrains.kotlin.kotlin-stdlib.version>1.6.21</org.jetbrains.kotlin.kotlin-stdlib.version>
         <com.fasterxml.woodstox.woodstox-core.version>5.0.3</com.fasterxml.woodstox.woodstox-core.version>
-        <io.undertow.undertow-core.version>2.2.36.Final</io.undertow.undertow-core.version>
+        <io.undertow.undertow-core.version>2.2.38.Final</io.undertow.undertow-core.version>
         <org.jboss.xnio.version>3.8.14.Final</org.jboss.xnio.version>
         <org.apache.cxf.version>3.2.1</org.apache.cxf.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.qubership.atp.auth</groupId>
+                <artifactId>atp-auth-impl</artifactId>
+                <version>${atp.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp</groupId>
+                <artifactId>atp-integration-spring-boot-starter</artifactId>
+                <version>${atp.integration.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.qubership.atp</groupId>
                 <artifactId>atp-itf-core</artifactId>
@@ -168,6 +181,21 @@
             <dependency>
                 <groupId>org.qubership.atp.common</groupId>
                 <artifactId>qubership-atp-common-probes</artifactId>
+                <version>${atp.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp.common</groupId>
+                <artifactId>qubership-atp-common-monitoring-undertow</artifactId>
+                <version>${atp.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp.common</groupId>
+                <artifactId>qubership-atp-common-utils</artifactId>
+                <version>${atp.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp.common</groupId>
+                <artifactId>qubership-atp-common-logging</artifactId>
                 <version>${atp.common.version}</version>
             </dependency>
             <dependency>
@@ -480,7 +508,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
-                <version>1.9.0</version><!-- DF uses to 1.9.0 -->
+                <version>1.9.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -566,10 +594,6 @@
                     <exclusion>
                         <groupId>org.apache.activemq</groupId>
                         <artifactId>activemq-broker</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.qubership.atp.auth</groupId>
-                        <artifactId>atp-auth-spring-boot-starter</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
