@@ -1,0 +1,7 @@
+http://atp-registry-service:8761/eureka
+http://atp-internal-gateway:8080/
+https://atp-dataset-service-address/
+http://atp-public-gateway-service-address/
+http://jaeger-app-collector.jaeger.svc:9411/
+tcp://atp-activemq:61616?wireFormat.maxInactivityDuration=0&wireFormat.maxFrameSize=104857600
+tcp://atp-activemq:61616\?wireFormat\.maxInactivityDuration=0&wireFormat\.maxFrameSize=104857600

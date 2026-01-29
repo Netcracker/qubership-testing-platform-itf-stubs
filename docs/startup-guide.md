@@ -5,12 +5,10 @@
 1. Clone repository
    `git clone <atp-itf-stubs repository url>`
 
-
 2. Build the project
    `mvn -P github clean install`
 
-
-3. Change default configuration [`.run/backend.run.xml`](../.run/backend.run.xml)
+3. Change default configuration file `backend.run.xml` (as a rule, in `.run` folder under project root)
 
    * Go to Run menu and click Edit Configuration
    * Set parameters
