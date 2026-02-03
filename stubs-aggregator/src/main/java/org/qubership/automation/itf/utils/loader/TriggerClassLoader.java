@@ -37,7 +37,7 @@ public class TriggerClassLoader extends AbstractLoader<Trigger> {
             justification = "Checked; it's suspicious, but let's skip now")
     public TriggerClassLoader() {
         LIB = "/lib";
-        PATH_PATTERN = "(mockingbird-trigger+[\\w-]*)";
+        PATH_PATTERN = "(stubs-trigger+[\\w-]*)";
     }
 
     @Override
