@@ -152,6 +152,10 @@
         </dependency>
 
         <dependency>
+            <groupId>org.qubership.atp.auth</groupId>
+            <artifactId>atp-auth-impl</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.qubership.atp.common</groupId>
             <artifactId>qubership-atp-common-probes</artifactId>
         </dependency>
