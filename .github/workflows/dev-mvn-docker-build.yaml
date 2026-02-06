@@ -146,6 +146,6 @@ jobs:
       repository_name: 'qubership-testing-platform-itf-stubs'
       service_name: 'atp-itf-stubs'
       namespace: 'stubs'
-      pipeline_branch: 'main'
+      pipeline_branch: ${{ github.ref }}
       activemq: enable
       enable_test: enable
