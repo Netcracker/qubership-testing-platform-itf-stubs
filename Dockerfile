@@ -25,6 +25,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.23/community/" >/etc/apk/repo
         jq=1.8.1-r0 \
         libpng=1.6.54-r0 \
         libcrypto3=3.5.5-r0 \
+        libexpat=2.7.4-r0 \
         libssl3=3.5.5-r0 \
         net-tools=2.10-r3 \
         nss_wrapper=1.1.12-r1 \
