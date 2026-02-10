@@ -58,8 +58,8 @@
                 <version>${atp.itf.core.version}</version>
                 <exclusions>
                     <exclusion>
-                        <artifactId>spring-boot-starter-data-jpa</artifactId>
                         <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-data-jpa</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.hibernate</groupId>
@@ -74,24 +74,28 @@
                         <artifactId>spring-security-core</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>com.hazelcast</groupId>
+                        <artifactId>hazelcast-all</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.hazelcast</groupId>
                         <artifactId>hazelcast</artifactId>
-                        <groupId>com.hazelcast</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>com.hazelcast</groupId>
                         <artifactId>hazelcast-eureka-one</artifactId>
-                        <groupId>com.hazelcast</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.poi</groupId>
                         <artifactId>poi</artifactId>
-                        <groupId>org.apache.poi</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.poi</groupId>
                         <artifactId>poi-ooxml</artifactId>
-                        <groupId>org.apache.poi</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>poi-ooxml-schemas</artifactId>
                         <groupId>org.apache.poi</groupId>
+                        <artifactId>poi-ooxml-schemas</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -142,32 +146,32 @@
                         <artifactId>javers-spring-boot-starter-sql</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.tomcat.embed</groupId>
                         <artifactId>tomcat-embed-core</artifactId>
-                        <groupId>org.apache.tomcat.embed</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.tomcat.embed</groupId>
                         <artifactId>tomcat-embed-websocket</artifactId>
-                        <groupId>org.apache.tomcat.embed</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.tomcat.embed</groupId>
                         <artifactId>tomcat-embed-el</artifactId>
-                        <groupId>org.apache.tomcat.embed</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>commons-beanutils</artifactId>
                         <groupId>commons-beanutils</groupId>
+                        <artifactId>commons-beanutils</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>commons-collections</artifactId>
                         <groupId>commons-collections</groupId>
+                        <artifactId>commons-collections</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>netty-handler</artifactId>
                         <groupId>io.netty</groupId>
+                        <artifactId>netty-handler</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>spring-kafka</artifactId>
                         <groupId>org.springframework.kafka</groupId>
+                        <artifactId>spring-kafka</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -769,7 +773,7 @@
             <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast</artifactId>
-                <version>5.3.5</version>
+                <version>5.2.5</version>
             </dependency>
             <dependency>
                 <groupId>com.hazelcast</groupId>
