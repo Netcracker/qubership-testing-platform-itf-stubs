@@ -771,6 +771,11 @@
                 <artifactId>hazelcast</artifactId>
                 <version>5.3.5</version>
             </dependency>
+            <dependency>
+                <groupId>arg.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.18.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
