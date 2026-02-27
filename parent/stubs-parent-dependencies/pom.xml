@@ -21,7 +21,7 @@
         <aspectj.version>1.8.10</aspectj.version>
 
         <atp.itf.core.version>4.4.114</atp.itf.core.version>
-        <atp.auth.version>1.2.82-SNAPSHOT</atp.auth.version>
+        <atp.auth.version>1.2.80</atp.auth.version>
         <atp.multitenancy.version>0.0.13</atp.multitenancy.version>
         <atp.common.version>0.0.47</atp.common.version>
         <atp.integration.version>0.2.42</atp.integration.version>
