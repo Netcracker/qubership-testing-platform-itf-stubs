@@ -17,9 +17,9 @@
 
 package org.qubership.automation.itf.integration.config.jms.template.instance;
 
+import javax.annotation.Nonnull;
 import javax.jms.ConnectionFactory;
 
-import org.jetbrains.annotations.NotNull;
 import org.qubership.atp.multitenancy.interceptor.jms.MultiTenantJmsTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +50,7 @@ public class MultiTenantJmsTemplateInstancesConfiguration {
         return initMultiTenantJmsTemplate(reportsPooledConnectionFactory);
     }
 
-    @NotNull
+    @Nonnull
     private MultiTenantJmsTemplate initMultiTenantJmsTemplate(ConnectionFactory connectionFactory) {
         MultiTenantJmsTemplate multiTenantJmsTemplate = new MultiTenantJmsTemplate();
         multiTenantJmsTemplate.setConnectionFactory(connectionFactory);

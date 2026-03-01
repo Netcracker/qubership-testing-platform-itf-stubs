@@ -2,7 +2,7 @@ package org.qubership.automation.itf.trigger.template.velocity;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +51,7 @@ public class VelocityTemplateEngineTest {
         TcContext context = new TcContext();
         Map<String, Storable> map = Maps.newHashMap();
         String processed = engine.process(map, velocityString, InstanceContext.from(context, null));
-        Assert.assertEquals(processed, StringEscapeUtils.escapeHtml(htmlString));
+        Assert.assertEquals(processed, StringEscapeUtils.escapeHtml4(htmlString));
     }
 
     @Test

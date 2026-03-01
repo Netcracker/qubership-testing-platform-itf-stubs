@@ -1,3 +1,20 @@
+/*
+ * # Copyright 2024-2025 NetCracker Technology Corporation
+ * #
+ * # Licensed under the Apache License, Version 2.0 (the "License");
+ * # you may not use this file except in compliance with the License.
+ * # You may obtain a copy of the License at
+ * #
+ * #      http://www.apache.org/licenses/LICENSE-2.0
+ * #
+ * # Unless required by applicable law or agreed to in writing, software
+ * # distributed under the License is distributed on an "AS IS" BASIS,
+ * # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * # See the License for the specific language governing permissions and
+ * # limitations under the License.
+ *
+ */
+
 package org.qubership.automation.itf.ui.service;
 
 import java.util.ArrayList;
@@ -12,7 +29,6 @@ import javax.annotation.Nonnull;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.jetbrains.annotations.NotNull;
 import org.qubership.automation.itf.activation.impl.OnStartupTriggersActivationService;
 import org.qubership.automation.itf.communication.RoutesInformation;
 import org.qubership.automation.itf.communication.StubsIntegrationMessageSender;
@@ -39,7 +55,7 @@ public class TriggerRouteService {
     private static final LoadingCache<UUID, List<RouteInfoDto>> routeInfoCache = CacheBuilder.newBuilder()
             .expireAfterAccess(3, TimeUnit.MINUTES)
             .build(new CacheLoader<UUID, List<RouteInfoDto>>() {
-                @NotNull
+                @Nonnull
                 @Override
                 public List<RouteInfoDto> load(@Nonnull UUID id) {
                     return new ArrayList<>();
@@ -49,7 +65,7 @@ public class TriggerRouteService {
     private static final LoadingCache<UUID, List<String>> routeStopCache = CacheBuilder.newBuilder()
             .expireAfterAccess(3, TimeUnit.MINUTES)
             .build(new CacheLoader<UUID, List<String>>() {
-                @NotNull
+                @Nonnull
                 @Override
                 public List<String> load(@Nonnull UUID id) {
                     return new ArrayList<>();
