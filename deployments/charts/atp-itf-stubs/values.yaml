@@ -90,7 +90,7 @@ SERVICE_NAME: "atp-itf-stubs"
 # Register to public gateway in eureka
 ATP_SERVICE_PUBLIC: "true"
 # Security profile: default or disable-security
-SPRING_PROFILES: "default"
+ACTIVE_PROFILES_SPRING: "default"
 # Url of registry service
 SERVICE_REGISTRY_URL: "http://atp-registry-service:8761/eureka"
 #tcp Url of ActiveMQ broker
