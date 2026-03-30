@@ -17,7 +17,7 @@
 
 package org.qubership.automation.itf.ui.config;
 
-import javax.servlet.Servlet;
+import jakarta.servlet.Servlet;
 
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;

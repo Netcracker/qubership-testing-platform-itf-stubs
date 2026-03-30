@@ -28,8 +28,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.representations.AccessToken;
 import org.qubership.automation.itf.communication.FastStubsInformation;
 import org.qubership.automation.itf.communication.StubsIntegrationMessageSender;
 import org.qubership.automation.itf.core.stub.fast.FastResponseConfig;
@@ -45,6 +43,8 @@ import org.qubership.automation.itf.core.util.eds.service.EdsContentType;
 import org.qubership.automation.itf.ui.controls.FastStubsProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -155,13 +155,18 @@ public class FastStubsService {
                     projectUuid, transportTypes.name(),
                     URLEncoder.encode(stubEndpointConfig.getConfiguredEndpoint(), "UTF-8"));
 
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Object authentication = SecurityContextHolder.getContext().getAuthentication();
             String userName = "Undefined";
             UUID userId = null;
-            if (principal instanceof KeycloakPrincipal) {
-                AccessToken accessToken = ((KeycloakPrincipal) principal).getKeycloakSecurityContext().getToken();
-                userId = UUID.fromString(((KeycloakPrincipal) principal).getName());
-                userName = accessToken.getName();
+
+            if (authentication instanceof JwtAuthenticationToken) {
+                Object principal = ((JwtAuthenticationToken) authentication).getPrincipal();
+                if (principal instanceof Jwt) {
+                    Jwt jwt = (Jwt) principal;
+                    String id = jwt.getClaim("sub");
+                    userId = id != null ? UUID.fromString(id) : null;
+
+                }
             }
 
             storeFileAndNotifyInstances(fileName, new ByteArrayInputStream(objectMapper.writeValueAsBytes(fastConfig)),

@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -93,8 +93,10 @@ public class JmsRoutingBuilder extends ItfAbstractRouteBuilder {
                     .routeDescription(triggerConfigurationDescriptor.getProjectUuid().toString())
                     .group(TransportType.JMS_INBOUND.name());
         } else {
-            JmsEndpoint jmsEndpoint = JmsEndpoint.newInstance(destination, component);
-            jmsEndpoint.setSelector(selectorExpression);
+            String jmsEndpoint = String.format("%s:%s?selector=%s",
+                    destinationType.toLowerCase(Locale.getDefault()),
+                    destinationName,
+                    selectorExpression);
             from(jmsEndpoint).process(createProcessor(jmsEndpoint.toString()))
                     .routeId(id)
                     .routeDescription(triggerConfigurationDescriptor.getProjectUuid().toString())

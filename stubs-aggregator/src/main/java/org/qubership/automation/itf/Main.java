@@ -36,7 +36,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 @SpringBootApplication(exclude = {
                 MongoAutoConfiguration.class,
@@ -69,7 +69,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @EnableDiscoveryClient
 @EnableM2MRestTemplate
 @EnableOauth2FeignClientInterceptor
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @EnableFeignClients(basePackages = {"org.qubership.atp.integration.configuration.feign",
                                     "org.qubership.automation.itf.integration.executor"})
 @Import({

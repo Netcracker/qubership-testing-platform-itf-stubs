@@ -17,9 +17,8 @@
 
 package org.qubership.automation.itf.integration.config.jms.template.instance;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
-import org.jetbrains.annotations.NotNull;
 import org.qubership.automation.itf.integration.config.jms.DefaultJmsTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +49,6 @@ public class DefaultJmsTemplateInstancesConfiguration {
         return initDefaultJmsTemplate(reportsPooledConnectionFactory);
     }
 
-    @NotNull
     private DefaultJmsTemplate initDefaultJmsTemplate(ConnectionFactory connectionFactory) {
         DefaultJmsTemplate defaultJmsTemplate = new DefaultJmsTemplate();
         defaultJmsTemplate.setConnectionFactory(connectionFactory);

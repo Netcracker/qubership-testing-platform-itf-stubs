@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -35,17 +36,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.activation.URLDataSource;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
+import jakarta.activation.URLDataSource;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.StringSource;
-import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.component.http4.HttpComponent;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.component.cxf.common.CxfPayload;
+import org.apache.camel.component.http.HttpComponent;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -66,6 +67,8 @@ import org.springframework.http.ResponseEntity;
 
 import com.google.gson.Gson;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import javax.xml.transform.stream.StreamSource;
 
 public class Helper {
 
@@ -143,8 +146,8 @@ public class Helper {
             if (isRawDataformat) {
                 camelMessage.setBody(itfMessage.getText());
             } else {
-                StringSource stringSource = new StringSource(itfMessage.getText());
-                List<StringSource> list = new ArrayList<>();
+                StreamSource stringSource = new StreamSource(new StringReader(itfMessage.getText()));
+                List<StreamSource> list = new ArrayList<>();
                 list.add(stringSource);
                 CxfPayload cxp = new CxfPayload(null, list, null);
                 camelMessage.setBody(cxp);
@@ -284,20 +287,21 @@ public class Helper {
             Message itfMessage) {
         String filename = (String) (camelMessage.getHeader("filename"));
         InputStream inputStream = null;
+        AttachmentMessage attachmentMessage = camelMessage.getExchange().getMessage(AttachmentMessage.class);
         try {
             URL url = new URL(filename);
             if (url.getProtocol().equals("https")) {
                 inputStream = getViaClient(url);
             }
-            camelMessage.addAttachment("fileAttachment", new DataHandler(new URLDataSource(url)));
+            attachmentMessage.addAttachment("fileAttachment", new DataHandler(new URLDataSource(url)));
         } catch (MalformedURLException ex) {
-            camelMessage.addAttachment("fileAttachment", new DataHandler(new FileDataSource(filename)));
+            attachmentMessage.addAttachment("fileAttachment", new DataHandler(new FileDataSource(filename)));
         } catch (Exception ex) {
             throw new RuntimeException("HTTPClient exception while composing attachments message", ex);
         }
         try {
             byte[] data = camelMessage.getExchange().getContext().getTypeConverter().convertTo(byte[].class,
-                    (inputStream == null) ? camelMessage.getAttachment("fileAttachment").getInputStream() :
+                    (inputStream == null) ? attachmentMessage.getAttachment("fileAttachment").getInputStream() :
                             inputStream);
             camelMessage.setBody(data);
             return camelMessage;

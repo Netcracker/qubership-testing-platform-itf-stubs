@@ -19,7 +19,7 @@ package org.qubership.automation.itf.ui.config;
 
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.qubership.automation.itf.activation.impl.OnDestroyTriggersActivationService;
 import org.qubership.automation.itf.activation.impl.OnStartupTriggersActivationService;

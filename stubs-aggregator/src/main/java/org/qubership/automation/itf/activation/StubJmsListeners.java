@@ -28,7 +28,7 @@ import java.net.URLDecoder;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.commons.lang3.StringUtils;

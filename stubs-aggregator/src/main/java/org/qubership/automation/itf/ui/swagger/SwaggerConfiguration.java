@@ -20,9 +20,9 @@ package org.qubership.automation.itf.ui.swagger;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.springdoc.core.SpringDocUtils;
 import org.springdoc.core.converters.models.Pageable;
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springdoc.core.utils.SpringDocUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,7 +48,7 @@ public class SwaggerConfiguration {
      * @return OpenApiCustomiser bean.
      */
     @Bean
-    public OpenApiCustomiser globalOperationOpenApiCustomiser() {
+    public OpenApiCustomizer globalOperationOpenApiCustomiser() {
         return openAPI -> openAPI.getPaths().values().forEach(pathItem -> pathItem.readOperations()
                 .forEach(operation -> {
             if (!StringUtils.hasLength(operation.getSummary())) {
@@ -68,7 +68,7 @@ public class SwaggerConfiguration {
      * @return OpenApiCustomiser bean.
      */
     @Bean
-    public OpenApiCustomiser sortSchemasAlphabetically() {
+    public OpenApiCustomizer sortSchemasAlphabetically() {
         return openApi -> {
             Map<String, Schema> schemas = openApi.getComponents().getSchemas();
             openApi.getComponents().setSchemas(new TreeMap<>(schemas));

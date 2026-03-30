@@ -17,8 +17,8 @@
 
 package org.qubership.automation.itf.trigger.jms.inbound;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
 import javax.naming.InitialContext;
 
 import org.apache.camel.component.jms.JmsComponent;

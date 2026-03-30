@@ -24,14 +24,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class StubsSecurityCustomizer {
 
-
     /**
      * Method adds endpoints to the list of ignored by WebSecurity resources.
      */
     @Bean
     public WebSecurityCustomizer ignoringCustomizer() {
-        return (web) -> web.ignoring()
-                .antMatchers("/error",
+        return (web) -> web.ignoring().requestMatchers("/error",
                         "/mockingbird-transport-rest/**",
                         "/mockingbird-transport-soap-http/**"
                 );

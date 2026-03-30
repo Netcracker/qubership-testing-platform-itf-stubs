@@ -34,11 +34,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -46,12 +47,12 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.StringSource;
-import org.apache.camel.component.cxf.CxfEndpoint;
-import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.component.cxf.DataFormat;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
+import org.apache.camel.component.cxf.common.CxfPayload;
+import org.apache.camel.component.cxf.common.DataFormat;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.util.xml.StringSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -158,7 +159,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
                                 getTriggerConfigurationDescriptor(), sessionId, message);
                         Message responseMessage = setUpOut(exchange, sessionId);
                         boolean resultState = responseMessage != null && responseMessage.getFailedMessage() == null;
-                        if (!exchange.getOut().isFault()) {
+                        if (exchange.getException() == null) {
                             try {
                                 validate(exchange.getOut(), PropertyConstants.Soap.RESPONSE_XSD_PATH);
                             } catch (IllegalArgumentException | RuntimeCamelException ex) {
@@ -234,7 +235,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
 
     private void clearOutFilter(CxfEndpoint endpoint) {
         DefaultHeaderFilterStrategy st = (DefaultHeaderFilterStrategy) endpoint.getHeaderFilterStrategy();
-        st.setOutFilter(null);
+        st.setOutFilter((Set<String>) null);
     }
 
     private void addClientAddressInHeader(Exchange exchange) {
@@ -375,7 +376,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
                 case "endpoint":
                     if (properties.containsKey("namespace")) {
                         cxfEndpoint.setPortName(new QName((String) properties.get("namespace"),
-                                (String) item.getValue()));
+                                (String) item.getValue()).getLocalPart());
                     } else {
                         cxfEndpoint.setPortName((String) item.getValue());
                     }
@@ -383,7 +384,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
                 case "servicename":
                     if (properties.containsKey("namespace")) {
                         cxfEndpoint.setServiceName(new QName((String) properties.get("namespace"),
-                                (String) item.getValue()));
+                                (String) item.getValue()).getNamespaceURI());
                     }
                     break;
                 default:

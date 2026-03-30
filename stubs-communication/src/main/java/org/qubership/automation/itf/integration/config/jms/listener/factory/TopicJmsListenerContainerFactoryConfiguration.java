@@ -17,7 +17,7 @@
 
 package org.qubership.automation.itf.integration.config.jms.listener.factory;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

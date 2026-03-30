@@ -21,11 +21,11 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.TopicConnection;
-import javax.jms.TopicConnectionFactory;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.TopicConnection;
+import jakarta.jms.TopicConnectionFactory;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -169,7 +169,7 @@ public class JmsTrigger extends AbstractCamelTrigger {
 
     @Override
     protected void deactivateSpecificTrigger() throws Exception {
-        CAMEL_CONTEXT.stopRoute(getId());
+        CAMEL_CONTEXT.getRouteController().stopRoute(getId());
         CAMEL_CONTEXT.removeRoute(getId());
         CAMEL_CONTEXT.removeComponent(getId());
         LOGGER.info("{} [{}] is deactivated successfully", CAMEL_CONTEXT, getId());
@@ -226,7 +226,7 @@ public class JmsTrigger extends AbstractCamelTrigger {
             env.put("weblogic.jndi.createIntermediateContexts", "true");
             context = new InitialContext(env);
             TopicConnectionFactory tconFactory = (TopicConnectionFactory) context
-                    .lookup("javax.jms.TopicConnectionFactory");
+                .lookup("jakarta.jms.TopicConnectionFactory");
             TopicConnection con = tconFactory.createTopicConnection();
             con.close();
             return Boolean.TRUE;

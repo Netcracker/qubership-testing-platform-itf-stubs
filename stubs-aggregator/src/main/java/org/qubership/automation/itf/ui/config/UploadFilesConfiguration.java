@@ -17,25 +17,28 @@
 
 package org.qubership.automation.itf.ui.config;
 
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.util.unit.DataSize;
+
+import jakarta.servlet.MultipartConfigElement;
 
 @Configuration
 public class UploadFilesConfiguration {
 
     /** Method for create CommonsMultipartResolver.
-     * @return {@link CommonsMultipartResolver} with next constraints:
+     * @return {@link MultipartConfigElement} with next constraints:
      *         <br>
      *         - maxUploadSize = 100MB
      *         <br>
-     *         - maxUploadSizePerFile = 100MB.
+     *         - maxRequestSize = 100MB.
      */
     @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
-        commonsMultipartResolver.setMaxUploadSize(1024 * 1024 * 100);
-        commonsMultipartResolver.setMaxUploadSizePerFile(1024 * 1024 * 100);
-        return commonsMultipartResolver;
+    public MultipartConfigElement multipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        factory.setMaxFileSize(DataSize.ofMegabytes(100));
+        factory.setMaxRequestSize(DataSize.ofMegabytes(100));
+        return factory.createMultipartConfig();
     }
 }

@@ -17,9 +17,9 @@
 
 package org.qubership.automation.itf.trigger.cli;
 
-import org.apache.camel.component.netty4.DefaultServerInitializerFactory;
-import org.apache.camel.component.netty4.NettyConsumer;
-import org.apache.camel.component.netty4.ServerInitializerFactory;
+import org.apache.camel.component.netty.DefaultServerInitializerFactory;
+import org.apache.camel.component.netty.NettyConsumer;
+import org.apache.camel.component.netty.ServerInitializerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.automation.itf.core.model.transport.ConnectionProperties;
 

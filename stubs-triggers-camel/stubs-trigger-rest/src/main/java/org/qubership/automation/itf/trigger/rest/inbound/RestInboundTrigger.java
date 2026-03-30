@@ -23,18 +23,19 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletEndpoint;
 import org.apache.camel.http.common.HttpMessage;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.automation.itf.JvmSettings;
 import org.qubership.automation.itf.core.model.communication.TransportType;
@@ -172,8 +173,8 @@ public class RestInboundTrigger extends HttpInboundTrigger {
 
     private void prepareFilters(ServletEndpoint endpoint) {
         DefaultHeaderFilterStrategy st = (DefaultHeaderFilterStrategy) endpoint.getHeaderFilterStrategy();
-        st.setOutFilter(null);
-        st.setInFilter(null);
+        st.setOutFilter((Set<String>) null);
+        st.setInFilter((Set<String>) null);
         st.getOutFilter().add("content-type");
         st.setCaseInsensitive(true);
     }

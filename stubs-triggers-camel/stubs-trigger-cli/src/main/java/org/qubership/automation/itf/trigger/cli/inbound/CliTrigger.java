@@ -19,6 +19,7 @@ package org.qubership.automation.itf.trigger.cli.inbound;
 
 import java.net.InetSocketAddress;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -30,16 +31,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
-import org.apache.camel.component.netty4.ChannelHandlerFactories;
-import org.apache.camel.component.netty4.ChannelHandlerFactory;
-import org.apache.camel.component.netty4.NettyComponent;
-import org.apache.camel.component.netty4.NettyConfiguration;
-import org.apache.camel.component.netty4.NettyConsumer;
-import org.apache.camel.component.netty4.NettyEndpoint;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.component.netty.ChannelHandlerFactories;
+import org.apache.camel.component.netty.ChannelHandlerFactory;
+import org.apache.camel.component.netty.NettyComponent;
+import org.apache.camel.component.netty.NettyConfiguration;
+import org.apache.camel.component.netty.NettyConsumer;
+import org.apache.camel.component.netty.NettyEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.automation.itf.JvmSettings;
 import org.qubership.automation.itf.communication.TriggerExecutionMessageSender;
@@ -90,10 +92,10 @@ public class CliTrigger extends AbstractCamelTrigger {
                 String params = "?textline=true";
                 if (StringUtils.isNotBlank(cmdDelimiter) && !"\n".equals(cmdDelimiter)) {
                     SimpleRegistry registry = new SimpleRegistry();
-                    ((DefaultCamelContext) context).setRegistry(registry);
-                    registry.put("tcpStringEncoder", new StringEncoder());
-                    registry.put("tcpStringDecoder", new StringDecoder());
-                    registry.put("tcpDelimiterFrameDecoder", getDelimiterFrameDecoder(cmdDelimiter));
+                    ((DefaultCamelContext) context).getCamelContextExtension().setRegistry(registry);
+                    registry.bind("tcpStringEncoder", new StringEncoder());
+                    registry.bind("tcpStringDecoder", new StringDecoder());
+                    registry.bind("tcpDelimiterFrameDecoder", getDelimiterFrameDecoder(cmdDelimiter));
                     params = "?allowDefaultCodec=false&decoders=#tcpDelimiterFrameDecoder,#tcpStringDecoder"
                             + "&encoders=#tcpStringEncoder&autoAppendDelimiter=false";
                 }
@@ -148,7 +150,7 @@ public class CliTrigger extends AbstractCamelTrigger {
                                     .recordIncomingRequestDuration(projectUuid,
                                             TransportType.CLI_INBOUND,
                                             endpointString,
-                                            Duration.between(exchange.getCreated().toInstant(), OffsetDateTime.now()));
+                                            Duration.between(Instant.ofEpochMilli(exchange.getCreated()), OffsetDateTime.now()));
                         }
                     }).routeId(getId())
                         .routeDescription(projectUuid.toString())
@@ -205,7 +207,7 @@ public class CliTrigger extends AbstractCamelTrigger {
 
     private void deactivateTrigger(CamelContext context) throws Exception {
         if (Objects.nonNull(context.hasComponent(getId()))) {
-            context.stopRoute(getId());
+            context.getRouteController().stopRoute(getId());
             context.removeRoute(getId());
             context.removeComponent(getId());
         }
@@ -237,8 +239,10 @@ public class CliTrigger extends AbstractCamelTrigger {
                 //noinspection SynchronizationOnLocalVariableOrMethodParameter
                 synchronized (context) {
                     if (!((ServiceSupport) context).isStarted()) {
-                        LoggingErrorHandlerBuilder errorHandlerBuilder = new LoggingErrorHandlerBuilder(LOGGER);
-                        context.setErrorHandlerBuilder(errorHandlerBuilder);
+                        DefaultErrorHandlerBuilder defaultErrorHandlerBuilder = new DefaultErrorHandlerBuilder();
+                        CamelLogger camelLogger = new CamelLogger(LOGGER);
+                        defaultErrorHandlerBuilder.setLoggerBean(camelLogger);
+                        context.getCamelContextExtension().setErrorHandlerFactory(defaultErrorHandlerBuilder);
                         context.start();
                     }
                 }
