@@ -13,29 +13,47 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring.boot.version>2.7.18</spring.boot.version>
-        <org.springframework.version>5.2.0.RELEASE</org.springframework.version>
-        <spring.cloud.version>2021.0.8</spring.cloud.version>
-        <atp.itf.core.version>4.4.106</atp.itf.core.version>
-        <camel.version>2.20.4</camel.version>
-        <activemq.version>5.15.16</activemq.version>
-        <aspectj.version>1.8.10</aspectj.version>
-        <atp.multitenancy.version>0.0.11</atp.multitenancy.version>
-        <atp.common.version>0.0.43</atp.common.version>
+        <spring.boot.version>3.5.11</spring.boot.version>
+        <spring.cloud.version>2025.0.1</spring.cloud.version>
+
+        <atp.itf.core.version>5.0.3-SNAPSHOT</atp.itf.core.version>
+        <atp.multitenancy.version>1.0.1-SNAPSHOT</atp.multitenancy.version>
+        <atp.common.version>1.0.1-SNAPSHOT</atp.common.version>
+        <atp.auth.version>2.0.3-SNAPSHOT</atp.auth.version>
+
+        <camel.version>4.14.5</camel.version>
+        <activemq.version>5.18.7</activemq.version>
+        <aspectj.version>1.9.24</aspectj.version>
+
+        <lombok.version>1.18.44</lombok.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <jackson.version>2.18.6</jackson.version>
 
         <com.squareup.okhttp3.okhttp.version>4.9.3</com.squareup.okhttp3.okhttp.version>
         <com.squareup.okio.okio.version>3.4.0</com.squareup.okio.okio.version>
         <org.bouncycastle.bcpkix-jdk15on.version>1.64</org.bouncycastle.bcpkix-jdk15on.version>
         <org.jboss.logging.jboss-logging.version>3.4.3.Final</org.jboss.logging.jboss-logging.version>
-        <org.jetbrains.kotlin.kotlin-stdlib.version>1.6.21</org.jetbrains.kotlin.kotlin-stdlib.version>
+        <org.jetbrains.kotlin.kotlin-stdlib.version>1.9.24</org.jetbrains.kotlin.kotlin-stdlib.version>
         <com.fasterxml.woodstox.woodstox-core.version>5.0.3</com.fasterxml.woodstox.woodstox-core.version>
-        <io.undertow.undertow-core.version>2.2.36.Final</io.undertow.undertow-core.version>
-        <org.jboss.xnio.version>3.8.14.Final</org.jboss.xnio.version>
-        <org.apache.cxf.version>3.2.1</org.apache.cxf.version>
+        <io.undertow.undertow-core.version>2.3.21.Final</io.undertow.undertow-core.version>
+        <org.jboss.xnio.version>3.8.16.Final</org.jboss.xnio.version>
+        <org.apache.cxf.version>4.1.4</org.apache.cxf.version>
+        <springdoc.version>2.8.16</springdoc.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.qubership.atp.auth</groupId>
+                <artifactId>atp-auth-impl</artifactId>
+                <version>${atp.auth.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpclient</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>org.qubership.atp</groupId>
                 <artifactId>atp-itf-core</artifactId>
@@ -153,6 +171,10 @@
                         <artifactId>spring-kafka</artifactId>
                         <groupId>org.springframework.kafka</groupId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>springdoc-openapi-ui</artifactId>
+                        <groupId>org.springdoc</groupId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -196,45 +218,8 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework.security</groupId>
-                        <artifactId>spring-security-web</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>5.7.13</version>
             </dependency>
             <!-- org.springframework.boot configuration - end -->
-
-            <!-- org.springframework configuration - start -->
-            <!-- To be deleted after functionality testing
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jms</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-config</artifactId>
-                <version>5.7.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>5.7.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>5.3.21</version>
-            </dependency>
-            -->
-
-            <!-- org.springframework configuration - end -->
 
             <!--Spring Configuration - End-->
             <dependency>
@@ -254,12 +239,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-http4</artifactId>
-                <version>${camel.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-netty4</artifactId>
+                <artifactId>camel-netty</artifactId>
                 <version>${camel.version}</version>
             </dependency>
             <dependency>
@@ -284,19 +264,23 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-cxf</artifactId>
+                <artifactId>camel-cxf-soap</artifactId>
                 <version>${camel.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-cxf-transport</artifactId>
-                <version>${camel.version}</version>
+                <groupId>org.apache.camel.springboot</groupId>
+                <artifactId>camel-cxf-soap-starter</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-ssh</artifactId>
                 <version>${camel.version}</version>
             </dependency>
+
+
+
+
+
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-rt</artifactId>
@@ -334,9 +318,9 @@
                 <version>1.4.21</version>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.2</version>
+                <groupId>jakarta.servlet.jsp.jstl</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+                <version>3.0.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
@@ -354,9 +338,9 @@
                 <version>${org.apache.cxf.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_2.0_spec</artifactId>
-                <version>1.0-alpha-2</version>
+                <groupId>jakarta.jms</groupId>
+                <artifactId>jakarta.jms-api</artifactId>
+                <version>3.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -375,9 +359,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>1.5</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
+                <version>2.0.0-M4</version>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
@@ -397,7 +381,7 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.16</version>
+                <version>${lombok.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -422,7 +406,7 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-kafka</artifactId>
-                <version>2.22.0</version>
+                <version>${camel.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.snmp4j</groupId>
@@ -519,36 +503,42 @@
                 <artifactId>activemq-kahadb-store</artifactId>
                 <version>${activemq.version}</version>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.apache.activemq</groupId>-->
+<!--                <artifactId>activemq-camel</artifactId>-->
+<!--                <version>${activemq.version}</version>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.apache.commons</groupId>-->
+<!--                        <artifactId>commons-pool2</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
+
             <dependency>
                 <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-camel</artifactId>
-                <version>${activemq.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>commons-pool2</artifactId>
-                    </exclusion>
-                </exclusions>
+                <artifactId>artemis-jms-client</artifactId>
+                <version>2.33.0</version>
             </dependency>
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>2.9.2</version>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jms</artifactId>
+                <version>${camel.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>2.9.2</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.json.bind</groupId>
-                <artifactId>javax.json.bind-api</artifactId>
-                <version>1.0</version>
+                <groupId>jakarta.json.bind</groupId>
+                <artifactId>jakarta.json.bind-api</artifactId>
+                <version>3.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-openfeign</artifactId>
-                <version>3.1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.qubership.atp.multitenancy</groupId>
@@ -662,8 +652,12 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-<!--                <version>2.10.0</version>-->
-                <version>2.12.6</version>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

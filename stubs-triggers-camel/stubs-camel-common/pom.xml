@@ -12,7 +12,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cxf</artifactId>
+            <artifactId>camel-cxf-soap</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -39,6 +39,11 @@
             <artifactId>activemq-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>javax.jms-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-jms-pool</artifactId>
         </dependency>
@@ -47,9 +52,7 @@
             <artifactId>jaxen</artifactId>
         </dependency>
     </dependencies>
-    <properties>
-        <jackson.version>2.7.3</jackson.version>
-    </properties>
+
     <build>
         <finalName>stubs-camel-common</finalName>
         <plugins>
@@ -76,7 +79,7 @@
                                 com.fasterxml.jackson.datatype,com.fasterxml.jackson.module,org.reactivestreams,org.postgresql,
                                 net.bytebuddy,org.hibernate
                             </excludeGroupIds>
-                            <excludeArtifactIds>querydsl-core,logback-classic,pcap4j-core,camel-ssh,camel-http-common,camel-http4,commons-lang,
+                            <excludeArtifactIds>querydsl-core,logback-classic,pcap4j-core,camel-ssh,camel-http-common,camel-http,commons-lang,
                                 commons-fileupload,commons-configuration,snakeyaml,reactor-netty,reactor-core,jul-to-slf4j,jcip-annotations,
                                 error_prone_annotations,javax.annotation-api,antlr,dom4j,oss-parent
                             </excludeArtifactIds>

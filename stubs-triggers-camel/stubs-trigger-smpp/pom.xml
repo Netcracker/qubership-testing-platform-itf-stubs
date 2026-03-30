@@ -40,7 +40,7 @@
                                 org.apache.ws.xmlschema, org.postgresql, org.jdom, joda-time, com.fasterxml.woodstox,
                                 org.openclover, org.apache.activemq, org.projectlombok
                             </excludeGroupIds>
-                            <excludeArtifactIds>querydsl-core,pcap4j-core,camel-ssh,camel-http-common,camel-http4,commons-lang,
+            <excludeArtifactIds>querydsl-core,pcap4j-core,camel-ssh,camel-http-common,camel-http,commons-lang,
                                 commons-fileupload,commons-configuration,snakeyaml,reactor-netty,reactor-core,jul-to-slf4j,jcip-annotations,
                                 error_prone_annotations,javax.annotation-api,antlr,dom4j,oss-parent,qubership-atp-common-logging,
                                 javax.persistence-api,clover-maven-plugin,
