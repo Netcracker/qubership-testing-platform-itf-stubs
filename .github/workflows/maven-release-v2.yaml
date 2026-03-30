@@ -67,7 +67,7 @@ jobs:
       - name: "Build and Publish current SNAPSHOT (dry run)"
         uses: netcracker/qubership-workflow-hub/actions/maven-release@d11baa8a4b42d1a931808c0766ee23eb344c47dd #v2.2.0
         with:
-          java-version: "8"
+          java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
           ref: ${{ github.ref }}
           module: ${{ github.event.repository.name }}
@@ -98,7 +98,7 @@ jobs:
 
         uses: netcracker/qubership-workflow-hub/actions/maven-release@d11baa8a4b42d1a931808c0766ee23eb344c47dd #v2.2.0
         with:
-          java-version: "8"
+          java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
           ref: ${{ github.ref }}
           module: ${{ github.event.repository.name }}
