@@ -165,7 +165,7 @@ public class FastStubsService {
                     Jwt jwt = (Jwt) principal;
                     String id = jwt.getClaim("sub");
                     userId = id != null ? UUID.fromString(id) : null;
-
+                    userName = jwt.getClaimAsString("preferred_username");
                 }
             }
 
