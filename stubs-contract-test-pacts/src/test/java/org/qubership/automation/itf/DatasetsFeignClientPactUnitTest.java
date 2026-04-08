@@ -15,61 +15,54 @@
  *
  */
 
-package org.qubership.automation.itf;import java.util.HashMap;
+package org.qubership.automation.itf;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit.PactProviderRule;
-import au.com.dius.pact.consumer.junit.PactVerification;
+import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
 import org.qubership.automation.itf.core.util.feign.impl.DatasetsAttachmentFeignClient;
 
-@RunWith(SpringRunner.class)
+@SpringBootTest
+@ExtendWith(PactConsumerTestExt.class)
 @EnableFeignClients(clients = {DatasetsAttachmentFeignClient.class})
-@ContextConfiguration(classes = {DatasetsFeignClientPactUnitTest.TestApp.class})
 @Import({JacksonAutoConfiguration.class,
         HttpMessageConvertersAutoConfiguration.class,
         FeignConfiguration.class,
         FeignAutoConfiguration.class})
 @TestPropertySource(properties = {"feign.atp.datasets.name=atp-datasets", "feign.atp.datasets.route=",
         "feign.atp.datasets.url=http://localhost:8888", "feign.httpclient.enabled=false"})
+@PactTestFor(providerName = "atp-datasets", port = "8888", pactVersion = PactSpecVersion.V3)
 public class DatasetsFeignClientPactUnitTest {
-
-    @Configuration
-    public static class TestApp {
-    }
-
-    @Rule
-    public PactProviderRule mockProvider
-            = new PactProviderRule("atp-datasets", "localhost", 8888, this);
 
     @Autowired
     private DatasetsAttachmentFeignClient dsAttachmentFeignClient;
     private final UUID attachmentUuid = UUID.fromString("7c9dafe9-2cd1-4ffc-ae54-45867f2b9701");
 
     @Test
-    @PactVerification()
+    @PactTestFor(pactMethod = "createPact")
     public void allPass() {
         ResponseEntity<Resource> result = dsAttachmentFeignClient.getAttachmentByParameterId(attachmentUuid);
         Assert.assertEquals(200, result.getStatusCode().value());

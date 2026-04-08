@@ -26,53 +26,46 @@ import java.util.UUID;
 
 import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit.PactProviderRule;
-import au.com.dius.pact.consumer.junit.PactVerification;
+import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.google.gson.Gson;
+
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
-import org.qubership.automation.itf.conf.OkHttpFeignConfiguration;
 import org.qubership.automation.itf.integration.executor.ExecutorFeignClient;
 import org.qubership.automation.itf.openapi.executor.dto.EnvironmentSampleDto;
 import org.qubership.automation.itf.openapi.executor.dto.ResultDto;
 import org.qubership.automation.itf.openapi.executor.dto.TriggerSampleDto;
 import org.qubership.automation.itf.openapi.executor.dto.UIUpdateTriggerStatusDto;
-import lombok.extern.slf4j.Slf4j;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
+
+@ExtendWith(PactConsumerTestExt.class)
 @EnableFeignClients(clients = {ExecutorFeignClient.class})
-@ContextConfiguration(classes = {ExecutorFeignClientPactUnitTest.TestApp.class})
-@Import({JacksonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, FeignConfiguration.class,
-        FeignAutoConfiguration.class, OkHttpFeignConfiguration.class})
+@SpringBootTest
+@Import({JacksonAutoConfiguration.class,
+        HttpMessageConvertersAutoConfiguration.class,
+        FeignConfiguration.class,
+        FeignAutoConfiguration.class})
 @TestPropertySource(properties = {"feign.atp.executor.name=atp-itf-executor", "feign.atp.executor.route=",
-                "feign.atp.executor.url=http://localhost:8888", "feign.httpclient.enabled=false"})
-@Slf4j
+        "feign.atp.executor.url=http://localhost:8888", "feign.httpclient.enabled=false"})
+@PactTestFor(providerName = "atp-itf-executor", port = "8888", pactVersion = PactSpecVersion.V3)
 public class ExecutorFeignClientPactUnitTest {
 
-    @Configuration
-    public static class TestApp {
-    }
-
-    @Rule
-    public PactProviderRule mockProvider
-            = new PactProviderRule("atp-itf-executor", "localhost", 8888, this);
     @Autowired
     ExecutorFeignClient executorFeignClient;
 
@@ -80,7 +73,7 @@ public class ExecutorFeignClientPactUnitTest {
     private BigInteger environmentId = new BigInteger("9167234930111872001");
 
     @Test
-    @PactVerification()
+    @PactTestFor(pactMethod = "createPact")
     public void allPass() {
         testGetAllActiveTriggers();
         testGetTriggerById();
