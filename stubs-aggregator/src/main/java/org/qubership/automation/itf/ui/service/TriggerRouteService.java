@@ -1,6 +1,7 @@
 package org.qubership.automation.itf.ui.service;
 
 import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,7 +11,6 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.jetbrains.annotations.NotNull;
 import org.qubership.automation.itf.activation.impl.OnStartupTriggersActivationService;
 import org.qubership.automation.itf.communication.RoutesInformation;
 import org.qubership.automation.itf.communication.StubsIntegrationMessageSender;
