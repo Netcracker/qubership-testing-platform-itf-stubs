@@ -22,7 +22,7 @@ import org.qubership.automation.itf.openapi.executor.controllers.ItfStubsRequest
 import org.springframework.cloud.openfeign.FeignClient;
 
 @FeignClient(name = "${feign.atp.executor.name}",
-             url = "${feign.atp.executor.url}",
+//             url = "${feign.atp.executor.url}",
              path = "${feign.atp.executor.route}",
              configuration = FeignConfiguration.class)
 public interface ExecutorFeignClient extends ItfStubsRequestControllerApi {
