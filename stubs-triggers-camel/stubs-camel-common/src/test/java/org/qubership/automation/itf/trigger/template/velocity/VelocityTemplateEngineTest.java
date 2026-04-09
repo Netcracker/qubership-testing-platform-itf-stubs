@@ -3,24 +3,23 @@ package org.qubership.automation.itf.trigger.template.velocity;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import org.qubership.automation.itf.core.model.common.Storable;
 import org.qubership.automation.itf.core.model.jpa.context.InstanceContext;
 import org.qubership.automation.itf.core.model.jpa.context.TcContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.testng.Assert;
+
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import com.google.common.collect.Maps;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath*:*template-velocity-test-context.xml"})
+@SpringJUnitConfig(locations = {"classpath*:*template-velocity-test-context.xml"})
 public class VelocityTemplateEngineTest {
     private VelocityTemplateEngine engine;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         engine = new VelocityTemplateEngine();
     }
@@ -31,7 +30,7 @@ public class VelocityTemplateEngineTest {
         TcContext context = new TcContext();
         Map<String, Storable> map = Maps.newHashMap();
         String processed = engine.process(map, sourceString, InstanceContext.from(context, null));
-        Assert.assertNotEquals(processed, sourceString);
+        Assertions.assertNotEquals(sourceString, processed);
     }
 
     @Test
@@ -40,7 +39,7 @@ public class VelocityTemplateEngineTest {
         TcContext context = new TcContext();
         Map<String, Storable> map = Maps.newHashMap();
         String processed = engine.process(map, sourceString, InstanceContext.from(context, null));
-        Assert.assertFalse(processed.contains("$date"));
+        Assertions.assertFalse(processed.contains("$date"));
         System.out.println(processed);
     }
 
@@ -51,7 +50,7 @@ public class VelocityTemplateEngineTest {
         TcContext context = new TcContext();
         Map<String, Storable> map = Maps.newHashMap();
         String processed = engine.process(map, velocityString, InstanceContext.from(context, null));
-        Assert.assertEquals(processed, StringEscapeUtils.escapeHtml(htmlString));
+        Assertions.assertEquals(StringEscapeUtils.escapeHtml(htmlString), processed);
     }
 
     @Test
@@ -60,7 +59,7 @@ public class VelocityTemplateEngineTest {
         TcContext context = new TcContext();
         Map<String, Storable> map = Maps.newHashMap();
         String processed = engine.process(map, velocityString, InstanceContext.from(context, null));
-        Assert.assertEquals(processed, "0056");
+        Assertions.assertEquals("0056", processed);
     }
 
     @Test
@@ -73,6 +72,6 @@ public class VelocityTemplateEngineTest {
         context.put("response", "<note><to>Tove</to><from>Jani</from><heading>Reminder</heading><body>Don't forget me this weekend!</body></note>");
         Map<String, Storable> map = Maps.newHashMap();
         String processed = engine.process(map, velocityString, InstanceContext.from(context, null));
-        Assert.assertEquals(processed, "<to>Tove</to>\n<from>Jani</from>\n<heading>Reminder</heading>\n<body>Don't forget me this weekend!</body>\n");
+        Assertions.assertEquals("<to>Tove</to>\n<from>Jani</from>\n<heading>Reminder</heading>\n<body>Don't forget me this weekend!</body>\n", processed);
     }
 }
