@@ -48,6 +48,7 @@
             <organizationUrl>https://www.netcracker.com</organizationUrl>
         </developer>
     </developers>
+
     <scm>
         <connection>scm:git:https//github.com/Netcracker/qubership-testing-platform-itf-stubs.git</connection>
         <developerConnection>scm:git:https://github.com/Netcracker/qubership-testing-platform-itf-stubs.git</developerConnection>
