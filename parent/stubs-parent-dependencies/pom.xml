@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.qubership.mockingbird</groupId>
         <artifactId>stubs</artifactId>
-        <version>1.1.169v1-SNAPSHOT</version>
+        <version>1.1.169v2-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -267,6 +267,11 @@
                 <version>${camel.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>artemis-jms-client</artifactId>
+                <version>2.33.0</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-snmp</artifactId>
                 <version>${camel.version}</version>
@@ -519,17 +524,6 @@
 <!--                    </exclusion>-->
 <!--                </exclusions>-->
 <!--            </dependency>-->
-
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>artemis-jms-client</artifactId>
-                <version>2.33.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-jms</artifactId>
-                <version>${camel.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.springdoc</groupId>

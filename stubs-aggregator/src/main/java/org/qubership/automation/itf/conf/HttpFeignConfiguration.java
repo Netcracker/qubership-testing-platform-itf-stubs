@@ -16,12 +16,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HttpFeignConfiguration {
 
-    @Bean
-    public feign.Client feignClient(CloseableHttpClient httpClient) {
-        return new feign.hc5.ApacheHttp5Client(httpClient);
-    }
+//    @Bean
+//    public feign.Client feignClient(CloseableHttpClient httpClient) {
+//        return new feign.hc5.ApacheHttp5Client(httpClient);
+//    }
 
-    @Bean
+//    @Bean
     public CloseableHttpClient httpClient() throws Exception {
         SSLContext sslContext = SSLContexts.custom()
                 .loadTrustMaterial(null, (chain, authType) -> true)
