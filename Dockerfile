@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-alpine-musl:21.0.10
+FROM bellsoft/liberica-openjdk-alpine-musl:21.0.11
 
 LABEL maintainer="opensourcegroup@netcracker.com"
 LABEL atp.service="atp-itf-stubs"
@@ -24,8 +24,11 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.23/community/" >/etc/apk/repo
         htop=3.4.1-r1 \
         jq=1.8.1-r0 \
         libpng=1.6.57-r0 \
-        libcrypto3=3.5.5-r0 \
-        libssl3=3.5.5-r0 \
+        libcrypto3=3.5.6-r0 \
+        libexpat=2.7.5-r0 \
+        libssl3=3.5.6-r0 \
+        musl=1.2.5-r23 \
+        musl-utils=1.2.5-r23 \
         net-tools=2.10-r3 \
         nss_wrapper=1.1.12-r1 \
         pcre2=10.47-r0 \
@@ -34,8 +37,9 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.23/community/" >/etc/apk/repo
         sysstat=12.7.8-r0 \
         tcpdump=4.99.5-r1 \
         wget=1.25.0-r2 \
-        xz-libs=5.8.2-r0 \
-        zip=3.0-r13 && \
+        xz-libs=5.8.3-r0 \
+        zip=3.0-r13 \
+        zlib=1.3.2-r0 && \
       rm -rf /var/cache/apk/*
 
 COPY deployments/install deployments/install
