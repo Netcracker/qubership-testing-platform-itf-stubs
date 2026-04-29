@@ -24,15 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import au.com.dius.pact.consumer.dsl.PactDslResponse;
-import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
-import au.com.dius.pact.consumer.junit5.PactTestFor;
-import au.com.dius.pact.core.model.PactSpecVersion;
-import au.com.dius.pact.core.model.RequestResponsePact;
-import au.com.dius.pact.core.model.annotations.Pact;
-import com.google.gson.Gson;
-
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
 import org.qubership.automation.itf.integration.executor.ExecutorFeignClient;
@@ -40,9 +33,6 @@ import org.qubership.automation.itf.openapi.executor.dto.EnvironmentSampleDto;
 import org.qubership.automation.itf.openapi.executor.dto.ResultDto;
 import org.qubership.automation.itf.openapi.executor.dto.TriggerSampleDto;
 import org.qubership.automation.itf.openapi.executor.dto.UIUpdateTriggerStatusDto;
-
-import org.junit.Assert;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
@@ -53,6 +43,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 
+import au.com.dius.pact.consumer.dsl.PactDslResponse;
+import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
+import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.PactSpecVersion;
+import au.com.dius.pact.core.model.RequestResponsePact;
+import au.com.dius.pact.core.model.annotations.Pact;
+import com.google.gson.Gson;
 
 @ExtendWith(PactConsumerTestExt.class)
 @EnableFeignClients(clients = {ExecutorFeignClient.class})

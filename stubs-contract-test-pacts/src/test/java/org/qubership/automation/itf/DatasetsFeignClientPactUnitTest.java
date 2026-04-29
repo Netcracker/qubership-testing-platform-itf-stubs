@@ -24,6 +24,8 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
+import org.qubership.automation.itf.core.util.feign.impl.DatasetsAttachmentFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
@@ -42,8 +44,6 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
-import org.qubership.automation.itf.core.util.feign.impl.DatasetsAttachmentFeignClient;
 
 @SpringBootTest
 @ExtendWith(PactConsumerTestExt.class)
