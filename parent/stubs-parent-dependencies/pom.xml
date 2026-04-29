@@ -13,8 +13,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring.boot.version>3.5.11</spring.boot.version>
-        <spring.cloud.version>2025.0.1</spring.cloud.version>
+        <spring.boot.version>3.5.12</spring.boot.version>
+        <spring.cloud.version>2025.0.2</spring.cloud.version>
 
         <atp.itf.core.version>5.0.5-SNAPSHOT</atp.itf.core.version>
         <atp.multitenancy.version>1.0.1-SNAPSHOT</atp.multitenancy.version>
@@ -22,18 +22,17 @@
         <atp.auth.version>2.0.3-SNAPSHOT</atp.auth.version>
 
         <camel.version>4.14.6</camel.version>
-        <activemq.version>5.18.7</activemq.version>
+        <activemq.version>5.19.5</activemq.version>
         <aspectj.version>1.9.24</aspectj.version>
 
         <lombok.version>1.18.44</lombok.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
         <jackson.version>2.18.6</jackson.version>
 
         <com.squareup.okhttp3.okhttp.version>4.9.3</com.squareup.okhttp3.okhttp.version>
         <com.squareup.okio.okio.version>3.4.0</com.squareup.okio.okio.version>
-        <org.bouncycastle.bcpkix-jdk15on.version>1.64</org.bouncycastle.bcpkix-jdk15on.version>
         <org.jboss.logging.jboss-logging.version>3.4.3.Final</org.jboss.logging.jboss-logging.version>
-        <org.jetbrains.kotlin.kotlin-stdlib.version>1.9.24</org.jetbrains.kotlin.kotlin-stdlib.version>
+        <kotlin.version>1.9.25</kotlin.version>
         <com.fasterxml.woodstox.woodstox-core.version>5.0.3</com.fasterxml.woodstox.woodstox-core.version>
         <io.undertow.undertow-core.version>2.3.21.Final</io.undertow.undertow-core.version>
         <org.jboss.xnio.version>3.8.16.Final</org.jboss.xnio.version>
@@ -43,6 +42,43 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>5.2.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>1.84</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-core</artifactId>
+                <version>3.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.qubership.atp.auth</groupId>
                 <artifactId>atp-auth-impl</artifactId>
@@ -515,6 +551,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-client</artifactId>
+                <version>6.2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-kahadb-store</artifactId>
                 <version>${activemq.version}</version>
             </dependency>
@@ -614,11 +655,6 @@
                 <version>${com.squareup.okio.okio.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcpkix-jdk15on</artifactId>
-                <version>${org.bouncycastle.bcpkix-jdk15on.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.logging</groupId>
                 <artifactId>jboss-logging</artifactId>
                 <version>${org.jboss.logging.jboss-logging.version}</version>
@@ -626,12 +662,12 @@
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>${org.jetbrains.kotlin.kotlin-stdlib.version}</version>
+                <version>${kotlin.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>${org.jetbrains.kotlin.kotlin-stdlib.version}</version>
+                <version>${kotlin.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.woodstox</groupId>
@@ -652,16 +688,6 @@
                 <groupId>org.jboss.xnio</groupId>
                 <artifactId>xnio-nio</artifactId>
                 <version>${org.jboss.xnio.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
