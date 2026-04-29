@@ -131,6 +131,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.qubership.atp.common</groupId>
             <artifactId>qubership-atp-common-probes</artifactId>
         </dependency>

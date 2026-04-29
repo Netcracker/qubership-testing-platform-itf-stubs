@@ -38,10 +38,49 @@
         <org.jboss.xnio.version>3.8.16.Final</org.jboss.xnio.version>
         <org.apache.cxf.version>4.1.4</org.apache.cxf.version>
         <springdoc.version>2.8.16</springdoc.version>
+
+        <reactor-bom.version>2024.0.17</reactor-bom.version>
+        <netty.version>4.1.132.Final</netty.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Reactor BOM -->
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-bom</artifactId>
+                <version>${reactor-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Netty BOM (above Reactor) -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http2</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast</artifactId>
@@ -121,12 +160,16 @@
                         <artifactId>spring-security-core</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>hazelcast</artifactId>
                         <groupId>com.hazelcast</groupId>
+                        <artifactId>hazelcast</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>hazelcast-eureka-one</artifactId>
                         <groupId>com.hazelcast</groupId>
+                        <artifactId>hazelcast-all</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.hazelcast</groupId>
+                        <artifactId>hazelcast-eureka-one</artifactId>
                     </exclusion>
                     <exclusion>
                         <artifactId>poi</artifactId>
@@ -434,16 +477,6 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>4.1.132.Final</version>
-            </dependency>
-            <!--<dependency>
-                <groupId>io.projectreactor.netty</groupId>
-                <artifactId>reactor-netty</artifactId>
-                <version>0.9.8.RELEASE</version>
-            </dependency>-->
             <!-- <dependency>
                 <groupId>com.oracle.weblogic</groupId>
                 <artifactId>wlthint3client</artifactId>
