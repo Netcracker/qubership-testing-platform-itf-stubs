@@ -21,7 +21,7 @@
         <atp.common.version>1.0.1-SNAPSHOT</atp.common.version>
         <atp.auth.version>2.0.3-SNAPSHOT</atp.auth.version>
 
-        <camel.version>4.14.5</camel.version>
+        <camel.version>4.14.6</camel.version>
         <activemq.version>5.18.7</activemq.version>
         <aspectj.version>1.9.24</aspectj.version>
 
