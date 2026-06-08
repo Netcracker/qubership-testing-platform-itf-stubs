@@ -16,12 +16,15 @@
         <spring.boot.version>2.7.18</spring.boot.version>
         <org.springframework.version>5.2.0.RELEASE</org.springframework.version>
         <spring.cloud.version>2021.0.8</spring.cloud.version>
-        <atp.itf.core.version>4.4.106</atp.itf.core.version>
         <camel.version>2.20.4</camel.version>
-        <activemq.version>5.15.16</activemq.version>
+        <activemq.version>5.16.8</activemq.version>
         <aspectj.version>1.8.10</aspectj.version>
-        <atp.multitenancy.version>0.0.11</atp.multitenancy.version>
-        <atp.common.version>0.0.43</atp.common.version>
+
+        <atp.itf.core.version>4.4.114</atp.itf.core.version>
+        <atp.auth.version>1.2.80</atp.auth.version>
+        <atp.multitenancy.version>0.0.13</atp.multitenancy.version>
+        <atp.common.version>0.0.47</atp.common.version>
+        <atp.integration.version>0.2.42</atp.integration.version>
 
         <com.squareup.okhttp3.okhttp.version>4.9.3</com.squareup.okhttp3.okhttp.version>
         <com.squareup.okio.okio.version>3.4.0</com.squareup.okio.okio.version>
@@ -29,21 +32,34 @@
         <org.jboss.logging.jboss-logging.version>3.4.3.Final</org.jboss.logging.jboss-logging.version>
         <org.jetbrains.kotlin.kotlin-stdlib.version>1.6.21</org.jetbrains.kotlin.kotlin-stdlib.version>
         <com.fasterxml.woodstox.woodstox-core.version>5.0.3</com.fasterxml.woodstox.woodstox-core.version>
-        <io.undertow.undertow-core.version>2.2.36.Final</io.undertow.undertow-core.version>
+        <io.undertow.undertow-core.version>2.2.39.Final</io.undertow.undertow-core.version>
         <org.jboss.xnio.version>3.8.14.Final</org.jboss.xnio.version>
         <org.apache.cxf.version>3.2.1</org.apache.cxf.version>
+        <ch.qos.logback.version>1.2.13</ch.qos.logback.version>
+        <jackson.version>2.15.0</jackson.version>
+        <io.netty.version>4.1.125.Final</io.netty.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.qubership.atp.auth</groupId>
+                <artifactId>atp-auth-impl</artifactId>
+                <version>${atp.auth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp</groupId>
+                <artifactId>atp-integration-spring-boot-starter</artifactId>
+                <version>${atp.integration.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.qubership.atp</groupId>
                 <artifactId>atp-itf-core</artifactId>
                 <version>${atp.itf.core.version}</version>
                 <exclusions>
                     <exclusion>
-                        <artifactId>spring-boot-starter-data-jpa</artifactId>
                         <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-data-jpa</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.hibernate</groupId>
@@ -58,24 +74,28 @@
                         <artifactId>spring-security-core</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>com.hazelcast</groupId>
+                        <artifactId>hazelcast-all</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.hazelcast</groupId>
                         <artifactId>hazelcast</artifactId>
-                        <groupId>com.hazelcast</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>com.hazelcast</groupId>
                         <artifactId>hazelcast-eureka-one</artifactId>
-                        <groupId>com.hazelcast</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.poi</groupId>
                         <artifactId>poi</artifactId>
-                        <groupId>org.apache.poi</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.poi</groupId>
                         <artifactId>poi-ooxml</artifactId>
-                        <groupId>org.apache.poi</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>poi-ooxml-schemas</artifactId>
                         <groupId>org.apache.poi</groupId>
+                        <artifactId>poi-ooxml-schemas</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>log4j</groupId>
@@ -126,32 +146,32 @@
                         <artifactId>javers-spring-boot-starter-sql</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.tomcat.embed</groupId>
                         <artifactId>tomcat-embed-core</artifactId>
-                        <groupId>org.apache.tomcat.embed</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.tomcat.embed</groupId>
                         <artifactId>tomcat-embed-websocket</artifactId>
-                        <groupId>org.apache.tomcat.embed</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.tomcat.embed</groupId>
                         <artifactId>tomcat-embed-el</artifactId>
-                        <groupId>org.apache.tomcat.embed</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>commons-beanutils</artifactId>
                         <groupId>commons-beanutils</groupId>
+                        <artifactId>commons-beanutils</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>commons-collections</artifactId>
                         <groupId>commons-collections</groupId>
+                        <artifactId>commons-collections</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>netty-handler</artifactId>
                         <groupId>io.netty</groupId>
+                        <artifactId>netty-handler</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>spring-kafka</artifactId>
                         <groupId>org.springframework.kafka</groupId>
+                        <artifactId>spring-kafka</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -168,6 +188,21 @@
             <dependency>
                 <groupId>org.qubership.atp.common</groupId>
                 <artifactId>qubership-atp-common-probes</artifactId>
+                <version>${atp.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp.common</groupId>
+                <artifactId>qubership-atp-common-monitoring-undertow</artifactId>
+                <version>${atp.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp.common</groupId>
+                <artifactId>qubership-atp-common-utils</artifactId>
+                <version>${atp.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.qubership.atp.common</groupId>
+                <artifactId>qubership-atp-common-logging</artifactId>
                 <version>${atp.common.version}</version>
             </dependency>
             <dependency>
@@ -375,11 +410,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>1.5</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.2</version>
@@ -402,12 +432,32 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
-                <version>4.0.9.Final</version>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http2</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${io.netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.projectreactor.netty</groupId>
                 <artifactId>reactor-netty</artifactId>
-                <version>0.9.8.RELEASE</version>
+                <version>1.0.39</version>
             </dependency>
             <!-- <dependency>
                 <groupId>com.oracle.weblogic</groupId>
@@ -480,7 +530,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
-                <version>1.9.0</version><!-- DF uses to 1.9.0 -->
+                <version>1.9.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -488,26 +538,25 @@
                 <artifactId>httpclient</artifactId>
                 <version>4.5.5</version>
             </dependency>
-            <!--<dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock</artifactId>
-                <version>1.58</version>
-            </dependency>-->
             <dependency>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
                 <version>20231013</version>
             </dependency>
-            <!--Dependency for wiremock-->
-            <!--<dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-util</artifactId>
-                <version>6.1.26</version>
-            </dependency>-->
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>1.9</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-client</artifactId>
+                <version>${activemq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-openwire-legacy</artifactId>
+                <version>${activemq.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq</groupId>
@@ -517,12 +566,12 @@
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-kahadb-store</artifactId>
-                <version>${activemq.version}</version>
+                <version>5.15.16</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-camel</artifactId>
-                <version>${activemq.version}</version>
+                <version>5.15.16</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.commons</groupId>
@@ -538,7 +587,7 @@
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger-ui</artifactId>
-                <version>2.9.2</version>
+                <version>2.10.0</version>
             </dependency>
             <dependency>
                 <groupId>javax.json.bind</groupId>
@@ -566,10 +615,6 @@
                     <exclusion>
                         <groupId>org.apache.activemq</groupId>
                         <artifactId>activemq-broker</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.qubership.atp.auth</groupId>
-                        <artifactId>atp-auth-spring-boot-starter</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -650,6 +695,16 @@
                 <version>${io.undertow.undertow-core.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.undertow</groupId>
+                <artifactId>undertow-servlet</artifactId>
+                <version>${io.undertow.undertow-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.undertow</groupId>
+                <artifactId>undertow-websockets-jsr</artifactId>
+                <version>${io.undertow.undertow-core.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jboss.xnio</groupId>
                 <artifactId>xnio-api</artifactId>
                 <version>${org.jboss.xnio.version}</version>
@@ -660,10 +715,75 @@
                 <version>${org.jboss.xnio.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>2.13.9</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${ch.qos.logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${ch.qos.logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>1.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>3.9.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.lz4</groupId>
+                        <artifactId>lz4-java</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>at.yawk.lz4</groupId>
+                <artifactId>lz4-java</artifactId>
+                <version>1.10.1</version>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-<!--                <version>2.10.0</version>-->
-                <version>2.12.6</version>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>5.2.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast-all</artifactId>
+                <version>4.2.8</version>
+            </dependency>
+            <dependency>
+                <groupId>arg.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.18.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -29,8 +29,8 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/lib/${project.build.finalName}</outputDirectory>
-                            <!-- <excludeTransitive>true</excludeTransitive> org.jboss,io.netty, -->
-                            <excludeGroupIds>org.springframework,org.apache.sshd,org.apache.httpcomponents,io.github.openfeign,io.zipkin.brave,io.zipkin.zipkin2,io.zipkin.reporter2,org.keycloak,io.undertow,
+                            <excludeTransitive>true</excludeTransitive>
+                            <!--<excludeGroupIds>org.springframework,org.apache.sshd,org.apache.httpcomponents,io.github.openfeign,io.zipkin.brave,io.zipkin.zipkin2,io.zipkin.reporter2,org.keycloak,io.undertow,
                                 com.netflix.archaius,org.aspectj,com.squareup.okhttp3,com.squareup.okio,jakarta.annotation,org.glassfish,
                                 jakarta.validation,io.reactivex,com.nimbusds,com.netflix.hystrix,org.qubership.atp.auth,
                                 org.bouncycastle,org.hdrhistogram,org.synchronoss.cloud,com.github.ben-manes.caffeine,
@@ -38,14 +38,16 @@
                                 net.bytebuddy,org.hibernate,
                                 org.apache.cxf, org.apache.camel, org.apache.neethi, com.google.guava,
                                 org.apache.ws.xmlschema, org.postgresql, org.jdom, joda-time, com.fasterxml.woodstox,
-                                org.openclover, org.apache.activemq, org.projectlombok
+                                org.openclover, org.apache.activemq, org.projectlombok,
+                                org.qubership.atp.multitenancy, org.qubership.atp.common, org.apache.velocity
                             </excludeGroupIds>
                             <excludeArtifactIds>querydsl-core,pcap4j-core,camel-ssh,camel-http-common,camel-http4,commons-lang,
                                 commons-fileupload,commons-configuration,snakeyaml,reactor-netty,reactor-core,jul-to-slf4j,jcip-annotations,
                                 error_prone_annotations,javax.annotation-api,antlr,dom4j,oss-parent,qubership-atp-common-logging,
                                 javax.persistence-api,clover-maven-plugin,
-                                jackson-annotations
-                            </excludeArtifactIds>
+                                jackson-annotations,
+                                atp-crypt, atp-integration-spring-boot-starter, hazelcast-all
+                            </excludeArtifactIds> -->
                             <!--if you have NoClassFoundException for this trigger then  include needed dependency here-->
                             <includeScope>runtime</includeScope>
                         </configuration>

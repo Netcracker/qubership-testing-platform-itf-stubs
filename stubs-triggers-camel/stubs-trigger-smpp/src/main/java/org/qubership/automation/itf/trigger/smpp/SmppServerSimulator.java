@@ -22,7 +22,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import org.qubership.automation.itf.core.model.transport.ConnectionProperties;
 import org.qubership.automation.itf.trigger.smpp.inbound.SmppTrigger;
 import org.slf4j.Logger;
@@ -89,7 +90,8 @@ public class SmppServerSimulator {
 
     private void initServerHandler() {
         serverHandler = new SmppServerHandler() {
-            public void sessionBindRequested(Long along, SmppSessionConfiguration smppSessionConfiguration,
+            public void sessionBindRequested(Long along,
+                                             SmppSessionConfiguration smppSessionConfiguration,
                                              BaseBind baseBind) {
                 LoggingOptions loggingOptions = new LoggingOptions();
                 loggingOptions.setLogPdu(false);
@@ -125,7 +127,7 @@ public class SmppServerSimulator {
     private static class MyThreadFactory implements ThreadFactory {
         AtomicInteger sequence = new AtomicInteger(0);
 
-        public Thread newThread(@NotNull Runnable runnable) {
+        public Thread newThread(@Nonnull Runnable runnable) {
             Thread t = new Thread(runnable);
             t.setName("SmppServerSessionWindowMonitorPool-" + sequence.getAndIncrement());
             return t;
