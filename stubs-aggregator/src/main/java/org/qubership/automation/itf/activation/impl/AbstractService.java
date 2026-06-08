@@ -177,6 +177,7 @@ public abstract class AbstractService implements ActivationService {
                     Metric.ATP_ITF_STUBS_ERROR_TRIGGER_BY_PROJECT);
             log.error(errorDescription, exc);
             try {
+                MdcUtils.put(MdcField.PROJECT_ID.toString(), triggerSample.getProjectUuid());
                 updateTriggerStatus(triggerSample.getTriggerId(), TriggerState.ERROR.toString(), errorDescription);
             } catch (Exception e) {
                 log.error("Error while updating trigger status via executor: ", exc);
@@ -229,6 +230,7 @@ public abstract class AbstractService implements ActivationService {
                         + " for trigger with id: " + triggerSample.getTriggerId());
         }
         try {
+            MdcUtils.put(MdcField.PROJECT_ID.toString(), triggerSample.getProjectUuid());
             response = updateTriggerStatus(triggerSample.getTriggerId(), state.toString(), StringUtils.EMPTY);
             triggerSample.setTriggerState(state);
         } catch (Exception e) {
