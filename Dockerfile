@@ -15,7 +15,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.23/community/" >/etc/apk/repo
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.23/main/" >>/etc/apk/repositories && \
     apk add --update --no-cache --no-check-certificate \
         bash=5.3.3-r1 \
-        curl=8.17.0-r1 \
+        curl=8.19.0-r0 \
         font-dejavu=2.37-r6 \
         fontconfig=2.17.1-r0 \
         gcompat=1.1.0-r4 \
@@ -23,19 +23,23 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.23/community/" >/etc/apk/repo
         git=2.52.0-r0 \
         htop=3.4.1-r1 \
         jq=1.8.1-r0 \
-        libpng=1.6.54-r0 \
-        libcrypto3=3.5.5-r0 \
-        libssl3=3.5.5-r0 \
+        libpng=1.6.58-r1 \
+        libcrypto3=3.5.6-r0 \
+        libexpat=2.7.5-r0 \
+        libssl3=3.5.6-r0 \
+        musl=1.2.5-r23 \
+        musl-utils=1.2.5-r23 \
         net-tools=2.10-r3 \
         nss_wrapper=1.1.12-r1 \
         pcre2=10.47-r0 \
         procps-ng=4.0.5-r0 \
-        sops=3.11.0-r3 \
+        sops=3.11.0-r6 \
         sysstat=12.7.8-r0 \
         tcpdump=4.99.5-r1 \
         wget=1.25.0-r2 \
-        xz-libs=5.8.2-r0 \
-        zip=3.0-r13 && \
+        xz-libs=5.8.3-r0 \
+        zip=3.0-r13 \
+        zlib=1.3.2-r0 && \
       rm -rf /var/cache/apk/*
 
 COPY deployments/install deployments/install
