@@ -34,15 +34,23 @@ public class SystemServerTriggerActivationService extends AbstractService {
      */
     public void perform(ServerTriggerSyncRequest syncRequest, String tenantId) {
         ServerTriggerStateResponse deactivationResult =
-                performBulkAction(syncRequest.getTriggerIdToDeactivate(), new ConcurrentHashMap<>(),
-                        ActivationServiceConstants.DEACTIVATE, syncRequest.getUser(), syncRequest.getSessionId());
+                performBulkAction(
+                        syncRequest.getTriggerIdToDeactivate(),
+                        new ConcurrentHashMap<>(),
+                        ActivationServiceConstants.DEACTIVATE,
+                        syncRequest.getUser(),
+                        syncRequest.getSessionId()
+                );
         ServerTriggerStateResponse reactivationResult =
                 performBulkAction(
                         syncRequest.getTriggerIdToReactivate().stream().filter(
                                 triggerSample -> TriggerState.ACTIVE.equals(triggerSample.getTriggerState()))
                                 .collect(Collectors.toList()),
                         new ConcurrentHashMap<>(),
-                        ActivationServiceConstants.SYNC, syncRequest.getUser(), syncRequest.getSessionId());
+                        ActivationServiceConstants.SYNC,
+                        syncRequest.getUser(),
+                        syncRequest.getSessionId()
+                );
         deactivationResult.merge(reactivationResult);
         getSender().send(deactivationResult, tenantId);
     }

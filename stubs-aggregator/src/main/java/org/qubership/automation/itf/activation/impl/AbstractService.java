@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.StringUtils;
+import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.qubership.automation.itf.activation.ActivationServiceConstants;
 import org.qubership.automation.itf.activation.ThreadPoolProvider;
 import org.qubership.automation.itf.communication.StubsIntegrationMessageSender;
@@ -35,6 +36,7 @@ import org.qubership.automation.itf.core.model.communication.UpdateTriggerStatus
 import org.qubership.automation.itf.core.model.communication.message.ServerTriggerStateResponse;
 import org.qubership.automation.itf.core.model.communication.message.TriggerStatusMessage;
 import org.qubership.automation.itf.core.util.constants.TriggerState;
+import org.qubership.automation.itf.core.util.mdc.MdcField;
 import org.qubership.automation.itf.integration.executor.ExecutorService;
 import org.qubership.automation.itf.monitoring.metrics.Metric;
 import org.qubership.automation.itf.monitoring.metrics.MetricsAggregateService;
@@ -128,11 +130,14 @@ public abstract class AbstractService implements ActivationService {
                                    String sessionId,
                                    String projectUuid) {
         Map<BigInteger, TriggerState> triggerStates = new ConcurrentHashMap<>();
-        threadPoolProvider.getForkJoinPool().submit(() -> triggers.stream().parallel().forEach(triggerSample -> {
-            log.info("Project UUID {}, SessionId {}, user {}, action '{}' for Trigger [{}] is started...",
-                    projectUuid, sessionId, user, action, triggerSample.getTriggerId());
-            performActionForTrigger(triggerSample, actionValue, user, isSuccess, availableServers);
-            triggerStates.put(triggerSample.getTriggerId(), triggerSample.getTriggerState());
+        threadPoolProvider.getForkJoinPool().submit(() -> triggers.stream().parallel().forEach(
+                triggerSample -> {
+                    MdcUtils.put(MdcField.PROJECT_ID.toString(), triggerSample.getProjectUuid());
+                    MdcUtils.put(MdcField.SESSION_ID.toString(), sessionId);
+                    log.info("Project UUID {}, SessionId {}, user {}, action '{}' for Trigger [{}] is started...",
+                            projectUuid, sessionId, user, action, triggerSample.getTriggerId());
+                    performActionForTrigger(triggerSample, actionValue, user, isSuccess, availableServers);
+                    triggerStates.put(triggerSample.getTriggerId(), triggerSample.getTriggerState());
         }));
         waitForCompletion(sessionId, triggers.size(), triggerStates);
     }
@@ -172,6 +177,7 @@ public abstract class AbstractService implements ActivationService {
                     Metric.ATP_ITF_STUBS_ERROR_TRIGGER_BY_PROJECT);
             log.error(errorDescription, exc);
             try {
+                MdcUtils.put(MdcField.PROJECT_ID.toString(), triggerSample.getProjectUuid());
                 updateTriggerStatus(triggerSample.getTriggerId(), TriggerState.ERROR.toString(), errorDescription);
             } catch (Exception e) {
                 log.error("Error while updating trigger status via executor: ", exc);
@@ -224,6 +230,7 @@ public abstract class AbstractService implements ActivationService {
                         + " for trigger with id: " + triggerSample.getTriggerId());
         }
         try {
+            MdcUtils.put(MdcField.PROJECT_ID.toString(), triggerSample.getProjectUuid());
             response = updateTriggerStatus(triggerSample.getTriggerId(), state.toString(), StringUtils.EMPTY);
             triggerSample.setTriggerState(state);
         } catch (Exception e) {
@@ -269,9 +276,12 @@ public abstract class AbstractService implements ActivationService {
             log.info("Session {}, action {}: No triggers to process.", sessionId, action);
             return new ServerTriggerStateResponse(triggerStates, StringUtils.EMPTY, user, sessionId);
         }
-        threadPoolProvider.getForkJoinPool().submit(() -> triggers.stream().parallel().forEach(triggerSample -> {
-            performActionForTrigger(triggerSample, action, availableServers);
-            triggerStates.put(triggerSample.getTriggerId(), triggerSample.getTriggerState());
+        threadPoolProvider.getForkJoinPool().submit(() -> triggers.stream().parallel().forEach(
+                triggerSample -> {
+                    MdcUtils.put(MdcField.PROJECT_ID.toString(), triggerSample.getProjectUuid());
+                    MdcUtils.put(MdcField.SESSION_ID.toString(), sessionId);
+                    performActionForTrigger(triggerSample, action, availableServers);
+                    triggerStates.put(triggerSample.getTriggerId(), triggerSample.getTriggerState());
         }));
         waitForCompletion(sessionId, triggers.size(), triggerStates);
         return new ServerTriggerStateResponse(triggerStates, StringUtils.EMPTY, user, sessionId);
