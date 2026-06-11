@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.qubership.mockingbird</groupId>
         <artifactId>stubs</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -13,13 +13,13 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring.boot.version>3.5.12</spring.boot.version>
+        <spring.boot.version>3.5.14</spring.boot.version>
         <spring.cloud.version>2025.0.2</spring.cloud.version>
 
-        <atp.itf.core.version>5.0.5-SNAPSHOT</atp.itf.core.version>
-        <atp.multitenancy.version>1.0.1-SNAPSHOT</atp.multitenancy.version>
-        <atp.common.version>1.0.1-SNAPSHOT</atp.common.version>
-        <atp.auth.version>2.0.3-SNAPSHOT</atp.auth.version>
+        <atp.itf.core.version>5.1.14-SNAPSHOT</atp.itf.core.version>
+        <atp.multitenancy.version>1.0.0</atp.multitenancy.version>
+        <atp.common.version>1.0.0</atp.common.version>
+        <atp.auth.version>2.0.0</atp.auth.version>
 
         <camel.version>4.14.6</camel.version>
         <activemq.version>5.19.5</activemq.version>
