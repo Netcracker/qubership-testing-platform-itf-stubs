@@ -28,7 +28,6 @@
         <!--pom for compile ready project and some local resources-->
         <module>stubs-common</module>
         <module>stubs-communication</module>
-
     </modules>
 
     <name>${project.groupId}:${project.artifactId}</name>
