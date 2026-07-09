@@ -161,6 +161,10 @@
             <artifactId>janino</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.qubership.atp.auth</groupId>
+            <artifactId>atp-auth-impl</artifactId>
+        </dependency>
         <!--Joined mockingbird modules start-->
         <dependency>
             <groupId>org.qubership.atp</groupId>

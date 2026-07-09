@@ -17,6 +17,7 @@
         <org.springframework.version>5.2.0.RELEASE</org.springframework.version>
         <spring.cloud.version>2021.0.8</spring.cloud.version>
         <atp.itf.core.version>4.4.117-SNAPSHOT</atp.itf.core.version>
+        <atp.auth.version>1.2.80</atp.auth.version>
         <camel.version>2.20.4</camel.version>
         <activemq.version>5.15.16</activemq.version>
         <aspectj.version>1.8.10</aspectj.version>
@@ -36,6 +37,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.qubership.atp.auth</groupId>
+                <artifactId>atp-auth-impl</artifactId>
+                <version>${atp.auth.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.qubership.atp</groupId>
                 <artifactId>atp-itf-core</artifactId>
