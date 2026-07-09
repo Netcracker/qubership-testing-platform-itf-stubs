@@ -18,8 +18,8 @@
 package org.qubership.automation.itf.integration.config.jms.template.instance;
 
 import javax.jms.ConnectionFactory;
+import javax.validation.constraints.NotNull;
 
-import org.jetbrains.annotations.NotNull;
 import org.qubership.automation.itf.integration.config.jms.DefaultJmsTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

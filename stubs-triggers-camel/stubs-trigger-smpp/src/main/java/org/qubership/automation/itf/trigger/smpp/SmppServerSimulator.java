@@ -17,12 +17,13 @@
 
 package org.qubership.automation.itf.trigger.smpp;
 
+import javax.validation.constraints.NotNull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jetbrains.annotations.NotNull;
+
 import org.qubership.automation.itf.core.model.transport.ConnectionProperties;
 import org.qubership.automation.itf.trigger.smpp.inbound.SmppTrigger;
 import org.slf4j.Logger;
