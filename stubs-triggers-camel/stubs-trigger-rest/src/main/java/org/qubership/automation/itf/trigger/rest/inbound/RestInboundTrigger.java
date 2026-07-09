@@ -82,6 +82,8 @@ public class RestInboundTrigger extends HttpInboundTrigger {
                             MetricsAggregateService.putCommonMetrics(projectUuid, sessionId);
                             LOGGER.info("Project: {}. SessionId: {}. Request is received by endpoint: {}",
                                     projectUuid, sessionId, currentEndPoint);
+                            collectMetric(TransportType.REST_INBOUND,
+                                    (BigInteger) getTriggerConfigurationDescriptor().getId());
                             OffsetDateTime started = OffsetDateTime.now();
                             prepareFilters((ServletEndpoint) exchange.getFromEndpoint());
                             addClientAddressInHeader(exchange);

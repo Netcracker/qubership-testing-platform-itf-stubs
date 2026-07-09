@@ -17,10 +17,12 @@
 
 package org.qubership.automation.itf.monitoring.metrics;
 
+import java.math.BigInteger;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.qubership.automation.itf.JvmSettings;
 import org.qubership.automation.itf.core.model.communication.TransportType;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.prometheus.PrometheusCounter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,6 +50,7 @@ public class MetricsAggregateService {
     private Counter.Builder stubsErrorTriggerCounter;
     private static Counter.Builder stubsIncomingMessageSizeCounter;
     private static Counter.Builder stubsIncomingRequestCounter;
+    private static Counter.Builder stubsUsageIncomingRequestCounter;
     private static MeterRegistry meterRegistry;
 
     /**
@@ -68,6 +72,8 @@ public class MetricsAggregateService {
                 .description("total number of incoming message size");
         stubsIncomingRequestCounter = Counter.builder(Metric.ATP_ITF_STUBS_INCOMING_REQUEST_BY_PROJECT.getValue())
                 .description("total number of incoming request");
+        stubsUsageIncomingRequestCounter = Counter.builder(Metric.ATP_ITF_STUBS_USAGE_INCOMING_REQUEST_BY_PROJECT_TOTAL.getValue())
+                .description("total number usage of incoming request");
     }
 
     /**
@@ -96,6 +102,62 @@ public class MetricsAggregateService {
                 .tag(MetricTag.RESULT.getValue(), String.valueOf(result))
                 .register(meterRegistry)
                 .increment();
+    }
+
+    /**
+     * Registration usage requests counter by projectUuid, transportType, triggerId, triggerName, envId and envName.
+     *
+     * @param projectUuid - project Uuid,
+     * @param transportType - transport Type,
+     * @param triggerId - trigger id,
+     * @param triggerName - trigger name,
+     * @param envId - envId id,
+     * @param envName - environment name.
+     */
+    public static void registerUsageIncomingRequestToProject(@NonNull UUID projectUuid,
+                                                         @NonNull TransportType transportType,
+                                                         @NonNull BigInteger triggerId,
+                                                         String triggerName, @NonNull BigInteger envId, String envName) {
+        stubsUsageIncomingRequestCounter
+                .tag(MetricTag.PROJECT.getValue(), projectUuid.toString())
+                .tag(MetricTag.TRANSPORT_TYPE.getValue(), transportType.name())
+                .tag(MetricTag.ENV_ID.getValue(), envId.toString())
+                .tag(MetricTag.ENV_NAME.getValue(), envName)
+                .tag(MetricTag.TRIGGER_ID.getValue(), triggerId.toString())
+                .tag(MetricTag.TRIGGER_NAME.getValue(), Objects.isNull(triggerName) ? StringUtils.EMPTY : triggerName)
+                .register(meterRegistry);
+    }
+
+    /**
+     * Increment usage requests counter by transportType and triggerId.
+     *
+     * @param transportType - transport Type,
+     * @param triggerId - trigger id.
+     */
+    public static void incrementUsageIncomingRequestToProject(@NonNull TransportType transportType,
+                                                              @NonNull BigInteger triggerId) {
+        Counter counter = meterRegistry
+                .find(Metric.ATP_ITF_STUBS_USAGE_INCOMING_REQUEST_BY_PROJECT_TOTAL.getValue())
+                .tag(MetricTag.TRANSPORT_TYPE.getValue(), transportType.name())
+                .tag(MetricTag.TRIGGER_ID.getValue(), triggerId.toString())
+                .counter();
+        if (Objects.nonNull(counter)) {
+            counter.increment();
+        }
+    }
+
+    /**
+     * Remove usage requests counter metric by triggerId.
+     *
+     * @param triggerId - trigger id.
+     */
+    public static void removeUsageMetricIncomingRequest(@NonNull BigInteger triggerId) {
+        meterRegistry.getMeters().stream().parallel()
+                .filter(meter -> meter instanceof PrometheusCounter)
+                .filter(meter -> meter.getId().getName().equals(
+                        Metric.ATP_ITF_STUBS_USAGE_INCOMING_REQUEST_BY_PROJECT_TOTAL.getValue()))
+                .filter(m -> triggerId.toString().equals(m.getId().getTag(MetricTag.TRIGGER_ID.getValue())))
+                .forEach(meterRegistry::remove);
     }
 
     /**

@@ -16,7 +16,7 @@
         <spring.boot.version>2.7.18</spring.boot.version>
         <org.springframework.version>5.2.0.RELEASE</org.springframework.version>
         <spring.cloud.version>2021.0.8</spring.cloud.version>
-        <atp.itf.core.version>4.4.106</atp.itf.core.version>
+        <atp.itf.core.version>4.4.117-SNAPSHOT</atp.itf.core.version>
         <camel.version>2.20.4</camel.version>
         <activemq.version>5.15.16</activemq.version>
         <aspectj.version>1.8.10</aspectj.version>

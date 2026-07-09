@@ -27,7 +27,11 @@ public enum MetricTag {
     PROJECT("project_id"),
     RESULT("result"),
     TRANSPORT_TYPE("transport_type"),
-    ENDPOINT("endpoint");
+    ENDPOINT("endpoint"),
+    ENV_ID("env_id"),
+    ENV_NAME("env_name"),
+    TRIGGER_ID("trigger_id"),
+    TRIGGER_NAME("trigger_name");
     private final String value;
 
 }

@@ -20,6 +20,7 @@ package org.qubership.automation.itf.trigger.http.inbound;
 import static org.qubership.automation.itf.trigger.camel.Helper.isTrue;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -95,6 +96,10 @@ public abstract class HttpInboundTrigger extends AbstractCamelTrigger {
         MetricsAggregateService.incrementIncomingRequestToProject(projectUuid, transportType, resultState);
         MetricsAggregateService.recordIncomingRequestDuration(projectUuid, transportType, endPoint,
                         Duration.between(started, OffsetDateTime.now()));
+    }
+
+    protected void collectMetric(TransportType transportType, BigInteger triggerId) {
+        MetricsAggregateService.incrementUsageIncomingRequestToProject(transportType, triggerId);
     }
 
     /**
