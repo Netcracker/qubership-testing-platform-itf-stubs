@@ -173,8 +173,8 @@ public abstract class AbstractService implements ActivationService {
                     triggerSample.getTriggerId(),
                     exc.getCause()
             );
-            metricsAggregateService.incrementRequestToProject(triggerSample.getProjectUuid(),
-                    Metric.ATP_ITF_STUBS_ERROR_TRIGGER_BY_PROJECT);
+//            metricsAggregateService.incrementRequestToProject(triggerSample.getProjectUuid(),
+//                    Metric.ATP_ITF_STUBS_ERROR_TRIGGER_BY_PROJECT);
             log.error(errorDescription, exc);
             try {
                 MdcUtils.put(MdcField.PROJECT_ID.toString(), triggerSample.getProjectUuid());
@@ -202,25 +202,25 @@ public abstract class AbstractService implements ActivationService {
                         triggerMaintainer.deactivate(triggerSample);
                     }
                     state = TriggerState.INACTIVE;
+                    metricsAggregateService.registerTriggerMetricByProject(triggerSample.getProjectUuid(), false);
                     metricsAggregateService.removeUsageMetricIncomingRequest(triggerSample.getTriggerId());
                 } else {
                     triggerMaintainer.activate(triggerSample, availableServers);
                     state = TriggerState.ACTIVE;
-                    metricsAggregateService.incrementRequestToProject(triggerSample.getProjectUuid(),
-                            Metric.ATP_ITF_STUBS_ACTIVE_TRIGGER_BY_PROJECT);
+                    metricsAggregateService.registerTriggerMetricByProject(triggerSample.getProjectUuid(), true);
                     metricsAggregateService.registerUsageIncomingRequestToProject(triggerSample.getProjectUuid(), triggerSample.getTransportType(), triggerSample.getTriggerId(), triggerSample.getTriggerName(), triggerSample.getEnvId(), triggerSample.getEnvName());
                 }
                 break;
             case ACTIVATE:
                 triggerMaintainer.activate(triggerSample, availableServers);
                 state = TriggerState.ACTIVE;
-                metricsAggregateService.incrementRequestToProject(triggerSample.getProjectUuid(),
-                        Metric.ATP_ITF_STUBS_ACTIVE_TRIGGER_BY_PROJECT);
+                metricsAggregateService.registerTriggerMetricByProject(triggerSample.getProjectUuid(), true);
                 metricsAggregateService.registerUsageIncomingRequestToProject(triggerSample.getProjectUuid(), triggerSample.getTransportType(), triggerSample.getTriggerId(), triggerSample.getTriggerName(), triggerSample.getEnvId(), triggerSample.getEnvName());
                 break;
             case DEACTIVATE:
                 triggerMaintainer.deactivate(triggerSample);
                 state = TriggerState.INACTIVE;
+                metricsAggregateService.registerTriggerMetricByProject(triggerSample.getProjectUuid(), false);
                 metricsAggregateService.removeUsageMetricIncomingRequest(triggerSample.getTriggerId());
                 break;
             case SYNC:

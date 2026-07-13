@@ -21,6 +21,8 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
@@ -33,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.prometheus.PrometheusCounter;
 import lombok.NonNull;
@@ -46,8 +49,9 @@ public class MetricsAggregateService {
             Config.getConfig().getIntOrDefault("logging.incoming.request.message.max.size",5242880);
     private static int MAX_SIZE_TO_MB = MAX_SIZE / (1024 * 1024);
 
-    private Counter.Builder stubsActiveTriggerCounter;
-    private Counter.Builder stubsErrorTriggerCounter;
+
+    private final static ConcurrentHashMap<UUID, AtomicInteger> stubsActiveTriggersMap = new ConcurrentHashMap<>();
+//    private Counter.Builder stubsErrorTriggerCounter; #ToDO - think about question - 'we needed that metric or no ?'
     private static Counter.Builder stubsIncomingMessageSizeCounter;
     private static Counter.Builder stubsIncomingRequestCounter;
     private static Counter.Builder stubsUsageIncomingRequestCounter;
@@ -63,10 +67,8 @@ public class MetricsAggregateService {
             justification = "No way due to usage inside Camel .process() method")
     public MetricsAggregateService(MeterRegistry meterRegistry) {
         MetricsAggregateService.meterRegistry = meterRegistry;
-        stubsActiveTriggerCounter = Counter.builder(Metric.ATP_ITF_STUBS_ACTIVE_TRIGGER_BY_PROJECT.getValue())
-                .description("total number of active trigger");
-        stubsErrorTriggerCounter = Counter.builder(Metric.ATP_ITF_STUBS_ERROR_TRIGGER_BY_PROJECT.getValue())
-                .description("total number of error trigger");
+//        stubsErrorTriggerCounter = Counter.builder(Metric.ATP_ITF_STUBS_ERROR_TRIGGER_BY_PROJECT.getValue())
+//                .description("total number of error trigger");
         stubsIncomingMessageSizeCounter = Counter.builder(Metric.ATP_ITF_STUBS_INCOMING_REQUEST_MESSAGE_SIZE_BY_PROJECT
                         .getValue())
                 .description("total number of incoming message size");
@@ -76,15 +78,15 @@ public class MetricsAggregateService {
                 .description("total number usage of incoming request");
     }
 
-    /**
-     * Increment requests counter for metric and projectUuid.
-     *
-     * @param projectUuid - project Uuid,
-     * @param metric - metric to increment.
-     */
-    public void incrementRequestToProject(@NonNull UUID projectUuid, @NonNull Metric metric) {
-        requestToProject(projectUuid, metric);
-    }
+//    /**
+//     * Increment requests counter for metric and projectUuid.
+//     *
+//     * @param projectUuid - project Uuid,
+//     * @param metric - metric to increment.
+//     */
+//    public void incrementRequestToProject(@NonNull UUID projectUuid, @NonNull Metric metric) {
+//        requestToProject(projectUuid, metric);
+//    }
 
     /**
      * Increment requests counter by projectUuid, transportType and execution result.
@@ -218,22 +220,44 @@ public class MetricsAggregateService {
         MdcUtils.put(MdcField.SESSION_ID.toString(), sessionId);
     }
 
-    private void requestToProject(UUID projectUuid, Metric metric) {
-        switch (metric) {
-            case ATP_ITF_STUBS_ACTIVE_TRIGGER_BY_PROJECT:
-                stubsActiveTriggerCounter
+//    private void requestToProject(UUID projectUuid, Metric metric) {
+//        switch (metric) {
+//            case ATP_ITF_STUBS_ACTIVE_TRIGGER_BY_PROJECT:
+//                stubsActiveTriggerCounter
+//                        .tag(MetricTag.PROJECT.getValue(), projectUuid.toString())
+//                        .register(meterRegistry)
+//                        .increment();
+//                break;
+//            case ATP_ITF_STUBS_ERROR_TRIGGER_BY_PROJECT:
+//                stubsErrorTriggerCounter
+//                        .tag(MetricTag.PROJECT.getValue(), projectUuid.toString())
+//                        .register(meterRegistry)
+//                        .increment();
+//                break;
+//            default:
+//                break;
+//        }
+//    }
+
+    public static void registerTriggerMetricByProject(@NonNull UUID projectUuid, boolean isIncrement) {
+        AtomicInteger counter;
+        if (stubsActiveTriggersMap.containsKey(projectUuid)) {
+            counter = stubsActiveTriggersMap.get(projectUuid);
+        } else {
+            counter = stubsActiveTriggersMap.computeIfAbsent(projectUuid, id -> {
+                AtomicInteger value = new AtomicInteger();
+                Gauge.builder(Metric.ATP_ITF_STUBS_ACTIVE_TRIGGER_BY_PROJECT.getValue(), value, AtomicInteger::get)
                         .tag(MetricTag.PROJECT.getValue(), projectUuid.toString())
-                        .register(meterRegistry)
-                        .increment();
-                break;
-            case ATP_ITF_STUBS_ERROR_TRIGGER_BY_PROJECT:
-                stubsErrorTriggerCounter
-                        .tag(MetricTag.PROJECT.getValue(), projectUuid.toString())
-                        .register(meterRegistry)
-                        .increment();
-                break;
-            default:
-                break;
+                        .description("total number of active trigger")
+                        .register(meterRegistry);
+                return value;
+            });
+        }
+
+        if (isIncrement) {
+            counter.incrementAndGet();
+        } else {
+            counter.decrementAndGet();
         }
     }
 }
