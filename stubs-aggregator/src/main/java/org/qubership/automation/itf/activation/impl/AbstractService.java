@@ -202,26 +202,18 @@ public abstract class AbstractService implements ActivationService {
                         triggerMaintainer.deactivate(triggerSample);
                     }
                     state = TriggerState.INACTIVE;
-                    metricsAggregateService.registerTriggerMetricByProject(triggerSample.getProjectUuid(), false);
-                    metricsAggregateService.removeUsageMetricIncomingRequest(triggerSample.getTriggerId());
                 } else {
                     triggerMaintainer.activate(triggerSample, availableServers);
                     state = TriggerState.ACTIVE;
-                    metricsAggregateService.registerTriggerMetricByProject(triggerSample.getProjectUuid(), true);
-                    metricsAggregateService.registerUsageIncomingRequestToProject(triggerSample.getProjectUuid(), triggerSample.getTransportType(), triggerSample.getTriggerId(), triggerSample.getTriggerName(), triggerSample.getEnvId(), triggerSample.getEnvName());
                 }
                 break;
             case ACTIVATE:
                 triggerMaintainer.activate(triggerSample, availableServers);
                 state = TriggerState.ACTIVE;
-                metricsAggregateService.registerTriggerMetricByProject(triggerSample.getProjectUuid(), true);
-                metricsAggregateService.registerUsageIncomingRequestToProject(triggerSample.getProjectUuid(), triggerSample.getTransportType(), triggerSample.getTriggerId(), triggerSample.getTriggerName(), triggerSample.getEnvId(), triggerSample.getEnvName());
                 break;
             case DEACTIVATE:
                 triggerMaintainer.deactivate(triggerSample);
                 state = TriggerState.INACTIVE;
-                metricsAggregateService.registerTriggerMetricByProject(triggerSample.getProjectUuid(), false);
-                metricsAggregateService.removeUsageMetricIncomingRequest(triggerSample.getTriggerId());
                 break;
             case SYNC:
             case RE_ACTIVATE:
@@ -236,11 +228,45 @@ public abstract class AbstractService implements ActivationService {
         try {
             MdcUtils.put(MdcField.PROJECT_ID.toString(), triggerSample.getProjectUuid());
             response = updateTriggerStatus(triggerSample.getTriggerId(), state.toString(), StringUtils.EMPTY);
+            putTriggerMetrics(triggerSample, action);
             triggerSample.setTriggerState(state);
         } catch (Exception e) {
             log.error("Error while updating trigger status via executor: ", e);
         }
         return response;
+    }
+
+    private void putTriggerMetrics(TriggerSample triggerSample, ActivationServiceConstants action) {
+        switch (action) {
+            case SWITCH:
+                if (!triggerSample.getTriggerState().equals(TriggerState.INACTIVE)) {
+                    if (TriggerState.ACTIVE.equals(triggerSample.getTriggerState())) {
+                        metricsAggregateService.registerTriggerMetric(triggerSample.getProjectUuid(),false);
+                        metricsAggregateService.removeUsageMetricIncomingRequest(triggerSample.getTriggerId());
+                    }
+                } else {
+                    if (TriggerState.INACTIVE.equals(triggerSample.getTriggerState())) {
+                        metricsAggregateService.registerTriggerMetric(triggerSample.getProjectUuid(),true);
+                        metricsAggregateService.registerUsageIncomingRequestToProject(triggerSample.getProjectUuid(),
+                            triggerSample.getTransportType(), triggerSample.getTriggerId(),
+                                triggerSample.getTriggerName(), triggerSample.getEnvId(), triggerSample.getEnvName());
+                    }
+                }
+                break;
+            case ACTIVATE:
+                metricsAggregateService.registerTriggerMetric(triggerSample.getProjectUuid(),true);
+                metricsAggregateService.registerUsageIncomingRequestToProject(triggerSample.getProjectUuid(),
+                    triggerSample.getTransportType(), triggerSample.getTriggerId(), triggerSample.getTriggerName(),
+                    triggerSample.getEnvId(), triggerSample.getEnvName());
+                break;
+            case DEACTIVATE:
+                if (TriggerState.ACTIVE.equals(triggerSample.getTriggerState())) {
+                    metricsAggregateService.registerTriggerMetric(triggerSample.getProjectUuid(),false);
+                    metricsAggregateService.removeUsageMetricIncomingRequest(triggerSample.getTriggerId());
+                }
+                break;
+            default:
+        }
     }
 
     /**

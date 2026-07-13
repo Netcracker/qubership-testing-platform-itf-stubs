@@ -123,10 +123,10 @@ public class MetricsAggregateService {
         stubsUsageIncomingRequestCounter
                 .tag(MetricTag.PROJECT.getValue(), projectUuid.toString())
                 .tag(MetricTag.TRANSPORT_TYPE.getValue(), transportType.name())
-                .tag(MetricTag.ENV_ID.getValue(), envId.toString())
-                .tag(MetricTag.ENV_NAME.getValue(), envName)
                 .tag(MetricTag.TRIGGER_ID.getValue(), triggerId.toString())
                 .tag(MetricTag.TRIGGER_NAME.getValue(), Objects.isNull(triggerName) ? StringUtils.EMPTY : triggerName)
+                .tag(MetricTag.ENV_ID.getValue(), envId.toString())
+                .tag(MetricTag.ENV_NAME.getValue(), envName)
                 .register(meterRegistry);
     }
 
@@ -239,7 +239,7 @@ public class MetricsAggregateService {
 //        }
 //    }
 
-    public static void registerTriggerMetricByProject(@NonNull UUID projectUuid, boolean isIncrement) {
+    public static void registerTriggerMetric(@NonNull UUID projectUuid, boolean isIncrement) {
         AtomicInteger counter;
         if (stubsActiveTriggersMap.containsKey(projectUuid)) {
             counter = stubsActiveTriggersMap.get(projectUuid);

@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public enum Metric {
 
     ATP_ITF_STUBS_ACTIVE_TRIGGER_BY_PROJECT("atp_itf_stubs_active_trigger_by_project"),
-    ATP_ITF_STUBS_ERROR_TRIGGER_BY_PROJECT("atp_itf_stubs_error_trigger_by_project"),
+//    ATP_ITF_STUBS_ERROR_TRIGGER_BY_PROJECT("atp_itf_stubs_error_trigger_by_project"),
     ATP_ITF_STUBS_INCOMING_REQUEST_BY_PROJECT("atp_itf_stubs_incoming_request_by_project"),
     ATP_ITF_STUBS_USAGE_INCOMING_REQUEST_BY_PROJECT_TOTAL("atp_itf_stubs_usage_incoming_request_by_project_total"),
     ATP_ITF_STUBS_INCOMING_REQUEST_SECONDS_BY_PROJECT("atp_itf_stubs_incoming_request_seconds_by_project"),
