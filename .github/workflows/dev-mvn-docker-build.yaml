@@ -121,7 +121,7 @@ jobs:
 
       - name: Build and Publish Docker Image
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@8c6dbeb901920bae9f40d7d7b646d8d9127e1ce7 #v2.4.0
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@b6bee6f61fdc8b367777c1173fc852a58878a6a7 #v2.5.0
         with:
           ref: ${{ github.ref }}
           dry-run: false
