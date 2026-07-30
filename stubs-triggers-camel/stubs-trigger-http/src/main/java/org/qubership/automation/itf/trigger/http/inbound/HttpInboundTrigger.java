@@ -309,12 +309,9 @@ public abstract class HttpInboundTrigger extends AbstractCamelTrigger {
                 uriParams = uriParams + "?" + query;
             }
             addProperties.put("uriParams", java.net.URLDecoder.decode(uriParams, JvmSettings.CHARSET_NAME));
-            addProperties.put("method", exchange.getIn().getHeader("CamelHttpMethod").toString());
-            // DF also puts all headers to connectionProperties. I don't think we (camel) should do the same...
-            // Commented by Alexander Kapustin
-            //addProperties.put("headers", exchange.getIn().getHeaders());
+            addProperties.put("method", exchange.getIn().getHeader("CamelHttpMethod", "GET").toString());
         } catch (UnsupportedEncodingException ex) {
-            // Silently go away now. May be we should throw an exception or log it - it should be discussed
+            // Silently go away now. May be, we should throw an exception or log it - it should be discussed
         }
         return addProperties;
     }

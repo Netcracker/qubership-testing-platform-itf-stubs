@@ -19,7 +19,10 @@ package org.qubership.automation.itf.xsd;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -37,7 +40,7 @@ public class XsdValidator {
     private static final String SOAP_ENV = "http://schemas.xmlsoap.org/soap/envelope/";
 
     /**
-     * TODO Add JavaDoc.
+     * Validate message against XSD schemas [].
      */
     public XsdValidationResult validate(String message, StreamSource[] schemaDocuments) {
         XsdValidationResult result = new XsdValidationResult(message);
@@ -49,7 +52,7 @@ public class XsdValidator {
             validator.validate(new StreamSource(xml));
             return result.setSchemaDocuments(schemaDocuments).setFailed(false);
         } catch (SAXException | IOException e) {
-            LOGGER.error("XSD Validation is failed. XML message: \n" + message, e);
+            LOGGER.error("XSD Validation is failed. XML message: \n{}\n", message, e);
             return result.setException(e)
                     .setSchemaDocuments(schemaDocuments)
                     .setFailed(true);
@@ -57,15 +60,31 @@ public class XsdValidator {
     }
 
     /**
-     * TODO Add JavaDoc.
+     * Validate message against 2 XSD schemas:
+     *  1) Schema at xsdPath file,
+     *  2) Default SOAP schema downloaded from SOAP_ENV URL into resource file /soap-envelope.xsd.
+     * <p>
+     * Returns failed result in case no schema is available.
      */
     public XsdValidationResult validate(String message, String xsdPath) {
-        return validate(message, new StreamSource[]{
-                new File(xsdPath).exists()
-                        ? new StreamSource(xsdPath)
-                        : null,
-                //to be able validate soap
-                new StreamSource(SOAP_ENV),
-        });
+        List<StreamSource> sources = new ArrayList<>();
+        if (xsdPath != null && !xsdPath.isEmpty() && new File(xsdPath).exists()) {
+            sources.add(new StreamSource(new File(xsdPath)));
+        }
+        // Загружаем SOAP схему из ресурсов
+        InputStream soapXsdStream = getClass().getResourceAsStream("/soap-envelope.xsd");
+        if (soapXsdStream != null) {
+            sources.add(new StreamSource(soapXsdStream, SOAP_ENV));
+        }
+        if (sources.isEmpty()) {
+            // No schema to perform validation. Return error result.
+            String errorMessage = "XSD Validation is failed. No XSD schema is found";
+            LOGGER.error(errorMessage);
+            XsdValidationResult result = new XsdValidationResult(message);
+            return result.setException(new IllegalArgumentException(errorMessage))
+                    .setSchemaDocuments((String[]) null)
+                    .setFailed(true);
+        }
+        return validate(message, sources.toArray(StreamSource[]::new));
     }
 }

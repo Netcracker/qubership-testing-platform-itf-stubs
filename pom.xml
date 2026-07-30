@@ -159,7 +159,21 @@
                 <version>3.5.4</version>
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
-                    <argLine>-Dfile.encoding=UTF-8 -Dconfig.file=${maven.multiModuleProjectDirectory}/stubs-common/application.properties -Dspring.config.location=${maven.multiModuleProjectDirectory}/stubs-common/application.properties -Dlogging.config=${maven.multiModuleProjectDirectory}/stubs-common/logback-spring.xml</argLine>
+                    <argLine>
+                        -Dfile.encoding=UTF-8
+                        -Dconfig.file=${maven.multiModuleProjectDirectory}/stubs-common/application.properties
+                        -Dspring.config.location=${maven.multiModuleProjectDirectory}/stubs-common/application.properties
+                        -Dlogging.config=${maven.multiModuleProjectDirectory}/stubs-common/logback-spring.xml
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                        --add-opens java.base/java.lang.invoke=ALL-UNNAMED
+                        --add-opens java.base/java.security=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                        --add-opens java.base/java.util.concurrent=ALL-UNNAMED
+                        --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED
+                        --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                        --add-opens java.base/sun.security.action=ALL-UNNAMED
+                    </argLine>
                 </configuration>
             </plugin>
         </plugins>

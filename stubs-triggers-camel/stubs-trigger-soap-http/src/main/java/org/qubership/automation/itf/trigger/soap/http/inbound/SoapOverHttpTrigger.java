@@ -38,8 +38,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -47,11 +45,11 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.cxf.common.DataFormat;
-import org.apache.camel.support.DefaultHeaderFilterStrategy;
+import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.util.xml.StringSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -97,6 +95,8 @@ import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class SoapOverHttpTrigger extends HttpInboundTrigger {
 
@@ -113,7 +113,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
     protected RoutesBuilder createRoute() {
         SoapOverHttpHelper.prepareBusContext(this);
         return new ItfAbstractRouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 UUID projectUuid = getTriggerConfigurationDescriptor().getProjectUuid();
                 BigInteger projectId = getTriggerConfigurationDescriptor().getProjectId();
                 String currentEndPoint = Objects.toString(getConnectionProperties().get(HttpConstants.ENDPOINT));
@@ -222,7 +222,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
         validate(exchange.getOut(), PropertyConstants.Soap.RESPONSE_XSD_PATH);
     }
 
-    private String getStringBody(org.apache.camel.Message camelMessage) {
+    String getStringBody(org.apache.camel.Message camelMessage) {
         Object messageBody = camelMessage.getBody();
         if (messageBody instanceof CxfPayload) {
             return serializeCxfPayloadBody((CxfPayload)messageBody);
@@ -233,12 +233,16 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
         }
     }
 
-    private void clearOutFilter(CxfEndpoint endpoint) {
+    void clearOutFilter(CxfEndpoint endpoint) {
         DefaultHeaderFilterStrategy st = (DefaultHeaderFilterStrategy) endpoint.getHeaderFilterStrategy();
+        if (st == null) {
+            st = new DefaultHeaderFilterStrategy();
+            endpoint.setHeaderFilterStrategy(st);
+        }
         st.setOutFilter((Set<String>) null);
     }
 
-    private void addClientAddressInHeader(Exchange exchange) {
+    void addClientAddressInHeader(Exchange exchange) {
         try {
             ServletRequest servletRequest = (ServletRequest) ((SoapMessage) exchange.getIn().getHeader(
                     "CamelCxfMessage")).get("HTTP.REQUEST");
@@ -252,7 +256,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
     /*
      *   If no exception was thrown, validation was successful
      */
-    private void validate(org.apache.camel.Message camelMessage, String xsdPathParameter) {
+    void validate(org.apache.camel.Message camelMessage, String xsdPathParameter) {
         String xsdPath = getConnectionProperties().obtain(xsdPathParameter);
         if (StringUtils.isBlank(xsdPath)) {
             LOGGER.debug("Message validation is skipped due to empty parameter {}", xsdPathParameter);
@@ -266,7 +270,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
         performValidation(stringBody, camelMessage.getBody(), xsdPath);
     }
 
-    private void validate(org.apache.camel.Message camelMessage, String stringBody, String xsdPathParameter) {
+    void validate(org.apache.camel.Message camelMessage, String stringBody, String xsdPathParameter) {
         if (StringUtils.isBlank(stringBody)) {
             LOGGER.warn("Message validation is skipped due to message is empty");
             return;
@@ -289,8 +293,10 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
         }
         if (validationResult.isFailed()) {
             throw new IllegalArgumentException(
-                    validationResult.getException() instanceof SAXException
-                            ? "Invalid message. " : "Unexpected exception. " + validationResult
+                    (validationResult.getException() instanceof SAXException
+                            ? "Invalid message. "
+                            : "Unexpected exception. "
+                    ) + (validationResult.getException() != null ? validationResult.getException() : "")
             );
         }
         return validationResult;
@@ -301,15 +307,15 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
         if (srcList == null || srcList.isEmpty()) {
             return StringUtils.EMPTY;
         }
-        Source src = srcList.get(0);
+        Source src = srcList.getFirst();
         if (src instanceof StringSource) {
             return ((StringSource) src).getText();
         }
         List<Element> elementList = cxfPayloadBody.getBody();
-        Document document = elementList.get(0).getOwnerDocument();
+        Document document = elementList.getFirst().getOwnerDocument();
         DOMImplementationLS domImplLs = (DOMImplementationLS) document.getImplementation();
         LSSerializer serializer = domImplLs.createLSSerializer();
-        return serializer.writeToString(elementList.get(0));
+        return serializer.writeToString(elementList.getFirst());
     }
 
     private String readBais(ByteArrayInputStream messageBody) {
@@ -325,13 +331,13 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
 
         List<Element> list = cxfPayloadBody.getBody();
         if (list != null && !list.isEmpty()) {
-            result.add(new StreamSource(list.get(0).getNamespaceURI()));
+            result.add(new StreamSource(list.getFirst().getNamespaceURI()));
         }
 
         return result.toArray(new StreamSource[0]);
     }
 
-    private String getWsdlPath() {
+    String getWsdlPath() {
         String pathToWsdlFile = getConnectionProperties().obtain(PropertyConstants.Soap.WSDL_PATH);
         if (StringUtils.isBlank(pathToWsdlFile)) {
             throw new IllegalArgumentException("Path/URL to WSDL file is not specified");
@@ -396,7 +402,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
         }
     }
 
-    private CxfEndpoint createCxfEndpoint(String wsdlPath) {
+    CxfEndpoint createCxfEndpoint(String wsdlPath) {
         CxfEndpoint cxfEndpoint = new CxfEndpoint();
         cxfEndpoint.setCamelContext(CAMEL_CONTEXT);
         cxfEndpoint.setWsdlURL(wsdlPath);
@@ -476,7 +482,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
         }
     }
 
-    private void handleMessage(SoapMessage soapMessage, PlainSoapMessage body) throws Fault {
+    void handleMessage(SoapMessage soapMessage, PlainSoapMessage body) throws Fault {
         final Fault fault = (Fault) soapMessage.getContent(Exception.class);
         if (fault == null) {
             return;
@@ -547,7 +553,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
         soapMessage.getInterceptorChain().abort();
     }
 
-    private void revertToPlainMessage(SoapMessage soapMessage, PlainSoapMessage body) {
+    void revertToPlainMessage(SoapMessage soapMessage, PlainSoapMessage body) {
         List<Object> listObj = soapMessage.getContent(List.class);
         if (listObj != null) {
             if (!listObj.isEmpty()) {
@@ -557,7 +563,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
         }
     }
 
-    private static class ItfMustUnderstandInterceptor extends MustUnderstandInterceptor {
+    static class ItfMustUnderstandInterceptor extends MustUnderstandInterceptor {
         public ItfMustUnderstandInterceptor() {
             super(Phase.PRE_PROTOCOL);
         }
@@ -570,7 +576,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
     }
 
     @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC", justification = "Checked; it can't be static")
-    private class ItfSoapMessageAbstractPhaseInterceptor extends AbstractPhaseInterceptor<SoapMessage> {
+    class ItfSoapMessageAbstractPhaseInterceptor extends AbstractPhaseInterceptor<SoapMessage> {
         private final PlainSoapMessage plainSoapMessage;
 
         public ItfSoapMessageAbstractPhaseInterceptor(PlainSoapMessage plainSoapMessage) {
@@ -598,7 +604,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
                 if (headers != null && !headers.isEmpty()) {
                     plainSoapMessage.setHeaders(headers.entrySet().stream().collect(Collectors.toMap(
                             Map.Entry::getKey, e -> e.getValue().isEmpty()
-                                    ? "" : e.getValue().size() == 1 ? e.getValue().get(0) : e.getValue())
+                                    ? "" : e.getValue().size() == 1 ? e.getValue().getFirst() : e.getValue())
                     ));
                 }
             } catch (Exception ex) {
@@ -608,7 +614,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
     }
 
     @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC", justification = "Checked; it can't be static")
-    private class PlainSoapMessage {
+    class PlainSoapMessage {
 
         private String text;
         private Map<String, Object> headers = new HashMap<>();

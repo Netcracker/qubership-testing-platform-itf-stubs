@@ -36,11 +36,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import jakarta.activation.DataHandler;
-import jakarta.activation.FileDataSource;
-import jakarta.activation.URLDataSource;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.attachment.AttachmentMessage;
@@ -67,8 +63,11 @@ import org.springframework.http.ResponseEntity;
 
 import com.google.gson.Gson;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import javax.xml.transform.stream.StreamSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
+import jakarta.activation.URLDataSource;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class Helper {
 
@@ -109,6 +108,9 @@ public class Helper {
     public static void fixCoNamedHeaders(Map<String, Object> headers, ServletRequest servletRequest) {
         if (Objects.nonNull(servletRequest)) {
             Enumeration<String> names = ((HttpServletRequest)servletRequest).getHeaderNames();
+            if (names == null) {
+                return;
+            }
             while (names.hasMoreElements()) {
                 String curName = names.nextElement();
                 Enumeration<String> requestHeaders = ((HttpServletRequest) servletRequest).getHeaders(curName);

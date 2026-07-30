@@ -16,10 +16,10 @@
         <spring.boot.version>3.5.14</spring.boot.version>
         <spring.cloud.version>2025.0.2</spring.cloud.version>
 
-        <atp.itf.core.version>5.1.19-SNAPSHOT</atp.itf.core.version>
+        <atp.itf.core.version>5.1.28-SNAPSHOT</atp.itf.core.version>
         <atp.multitenancy.version>1.0.0</atp.multitenancy.version>
         <atp.common.version>1.0.0</atp.common.version>
-        <atp.auth.version>2.0.1-SNAPSHOT</atp.auth.version>
+        <atp.auth.version>2.0.1</atp.auth.version>
 
         <camel.version>4.18.0</camel.version>
         <activemq.version>5.19.5</activemq.version>
@@ -41,6 +41,9 @@
 
         <reactor-bom.version>2024.0.17</reactor-bom.version>
         <netty.version>4.1.132.Final</netty.version>
+
+        <mockito.version>5.23.0</mockito.version>
+        <junit.version>5.12.2</junit.version>
     </properties>
 
     <dependencyManagement>
@@ -545,21 +548,27 @@
                 <version>4.5.3</version>
             </dependency>
             <dependency>
-                <groupId>org.testng</groupId>
-                <artifactId>testng</artifactId>
-                <version>6.8</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.version}</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.yaml</groupId>
-                        <artifactId>snakeyaml</artifactId>
-                    </exclusion>
-                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>1.9.0</version><!-- DF uses to 1.9.0 -->
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
