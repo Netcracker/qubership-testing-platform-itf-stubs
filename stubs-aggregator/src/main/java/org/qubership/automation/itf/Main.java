@@ -19,7 +19,6 @@ package org.qubership.automation.itf;
 
 import org.qubership.atp.auth.springbootstarter.security.oauth2.client.config.annotation.EnableM2MRestTemplate;
 import org.qubership.atp.auth.springbootstarter.security.oauth2.client.config.annotation.EnableOauth2FeignClientInterceptor;
-import org.qubership.atp.common.probes.controllers.DeploymentController;
 import org.qubership.atp.integration.configuration.annotation.EnableAtpJaegerLog;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
@@ -75,8 +74,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @Import({
         WebMvcAutoConfiguration.class,
         DispatcherServletAutoConfiguration.class,
-        ServletWebServerFactoryAutoConfiguration.class,
-        DeploymentController.class
+        ServletWebServerFactoryAutoConfiguration.class
 })
 @EnableAtpJaegerLog
 public class Main {

@@ -171,11 +171,11 @@
                 <artifactId>commons-collections</artifactId>
                 <version>3.2.2</version>
             </dependency>
-            <dependency>
-                <groupId>org.qubership.atp.common</groupId>
-                <artifactId>qubership-atp-common-probes</artifactId>
-                <version>${atp.common.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.qubership.atp.common</groupId>-->
+<!--                <artifactId>qubership-atp-common-probes</artifactId>-->
+<!--                <version>${atp.common.version}</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>com.nimbusds</groupId>
                 <artifactId>nimbus-jose-jwt</artifactId>

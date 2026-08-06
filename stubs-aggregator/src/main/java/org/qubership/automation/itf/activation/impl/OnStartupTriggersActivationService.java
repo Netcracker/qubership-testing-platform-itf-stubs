@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 import org.qubership.automation.itf.core.model.communication.TransportType;
 import org.qubership.automation.itf.core.model.communication.TriggerSample;
-import org.qubership.automation.itf.core.util.eds.ExternalDataManagementService;
 import org.qubership.automation.itf.integration.executor.ExecutorService;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +42,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class OnStartupTriggersActivationService extends AbstractService {
 
-    private final ExternalDataManagementService externalDataManagementService;
     private final ExecutorService executorService;
 
     private static final List<TransportType> VIP1_TYPES = Arrays.asList(TransportType.SMPP_INBOUND,
@@ -56,6 +54,7 @@ public class OnStartupTriggersActivationService extends AbstractService {
     @Getter
     private boolean listForActivationReceived = false;
     private boolean initialTriggersActivationCompleted = false;
+    private boolean initialHttpTriggersActivationCompleted = false;
 
     /**
      * Perform triggers activation at service startup, separately by types, based on priority.
@@ -102,6 +101,9 @@ public class OnStartupTriggersActivationService extends AbstractService {
                 activateListOfTriggers(triggerSamples, availableServers, "activation-at-service-startup");
                 log.info("Triggers activation for '{}' is finished, total count {}", triggerClassName,
                         triggerSamples.size());
+                if (processOnlyTypes == VIP2_TYPES) {
+                    initialHttpTriggersActivationCompleted = true;
+                }
             }
         });
     }
@@ -127,6 +129,10 @@ public class OnStartupTriggersActivationService extends AbstractService {
 
     public boolean isInitialActivationCompleted() {
         return initialTriggersActivationCompleted;
+    }
+
+    public boolean isInitialHttpTriggersActivationCompleted() {
+        return initialHttpTriggersActivationCompleted;
     }
 
 }

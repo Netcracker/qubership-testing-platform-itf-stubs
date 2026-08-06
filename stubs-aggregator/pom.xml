@@ -151,10 +151,10 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.qubership.atp.common</groupId>
-            <artifactId>qubership-atp-common-probes</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.qubership.atp.common</groupId>-->
+<!--            <artifactId>qubership-atp-common-probes</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.codehaus.janino</groupId>

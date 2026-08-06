@@ -17,6 +17,7 @@ import org.qubership.automation.itf.activation.impl.OnStartupTriggersActivationS
 import org.qubership.automation.itf.communication.RoutesInformation;
 import org.qubership.automation.itf.communication.StubsIntegrationMessageSender;
 import org.qubership.automation.itf.core.model.communication.TransportType;
+import org.qubership.automation.itf.core.util.config.ApplicationConfig;
 import org.qubership.automation.itf.core.util.config.Config;
 import org.qubership.automation.itf.trigger.camel.CamelContextProvider;
 import org.qubership.automation.itf.ui.model.RouteEvent;
@@ -61,6 +62,7 @@ public class TriggerRouteService {
 
     @Value("${collect.routes.info.timeout}")
     private int collectRoutesMaxTime;
+    private Boolean startTransportTriggersAtStartup = null;
 
     public TriggerRouteService(OnStartupTriggersActivationService onStartupTriggersActivationService,
                                StubsIntegrationMessageSender sender) {
@@ -70,6 +72,18 @@ public class TriggerRouteService {
 
     public boolean ping() {
         return onStartupTriggersActivationService.isInitialActivationCompleted();
+    }
+
+    public boolean isInitialHttpTriggersActivationCompleted() {
+        if (Objects.isNull(startTransportTriggersAtStartup)) {
+            startTransportTriggersAtStartup
+                    = Boolean.parseBoolean(ApplicationConfig.env.getProperty("start.transport.triggers.at.startup"));
+        }
+        if (startTransportTriggersAtStartup) {
+            return onStartupTriggersActivationService.isInitialHttpTriggersActivationCompleted();
+        } else {
+            return true;
+        }
     }
 
     public RouteInfoResponse collectRoutes(UUID projectUuid, TransportType transportType, int podCount) {
