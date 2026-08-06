@@ -21,6 +21,7 @@ import org.qubership.automation.itf.stubs.service.ProjectSettingsService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import com.hazelcast.core.HazelcastInstance;
 
@@ -28,6 +29,7 @@ import com.hazelcast.core.HazelcastInstance;
 public class StubsProjectSettingsServiceConfiguration {
 
     @Bean
+    @Primary
     public ProjectSettingsService projectSettingsService(
             @Qualifier("hazelcastClient") HazelcastInstance hazelcastClient) {
         return new ProjectSettingsService(hazelcastClient);
