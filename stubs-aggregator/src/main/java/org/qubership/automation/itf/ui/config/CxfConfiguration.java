@@ -26,21 +26,21 @@ import org.springframework.context.annotation.Configuration;
 //@ImportResource({ "classpath:META-INF/cxf/cxf.xml" })
 public class CxfConfiguration {
 
-    /** This method create CustomEditorConfigurer.
+    /** This method creates CustomEditorConfigurer.
      * @return instance of {@link CustomEditorConfigurer} with {@link SoapVersionRegistrar}.
      */
     @Bean
-    public CustomEditorConfigurer getCustomEditorConfigurer() {
+    public static CustomEditorConfigurer getCustomEditorConfigurer() {
         CustomEditorConfigurer customEditorConfigurer = new CustomEditorConfigurer();
         customEditorConfigurer.setPropertyEditorRegistrars(
                 new SoapVersionRegistrar[]{
                         getSoapVersionRegistrar()
                 });
-        return new CustomEditorConfigurer();
+        return customEditorConfigurer;
     }
 
     @Bean
-    public SoapVersionRegistrar getSoapVersionRegistrar() {
+    public static SoapVersionRegistrar getSoapVersionRegistrar() {
         return new SoapVersionRegistrar();
     }
 }
