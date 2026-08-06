@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package org.qubership.automation.itf.ui.config;
 
 import java.util.Set;
 
-import jakarta.annotation.PostConstruct;
-
 import org.qubership.automation.itf.activation.impl.OnDestroyTriggersActivationService;
 import org.qubership.automation.itf.activation.impl.OnStartupTriggersActivationService;
 import org.qubership.automation.itf.utils.loader.TriggerClassLoader;
@@ -28,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -45,7 +44,7 @@ public class TriggerContext {
     private String triggersCustomLibFolder;
 
     /**
-     * TODO Add JavaDoc.
+     * Constructor.
      */
     @Autowired
     public TriggerContext(OnStartupTriggersActivationService onStartupTriggersActivationService,
@@ -57,21 +56,24 @@ public class TriggerContext {
     }
 
     /**
-     * TODO Add JavaDoc.
+     * Perform init of transport modules.
+     * In addition to bundled libraries, custom libraries from 'triggersCustomLibFolder' are loaded too.
      */
     @PostConstruct
     public void init() {
-        log.info("Start triggers loading...");
+        log.info("Start transport modules loading...");
         try {
             triggerClassLoader.load(triggerFolder, triggersCustomLibFolder);
-            log.info("Triggers are loaded successfully.");
+            log.info("Transport modules are loaded successfully.");
         } catch (Exception e) {
-            log.error("Error initialing triggers modules", e);
+            log.error("Error initialing transport modules", e);
         }
     }
 
     /**
-     * TODO Add JavaDoc.
+     * Activate triggers.
+     * Activation process is organized by transport types, in order to primarily activate
+     * more often used (and quickly activated) REST/SOAP triggers.
      */
     public Thread activateTriggers() {
         Thread thread = new Thread(() -> {
