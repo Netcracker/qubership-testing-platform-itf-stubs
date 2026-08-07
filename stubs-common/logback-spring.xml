@@ -5,7 +5,12 @@
     <springProperty name="GRAYLOG_HOST" source="log.graylog.host"/>
     <springProperty name="GRAYLOG_PORT" source="log.graylog.port"/>
     <springProperty name="LOG_LEVEL_ROOT" source="logging.level.root"/>
-    <if condition='property("GRAYLOG_ON").equals("true")'>
+
+    <condition class="ch.qos.logback.core.boolex.PropertyEqualityCondition">
+        <key>GRAYLOG_ON</key>
+        <value>true</value>
+    </condition>
+    <if>
         <then>
             <appender name="GELF"
                       class="org.qubership.atp.integration.configuration.logging.gelf.logback.FailSafeGelfLogbackAppender">
