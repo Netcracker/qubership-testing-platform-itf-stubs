@@ -270,7 +270,10 @@ public abstract class AbstractService implements ActivationService {
             return new ServerTriggerStateResponse(triggerStates, StringUtils.EMPTY, user, sessionId);
         }
         threadPoolProvider.getForkJoinPool().submit(() -> triggers.stream().parallel().forEach(triggerSample -> {
-            performActionForTrigger(triggerSample, action, availableServers);
+            Result result = performActionForTrigger(triggerSample, action, availableServers);
+            if (result != null && !result.isSuccess()) {
+                triggerSample.setTriggerState(TriggerState.ERROR);
+            }
             triggerStates.put(triggerSample.getTriggerId(), triggerSample.getTriggerState());
         }));
         waitForCompletion(sessionId, triggers.size(), triggerStates);
