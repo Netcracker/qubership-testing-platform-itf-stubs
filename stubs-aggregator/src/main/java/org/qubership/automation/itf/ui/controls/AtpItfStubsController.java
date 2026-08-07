@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -17,17 +17,27 @@
 
 package org.qubership.automation.itf.ui.controls;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
+import org.qubership.automation.itf.activation.ActivationServiceConstants;
+import org.qubership.automation.itf.activation.impl.SystemServerTriggerActivationService;
+import org.qubership.automation.itf.core.model.communication.StubUser;
 import org.qubership.automation.itf.core.model.communication.TransportType;
+import org.qubership.automation.itf.core.model.communication.TriggerSample;
+import org.qubership.automation.itf.core.model.communication.message.ServerTriggerStateResponse;
 import org.qubership.automation.itf.core.util.mdc.MdcField;
 import org.qubership.automation.itf.ui.model.RouteInfoResponse;
 import org.qubership.automation.itf.ui.service.TriggerRouteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,11 +47,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AtpItfStubsController {
 
+    @Value("${stubs.testing.mode.enabled:false}")
+    private boolean isTestingMode;
+
     private final TriggerRouteService triggerRouteService;
+    private final SystemServerTriggerActivationService triggerActivationService;
 
     @Autowired
-    public AtpItfStubsController(TriggerRouteService triggerRouteService) {
+    public AtpItfStubsController(TriggerRouteService triggerRouteService,
+                                 SystemServerTriggerActivationService triggerActivationService) {
         this.triggerRouteService = triggerRouteService;
+        this.triggerActivationService = triggerActivationService;
     }
 
     @RequestMapping(value = "/ping", method = RequestMethod.GET)
@@ -73,5 +89,32 @@ public class AtpItfStubsController {
                             @RequestParam String podName) {
         MdcUtils.put(MdcField.PROJECT_ID.toString(), projectUuid);
         return triggerRouteService.stopRoute(projectUuid, routeId, podName);
+    }
+
+    /**
+     * Load and activate triggers according received list of objects.
+     * It's used in case stubs.testing.mode.enabled=true only,
+     * to provide testability of the service alone (without itf-executor service).
+     * Primarily, for local development and GitHub CI.
+     *
+     * @param triggers List of trigger objects to activate
+     * @return Activation result.
+     */
+    @PostMapping("/routes/load")
+    public ServerTriggerStateResponse loadRoutes(@RequestBody List<TriggerSample> triggers) {
+        if (!isTestingMode) {
+            throw new IllegalStateException("Loading of routes is allowed in testing mode only! Please check 'stubs.testing.mode.enabled' setting.");
+        }
+        if (triggers == null || triggers.isEmpty()) {
+            throw new IllegalArgumentException("Trigger List is empty!");
+        }
+        StubUser user = new StubUser();
+        user.setId("0");
+        user.setName("itf");
+        return triggerActivationService.performBulkAction(triggers,
+                new ConcurrentHashMap<>(),
+                ActivationServiceConstants.ACTIVATE,
+                user,
+                "load-and-activate-via-rest");
     }
 }
