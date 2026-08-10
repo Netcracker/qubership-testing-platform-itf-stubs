@@ -26,8 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.file.GenericFile;
@@ -36,8 +39,6 @@ import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.automation.itf.JvmSettings;
-import org.qubership.automation.itf.communication.TriggerExecutionMessageSender;
-import org.qubership.automation.itf.core.model.communication.message.CommonTriggerExecutionMessage;
 import org.qubership.automation.itf.core.model.jpa.message.Message;
 import org.qubership.automation.itf.core.model.transport.ConnectionProperties;
 import org.qubership.automation.itf.core.util.config.Config;
@@ -47,18 +48,14 @@ import org.qubership.automation.itf.trigger.camel.Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-
 import jakarta.annotation.Nonnull;
 
 public abstract class ItfAbstractRouteBuilder extends RouteBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ItfAbstractRouteBuilder.class);
-    private static final String EXCHANGE_PATTERN_JNDI_PROPERTY = "exchangePattern";
-    private static final int MAX_SIZE = Config.getConfig().getIntOrDefault(
-            "logging.incoming.request.message.max.size",5242880);
+    private static final int MAX_SIZE = Config.getConfig()
+            .getIntOrDefault("logging.incoming.request.message.max.size",5242880);
+    private static final SessionStarter SESSION_STARTER = SessionStarterFactory.get();
 
     /**
      * Create and fill Message (String body and headers) from Camel message received.
@@ -93,24 +90,7 @@ public abstract class ItfAbstractRouteBuilder extends RouteBuilder {
                              @Nonnull StorableDescriptor triggerConfig,
                              @Nonnull String sessionId,
                              @Nonnull Message message) throws Exception {
-        if (exchange.getPattern() == ExchangePattern.InOut) {
-            Map<String, String> addJndiProps = transportConfig.obtain("addJndiProps");
-            if (addJndiProps != null && addJndiProps.containsKey(EXCHANGE_PATTERN_JNDI_PROPERTY)) {
-                String exchangePattern = addJndiProps.get(EXCHANGE_PATTERN_JNDI_PROPERTY);
-                if (exchangePattern != null && exchangePattern.equalsIgnoreCase(ExchangePattern.InOnly.toString())) {
-                    exchange.setPattern(ExchangePattern.InOnly);
-                }
-            }
-        }
-        String brokerMessageSelectorValue = Helper.getBrokerMessageSelectorValue();
-        TriggerExecutionMessageSender.send(
-                new CommonTriggerExecutionMessage(
-                        transportClassName, message, triggerConfig, sessionId, brokerMessageSelectorValue
-                ), triggerConfig.getProjectUuid()
-        );
-        LOGGER.debug("Project: {}, SessionId: {}, Broker Message Selector Value: {}, transport: '{}' - message to "
-                        + "executor is sent.", triggerConfig.getProjectUuid(), sessionId, brokerMessageSelectorValue,
-                transportClassName);
+        SESSION_STARTER.startSession(exchange, transportClassName, transportConfig, triggerConfig, sessionId, message);
     }
 
     /**
@@ -134,7 +114,7 @@ public abstract class ItfAbstractRouteBuilder extends RouteBuilder {
         Message message;
         long bodyLength = -1L;
         if (messageBody instanceof CxfPayload) {
-            message = new Message(asString(((CxfPayload<?>) messageBody).getBodySources().get(0)));
+            message = new Message(asString(((CxfPayload<?>) messageBody).getBodySources().getFirst()));
         } else if (messageBody instanceof InputStream) {
             /*  Should be revised. May be charset replacement could be configured in properties file?
                 Algorithm:
@@ -152,15 +132,14 @@ public abstract class ItfAbstractRouteBuilder extends RouteBuilder {
                 }
             }
             message = new Message(IOUtils.toString((InputStream) messageBody, charset));
-        } else if (messageBody instanceof RemoteFile) {
-            RemoteFile remoteFile = (RemoteFile) messageBody;
+        } else if (messageBody instanceof RemoteFile remoteFile) {
             GenericFileBinding gfb = remoteFile.getBinding();
             GenericFile gf = new GenericFile();
             ByteArrayOutputStream ba = (ByteArrayOutputStream) gfb.getBody(gf);
             message = new Message(ba.toString(JvmSettings.CHARSET_NAME));
-        } else if (messageBody instanceof GenericFile) {
-            message = new Message((File) ((GenericFile) messageBody).getFile());
-            bodyLength = ((GenericFile) messageBody).getFileLength();
+        } else if (messageBody instanceof GenericFile genericFile) {
+            message = new Message((File) genericFile.getFile());
+            bodyLength = genericFile.getFileLength();
         } else if (messageBody instanceof byte[]) {
             message = new Message(new String((byte[]) messageBody, StandardCharsets.UTF_8));
         } else {
