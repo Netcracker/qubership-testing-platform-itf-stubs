@@ -105,14 +105,13 @@ public class StubJmsListeners {
 
     /**
      * On receive trigger configuration (activate, deactivate, sync) messages.
-     * "X-Project-Id" StringProperty (header) is required for income message to properly work ITF multi-tenancy
-     * (additional db clusters).
+     * "X-Project-Id" StringProperty (header) is required for incoming message for
+     * ITF to properly work in case multi-tenancy (additional db clusters).
      *
      * @param message - AMQ message with "type" parameter and two types of actions.
-     *                1. "sync" (update action)
-     *                Bulk action to reactivate/deactivate list of triggers for System-Server (After click on save
-     *                button on UI).
-     *                2. activate\deactivate\turn off actions for one certainly trigger or whole environment.
+     *   1. "sync" (update action)
+     *      Bulk action to reactivate/deactivate list of triggers for System-Server (After click on save button on UI).
+     *   2. activate\deactivate\turn off actions for one certainly trigger or whole environment.
      */
     @JmsListener(destination = "${message-broker.configurator-stubs.topic}",
             containerFactory = "stubsTopicJmsListenerContainerFactory")
@@ -129,12 +128,13 @@ public class StubJmsListeners {
             if (service != null) {
                 CompletableFuture.runAsync(() ->
                         processTriggersActivationMessage(message, type, action, projectUuid, service),
-                        threadPoolProvider.getAsyncTasksPool());
+                        threadPoolProvider.getAsyncTasksPool()
+                );
             } else {
                 log.error("There is no service for '{}' type", type);
             }
         } catch (JMSException | JsonProcessingException e) {
-            log.error("Error while message processing: {}", e.getMessage());
+            log.error("Error while message (received from configurator) processing: {}", e.getMessage());
             sendFailMessageToConfigurator(message, e.getMessage());
         } finally {
             MDC.clear();
@@ -184,7 +184,7 @@ public class StubJmsListeners {
             }
             LockProvider.INSTANCE.notify(sessionId);
         } catch (JMSException | JsonProcessingException e) {
-            log.error("Error while message processing: {}", e.getMessage());
+            log.error("Error while outgoing response message processing: {}", e.getMessage());
         } catch (Exception e) {
             log.error("Error while executor_stubs_outgoing_response queue message processing : {}", e.getMessage());
         } finally {
@@ -204,7 +204,7 @@ public class StubJmsListeners {
             CompletableFuture.runAsync(() -> processUpdateFileMessage(fileInfo),
                     threadPoolProvider.getAsyncTasksPool());
         } catch (JMSException | JsonProcessingException e) {
-            log.error("Error while message processing: {}", e.getMessage());
+            log.error("Error while EDS update message processing: {}", e.getMessage());
         } finally {
             MDC.clear();
         }
@@ -230,7 +230,7 @@ public class StubJmsListeners {
                     throw new RuntimeException("Unknown route event type: " + event.getEventType());
             }
         } catch (JMSException | JsonProcessingException e) {
-            log.error("Error while message processing: {}", e.getMessage());
+            log.error("Error while stubs route info request message processing: {}", e.getMessage());
         } catch (Exception e) {
             log.error("Error while stubs-route-info.request topic message processing: {}", e.getMessage());
         } finally {
@@ -249,7 +249,7 @@ public class StubJmsListeners {
             }
             triggerRouteService.putToCache(event);
         } catch (JMSException | JsonProcessingException e) {
-            log.error("Error while message processing: {}", e.getMessage());
+            log.error("Error while stubs route info response message processing: {}", e.getMessage());
         } catch (Exception e) {
             log.error("Error while stubs-route-info.response topic message processing: {}", e.getMessage());
         } finally {
@@ -283,7 +283,7 @@ public class StubJmsListeners {
             }
             log.info("Message of type '{}' processing is completed", type);
         } catch (JMSException | JsonProcessingException e) {
-            log.error("Error while message processing: {}", e.getMessage());
+            log.error("Error while trigger activation message processing: {}", e.getMessage());
             sendFailMessageToConfigurator(message, e.getMessage());
         } finally {
             MDC.clear();
@@ -326,7 +326,7 @@ public class StubJmsListeners {
                 }
             }
         } catch (IOException e) {
-            log.error("Error while message processing: {}", e.getMessage());
+            log.error("Error while file update message processing: {}", e.getMessage());
         }
     }
 

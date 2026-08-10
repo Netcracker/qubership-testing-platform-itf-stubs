@@ -91,7 +91,7 @@ Variants, how ITF actions are invoked, include:
    * to activate/deactivate transport triggers
    * to re-execute failed callchain starting from some step selected
 2. Also, ITF provides other ways to execute tests:
-   * Callchain can be executed from NTT/Executor via **actions**
+   * Callchain can be executed from Orchestrator or Executor via **actions**
    * REST API is provided to run a callchain and check execution status
 
 ### To monitor execution results

@@ -91,7 +91,10 @@ public class SwaggerConfiguration {
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes("Bearer Authentication", createApiKeyScheme()))
                 .info(new Info().title("ITF Stubs API").version(API_VERSION)
-                        .license(new License().name("(C) Copyright Qubership")));
+                        .license(new License()
+                                .name("Apache-2.0")
+                                .url("https://www.apache.org/licenses/LICENSE-2.0")
+                        ));
     }
 
     private SecurityScheme createApiKeyScheme() {

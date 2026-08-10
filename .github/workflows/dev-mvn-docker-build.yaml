@@ -38,11 +38,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Maven Docker build
         id: maven_build
-        uses: netcracker/qubership-workflow-hub/actions/maven-snapshot-deploy@d11baa8a4b42d1a931808c0766ee23eb344c47dd # v2.2.0
+        uses: netcracker/qubership-workflow-hub/actions/maven-snapshot-deploy@b6bee6f61fdc8b367777c1173fc852a58878a6a7 # v2.5.0
         with:
           java-version: "21"
           additional-mvn-args: ${{ env.additional-mvn-args }}
@@ -60,7 +60,7 @@ jobs:
       platforms: ${{ steps.load_component.outputs.platforms }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -99,11 +99,11 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Metadata
         id: metadata
-        uses: netcracker/qubership-workflow-hub/actions/metadata-action@d11baa8a4b42d1a931808c0766ee23eb344c47dd #v2.2.0
+        uses: netcracker/qubership-workflow-hub/actions/metadata-action@b6bee6f61fdc8b367777c1173fc852a58878a6a7 #v2.5.0
         with:
           default-template: '{{ref-name}}-{{timestamp}}'
 
@@ -121,7 +121,7 @@ jobs:
 
       - name: Build and Publish Docker Image
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@d11baa8a4b42d1a931808c0766ee23eb344c47dd #v2.2.0
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@b6bee6f61fdc8b367777c1173fc852a58878a6a7 #v2.5.0
         with:
           ref: ${{ github.ref }}
           dry-run: false
