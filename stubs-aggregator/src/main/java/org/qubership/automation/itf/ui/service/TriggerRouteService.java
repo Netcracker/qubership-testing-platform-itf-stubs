@@ -4,6 +4,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
+import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.qubership.automation.itf.activation.impl.OnStartupTriggersActivationService;
 import org.qubership.automation.itf.communication.RoutesInformation;
 import org.qubership.automation.itf.communication.StubsIntegrationMessageSender;
@@ -33,6 +36,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class TriggerRouteService {
+
+    private static final Boolean CAMEL_ROUTE_STATISTICS_ENABLED = Boolean.valueOf(Config.getConfig().getStringOrDefault(
+            "camel.route.statistics.enabled", "true"));
 
     private static final LoadingCache<UUID, List<RouteInfoDto>> routeInfoCache = CacheBuilder.newBuilder()
             .expireAfterAccess(3, TimeUnit.MINUTES)
@@ -134,6 +140,28 @@ public class TriggerRouteService {
                         && route.getProjectUuid().equals(event.getProjectUuid().toString()))
                 .filter(route -> route.getTransportType().equals(event.getTransportType().toString()))
                 .collect(Collectors.toList());
+
+        if (CAMEL_ROUTE_STATISTICS_ENABLED) {
+            ManagedCamelContext managedContext = CamelContextProvider.CAMEL_CONTEXT
+                    .getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+
+            routesInformation.stream().parallel().forEach(route -> {
+                ManagedRouteMBean managedRouteMBean =
+                        managedContext.getManagedRoute(String.valueOf(route.getRouteId()));
+
+                Map<String, Object> exchangesProperties = route.getExchangesProperties();
+                exchangesProperties.put("total", managedRouteMBean.getExchangesTotal());
+                exchangesProperties.put("completed", managedRouteMBean.getExchangesCompleted());
+                exchangesProperties.put("failed", managedRouteMBean.getExchangesFailed());
+                exchangesProperties.put("inflight", managedRouteMBean.getExchangesInflight());
+
+                exchangesProperties.put("totalProcessingTime", managedRouteMBean.getTotalProcessingTime());
+                exchangesProperties.put("minProcessingTime", managedRouteMBean.getMinProcessingTime());
+                exchangesProperties.put("maxProcessingTime", managedRouteMBean.getMaxProcessingTime());
+                exchangesProperties.put("meanProcessingTime", managedRouteMBean.getMeanProcessingTime());
+                exchangesProperties.put("idleSince", managedRouteMBean.getIdleSince());
+            });
+        }
 
         RouteInfoDto response = new RouteInfoDto();
         response.setRequestId(event.getRequestId());

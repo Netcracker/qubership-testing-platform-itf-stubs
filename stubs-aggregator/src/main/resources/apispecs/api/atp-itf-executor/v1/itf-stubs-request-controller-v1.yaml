@@ -217,6 +217,10 @@ components:
           type: string
         triggerTypeName:
           type: string
+        envId:
+          type: string
+        envName:
+          type: string
         transportName:
           type: string
         serverName:

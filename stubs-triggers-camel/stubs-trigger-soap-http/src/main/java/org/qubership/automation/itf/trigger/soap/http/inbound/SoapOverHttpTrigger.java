@@ -67,6 +67,7 @@ import org.apache.cxf.phase.Phase;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.ws.policy.PolicyException;
 import org.qubership.automation.itf.JvmSettings;
+import org.qubership.automation.itf.communication.RouteMetaInfo;
 import org.qubership.automation.itf.communication.TriggerExecutionMessageSender;
 import org.qubership.automation.itf.core.model.communication.TransportType;
 import org.qubership.automation.itf.core.model.communication.message.CommonTriggerExecutionMessage;
@@ -116,6 +117,7 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
             public void configure() {
                 UUID projectUuid = getTriggerConfigurationDescriptor().getProjectUuid();
                 BigInteger projectId = getTriggerConfigurationDescriptor().getProjectId();
+                String triggerId = String.valueOf(getTriggerConfigurationDescriptor().getId());
                 String currentEndPoint = Objects.toString(getConnectionProperties().get(HttpConstants.ENDPOINT));
                 String wsdlPath = getWsdlPath();
                 CxfEndpoint cxfEndpoint = createCxfEndpoint(wsdlPath);
@@ -186,9 +188,16 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
                         collectMetrics(projectUuid, TransportType.SOAP_OVER_HTTP_INBOUND,
                                 currentEndPoint, true, started);
                     }
-                }).routeId(getId())
-                        .routeDescription(projectUuid.toString())
-                        .group(TransportType.SOAP_OVER_HTTP_INBOUND.name());
+                }).routeId(triggerId)
+                        .group(TransportType.SOAP_OVER_HTTP_INBOUND.name())
+                        .routeProperty(RouteMetaInfo.PROJECT_UUID.getValue(), projectUuid.toString())
+                        .routeProperty(RouteMetaInfo.TRIGGER_NAME.getValue(),
+                                getTriggerConfigurationDescriptor().getName())
+                        .routeProperty(RouteMetaInfo.TRIGGER_ID.getValue(), triggerId)
+                        .routeProperty(RouteMetaInfo.ENV_NAME.getValue(),
+                                getTriggerConfigurationDescriptor().getEnvName())
+                        .routeProperty(RouteMetaInfo.ENV_ID.getValue(),
+                                String.valueOf(getTriggerConfigurationDescriptor().getEnvId()));
                 cxfEndpoint.start();
             }
 

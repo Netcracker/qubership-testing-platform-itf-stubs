@@ -103,7 +103,11 @@ public class TriggerMaintainer {
     }
 
     private StorableDescriptor createStorableDescriptorFromTriggerSample(TriggerSample triggerSample) {
-        return new StorableDescriptor(triggerSample.getTriggerId(), triggerSample.getTriggerName(),
+        StorableDescriptor storableDescriptor = new StorableDescriptor(triggerSample.getTriggerId(),
+                triggerSample.getTriggerName(),
                 triggerSample.getProjectUuid(), triggerSample.getProjectId());
+        storableDescriptor.setEnvId(triggerSample.getEnvId());
+        storableDescriptor.setEnvName(triggerSample.getEnvName());
+        return storableDescriptor;
     }
 }

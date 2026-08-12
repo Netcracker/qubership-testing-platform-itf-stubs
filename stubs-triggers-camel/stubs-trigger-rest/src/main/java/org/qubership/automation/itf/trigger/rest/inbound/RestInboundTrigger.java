@@ -38,6 +38,7 @@ import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.automation.itf.JvmSettings;
+import org.qubership.automation.itf.communication.RouteMetaInfo;
 import org.qubership.automation.itf.core.model.communication.TransportType;
 import org.qubership.automation.itf.core.model.jpa.message.Message;
 import org.qubership.automation.itf.core.model.transport.ConnectionProperties;
@@ -73,6 +74,7 @@ public class RestInboundTrigger extends HttpInboundTrigger {
             public void configure() {
                 UUID projectUuid = getTriggerConfigurationDescriptor().getProjectUuid();
                 BigInteger projectId = getTriggerConfigurationDescriptor().getProjectId();
+                String triggerId = String.valueOf(getTriggerConfigurationDescriptor().getId());
                 String endPoint = Objects.toString(getConnectionProperties().get(HttpConstants.ENDPOINT));
                 ArrayList<String> endPointsList = splitEndPoint(endPoint);
                 int cnt = 0;
@@ -128,9 +130,16 @@ public class RestInboundTrigger extends HttpInboundTrigger {
                                 collectMetrics(projectUuid, TransportType.REST_INBOUND, currentEndPoint,
                                         true, started);
                             }
-                        }).routeId((endPointsList.size() == 1) ? getId() : getId() + (++cnt))
-                            .routeDescription(projectUuid.toString())
-                            .group(TransportType.REST_INBOUND.name());
+                        }).routeId((endPointsList.size() == 1) ? triggerId : triggerId + "_" + (++cnt))
+                            .group(TransportType.REST_INBOUND.name())
+                            .routeProperty(RouteMetaInfo.PROJECT_UUID.getValue(), projectUuid.toString())
+                            .routeProperty(RouteMetaInfo.TRIGGER_NAME.getValue(),
+                                    getTriggerConfigurationDescriptor().getName())
+                            .routeProperty(RouteMetaInfo.TRIGGER_ID.getValue(), triggerId)
+                            .routeProperty(RouteMetaInfo.ENV_NAME.getValue(),
+                                    getTriggerConfigurationDescriptor().getEnvName())
+                            .routeProperty(RouteMetaInfo.ENV_ID.getValue(),
+                                    String.valueOf(getTriggerConfigurationDescriptor().getEnvId()));
                 }
             }
 

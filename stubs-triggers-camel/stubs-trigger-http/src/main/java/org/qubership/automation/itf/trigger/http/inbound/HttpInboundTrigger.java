@@ -267,9 +267,9 @@ public abstract class HttpInboundTrigger extends AbstractCamelTrigger {
 
     @Override
     protected void deactivateSpecificTrigger() throws Exception {
-        String id = getId();
+        String id = String.valueOf(getTriggerConfigurationDescriptor().getId());
         for (int cnt = 1; ; cnt++) {
-            String curId = id + cnt;
+            String curId = id + "_" + cnt;
             if (CAMEL_CONTEXT.getRoute(curId) == null) {
                 break;
             }

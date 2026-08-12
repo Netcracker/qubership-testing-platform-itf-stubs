@@ -18,8 +18,10 @@
 package org.qubership.automation.itf.trigger.camel;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.qubership.automation.itf.core.util.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,13 @@ public interface CamelContextProvider {
             try {
                 synchronized (CAMEL_CONTEXT) {
                     if (!CAMEL_CONTEXT.isStarted()) {
+                        Boolean CAMEL_ROUTE_STATISTICS_ENABLED = Boolean.valueOf(Config.getConfig()
+                                .getStringOrDefault("camel.route.statistics.enabled", "true"));
+                        if (CAMEL_ROUTE_STATISTICS_ENABLED) {
+                            CAMEL_CONTEXT.getManagementStrategy()
+                                    .getManagementAgent()
+                                    .setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
+                        }
                         CAMEL_CONTEXT.start();
                     }
                 }

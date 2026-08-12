@@ -17,8 +17,11 @@
 
 package org.qubership.automation.itf.communication;
 
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -35,7 +38,6 @@ import lombok.Setter;
 public class RoutesInformation {
 
     private ServiceStatus serviceStatus;
-    private String version;
     private String consumer;
     private String consumerClassName;
     private String endpoint;
@@ -43,12 +45,13 @@ public class RoutesInformation {
     private String transportType;
     @JsonIgnore
     private String projectUuid;
-    private Map<String,Object> routeProperties;
-
+    private Map<String, Object> metaInfo;
+    private Map<String, Object> exchangesProperties = new HashMap<>();
     private Object routeId;
 
     /**
      * Create simple representation of Camel route.
+     *
      * @param route - route to simplify.
      */
     public RoutesInformation(Route route) {
@@ -60,11 +63,16 @@ public class RoutesInformation {
         this.consumer = route.getConsumer().toString();
         this.consumerClassName = route.getConsumer().getClass().getSimpleName();
         this.endpoint = route.getEndpoint().toString();
-        this.routeProperties = route.getProperties();
-        this.routeId = routeProperties.get("id");
-        this.projectUuid = route.getDescription();
-        if (routeProperties.containsKey("group") && Objects.nonNull(routeProperties.get("group"))) {
-            this.transportType = routeProperties.get("group").toString();
-        }
+        this.metaInfo = Arrays.stream(RouteMetaInfo.values())
+                .map(routeMetaInfo -> routeMetaInfo.getValue())
+                .filter(route.getProperties()::containsKey)
+                .collect(Collectors.toMap(key -> key, route.getProperties()::get));
+        this.routeId = route.getRouteId();
+        this.projectUuid = metaInfo.get(RouteMetaInfo.PROJECT_UUID.getValue()).toString();
+        this.metaInfo.remove(RouteMetaInfo.PROJECT_UUID.getValue());
+        this.transportType = route.getGroup();
+        this.metaInfo.put(RouteMetaInfo.UP_TIME.getValue(), route.getUptime());
+        this.metaInfo.put(RouteMetaInfo.START_TIME.getValue(),
+                Instant.now().minusMillis(route.getUptimeMillis()).toString());
     }
 }
