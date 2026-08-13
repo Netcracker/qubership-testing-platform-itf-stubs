@@ -20,18 +20,16 @@ package org.qubership.automation.itf.trigger.camel.route;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.StringSource;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.CxfPayload;
+import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileBinding;
 import org.apache.camel.component.file.remote.RemoteFile;
@@ -48,6 +46,12 @@ import org.qubership.automation.itf.monitoring.metrics.MetricsAggregateService;
 import org.qubership.automation.itf.trigger.camel.Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+
+import jakarta.annotation.Nonnull;
 
 public abstract class ItfAbstractRouteBuilder extends RouteBuilder {
 
@@ -130,7 +134,7 @@ public abstract class ItfAbstractRouteBuilder extends RouteBuilder {
         Message message;
         long bodyLength = -1L;
         if (messageBody instanceof CxfPayload) {
-            message = new Message(((StringSource) ((CxfPayload) messageBody).getBodySources().get(0)).getText());
+            message = new Message(asString(((CxfPayload<?>) messageBody).getBodySources().get(0)));
         } else if (messageBody instanceof InputStream) {
             /*  Should be revised. May be charset replacement could be configured in properties file?
                 Algorithm:
@@ -172,6 +176,12 @@ public abstract class ItfAbstractRouteBuilder extends RouteBuilder {
         message.getConnectionProperties().putAll(transportConfig);
         message.getConnectionProperties().putAll(getAdditionalProperties(exchange));
         return message;
+    }
+
+    private String asString(Source source) throws Exception {
+        StringWriter stringWriter = new StringWriter();
+        TransformerFactory.newInstance().newTransformer().transform(source, new StreamResult(stringWriter));
+        return stringWriter.toString();
     }
 
     /**

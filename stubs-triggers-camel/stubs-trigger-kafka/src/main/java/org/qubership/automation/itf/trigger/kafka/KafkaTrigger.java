@@ -33,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaEndpoint;
+import org.apache.camel.component.kafka.SeekPolicy;
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.automation.itf.JvmSettings;
 import org.qubership.automation.itf.communication.TriggerExecutionMessageSender;
@@ -114,7 +115,7 @@ public class KafkaTrigger extends AbstractCamelTrigger {
 
     @Override
     protected void deactivateSpecificTrigger() throws Exception {
-        CAMEL_CONTEXT.stopRoute(getId());
+        CAMEL_CONTEXT.getRouteController().stopRoute(getId());
         CAMEL_CONTEXT.removeRoute(getId());
         CAMEL_CONTEXT.removeComponent(getId());
         LOGGER.info("CAMEL_CONTEXT [{}] is deactivated successfully", getId());
@@ -277,7 +278,7 @@ public class KafkaTrigger extends AbstractCamelTrigger {
                     configuration.setAutoCommitIntervalMs(Integer.parseInt(prop.getValue().toString()));
                     break;
                 case "autoCommitOnStop":
-                    configuration.setAutoCommitOnStop(prop.getValue().toString());
+//                    configuration.setAutoCommitOnStop(prop.getValue().toString());
                     break;
                 case "breakOnFirstError":
                     configuration.setBreakOnFirstError(Boolean.parseBoolean(prop.getValue().toString()));
@@ -294,7 +295,7 @@ public class KafkaTrigger extends AbstractCamelTrigger {
                     configuration.setConsumersCount(Integer.parseInt(prop.getValue().toString()));
                     break;
                 case "consumerStreams":
-                    configuration.setConsumerStreams(Integer.parseInt(prop.getValue().toString()));
+//                    configuration.setConsumerStreams(Integer.parseInt(prop.getValue().toString()));
                     break;
                 case "fetchMaxBytes":
                 case "fetch.max.bytes":
@@ -329,10 +330,10 @@ public class KafkaTrigger extends AbstractCamelTrigger {
                     break;
                 case "maxPollIntervalMs":
                 case "max.poll.interval.ms":
-                    configuration.setMaxPollIntervalMs(Long.parseLong(prop.getValue().toString()));
+                    configuration.setMaxPollIntervalMs(Integer.parseInt(prop.getValue().toString()));
                     break;
                 case "seekTo":
-                    configuration.setSeekTo(prop.getValue().toString());
+                    configuration.setSeekTo(SeekPolicy.valueOf(prop.getValue().toString()));
                     break;
                 case "sessionTimeoutMs":
                 case "session.timeout.ms":

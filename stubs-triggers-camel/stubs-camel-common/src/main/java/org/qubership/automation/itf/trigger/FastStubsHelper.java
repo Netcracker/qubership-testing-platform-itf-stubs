@@ -19,10 +19,11 @@ package org.qubership.automation.itf.trigger;
 
 import static org.qubership.automation.itf.trigger.camel.Helper.isTrue;
 
+import java.math.BigInteger;
 import java.util.Date;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.TextMessage;
 
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.commons.lang3.BooleanUtils;
@@ -176,7 +177,7 @@ public class FastStubsHelper {
         stepInstance.setStatus(Status.PASSED);
 
         tcContext.setName(situationName);
-        tcContext.setID(IdGenerator.nextId());
+        tcContext.setID(BigInteger.valueOf(IdGenerator.nextId()));
         tcContext.setProjectId(triggerDescriptor.getProjectId());
         tcContext.setProjectUuid(triggerDescriptor.getProjectUuid());
         tcContext.setStatus(Status.PASSED);

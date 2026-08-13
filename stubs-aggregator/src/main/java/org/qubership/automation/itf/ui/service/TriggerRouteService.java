@@ -1,5 +1,7 @@
 package org.qubership.automation.itf.ui.service;
 
+import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -7,12 +9,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.jetbrains.annotations.NotNull;
 import org.qubership.automation.itf.activation.impl.OnStartupTriggersActivationService;
 import org.qubership.automation.itf.communication.RoutesInformation;
 import org.qubership.automation.itf.communication.StubsIntegrationMessageSender;
@@ -110,7 +108,7 @@ public class TriggerRouteService {
         String message = "";
         try {
             CamelContext camelContext = CamelContextProvider.CAMEL_CONTEXT;
-            camelContext.stopRoute(event.getRouteId());
+            camelContext.getRouteController().stopRoute(event.getRouteId());
             camelContext.removeRoute(event.getRouteId());
             camelContext.removeComponent(event.getRouteId());
             message = String.format("Route deactivated id[%s].", event.getRouteId());
@@ -131,7 +129,7 @@ public class TriggerRouteService {
         List<Route> routes = CamelContextProvider.CAMEL_CONTEXT.getRoutes();
 
         List<RoutesInformation> routesInformation = routes.stream().parallel()
-                .map(route -> new RoutesInformation((EventDrivenConsumerRoute)route))
+                .map(RoutesInformation::new)
                 .filter(route -> Objects.nonNull(route.getProjectUuid())
                         && route.getProjectUuid().equals(event.getProjectUuid().toString()))
                 .filter(route -> route.getTransportType().equals(event.getTransportType().toString()))

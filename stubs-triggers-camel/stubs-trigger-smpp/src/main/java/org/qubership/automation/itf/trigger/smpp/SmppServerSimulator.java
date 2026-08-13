@@ -22,7 +22,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jetbrains.annotations.NotNull;
 import org.qubership.automation.itf.core.model.transport.ConnectionProperties;
 import org.qubership.automation.itf.trigger.smpp.inbound.SmppTrigger;
 import org.slf4j.Logger;
@@ -37,6 +36,7 @@ import com.cloudhopper.smpp.pdu.BaseBind;
 import com.cloudhopper.smpp.pdu.BaseBindResp;
 import com.cloudhopper.smpp.type.LoggingOptions;
 import com.cloudhopper.smpp.type.SmppChannelException;
+import jakarta.validation.constraints.NotNull;
 
 public class SmppServerSimulator {
     private static final Logger LOGGER = LoggerFactory.getLogger(SmppServerSimulator.class);

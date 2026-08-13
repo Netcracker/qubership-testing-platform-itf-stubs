@@ -23,9 +23,8 @@ import java.util.UUID;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -185,7 +184,7 @@ public class FileInboundTrigger extends AbstractCamelTrigger {
                         .routeId(getId())
                         .routeDescription(projectUuid.toString())
                         .group(TransportType.FILE_INBOUND.name())
-                        .idempotentConsumer(SimpleBuilder.simple("${in.body.lastModified}"),
+                        .idempotentConsumer(simple("${in.body.lastModified}"),
                                 new MemoryIdempotentRepository())
                         .process(exchange -> {
                             String sessionId = UUID.randomUUID().toString();

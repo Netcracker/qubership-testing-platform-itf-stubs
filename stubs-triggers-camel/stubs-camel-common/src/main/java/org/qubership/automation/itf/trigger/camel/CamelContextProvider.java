@@ -19,12 +19,12 @@ package org.qubership.automation.itf.trigger.camel;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.ServiceSupport;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public interface CamelContextProvider {
+    Logger LOGGER = LoggerFactory.getLogger(CamelContextProvider.class);
     CamelContext CAMEL_CONTEXT = new DefaultCamelContext();
     ProducerTemplate template = CAMEL_CONTEXT.createProducerTemplate();
 
@@ -32,18 +32,15 @@ public interface CamelContextProvider {
      * TODO Add JavaDoc.
      */
     default void start() {
-        if (!((ServiceSupport) CAMEL_CONTEXT).isStarted()) {
+        if (!CAMEL_CONTEXT.isStarted()) {
             try {
                 synchronized (CAMEL_CONTEXT) {
-                    if (!((ServiceSupport) CAMEL_CONTEXT).isStarted()) {
-                        LoggingErrorHandlerBuilder errorHandlerBuilder =
-                                new LoggingErrorHandlerBuilder(LoggerFactory.getLogger(CamelContextProvider.class));
-                        CAMEL_CONTEXT.setErrorHandlerBuilder(errorHandlerBuilder);
+                    if (!CAMEL_CONTEXT.isStarted()) {
                         CAMEL_CONTEXT.start();
                     }
                 }
             } catch (Exception e) {
-                LoggerFactory.getLogger(CamelContextProvider.class).error("Failed starting of CamelContext", e);
+                LOGGER.error("Failed starting of CamelContext", e);
             }
         }
     }

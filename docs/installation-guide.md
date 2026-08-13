@@ -21,7 +21,7 @@
 -DKEYSTORE_FILE
 -DKEYSTORE_PASSWORD
 -DTRIGGER_FOLDER
--DSPRING_PROFILES=default
+-DACTIVE_PROFILES_SPRING=default
 -DKEYCLOAK_ENABLED
 -DKEYCLOAK_CLIENT_NAME
 -DKEYCLOAK_SECRET
@@ -67,7 +67,7 @@
 | `SERVICE_NAME`                                       | No        | atp-itf-reporting                                                                                                | Service system name                                                |
 | `EUREKA_CLIENT_ENABLED`                              | No        | false                                                                                                            | Enable or disable eureka integration                               |
 | `SERVICE_REGISTRY_URL`                               | No        | [Registry URL](http://atp-registry-service:8761/eureka)                                                          | Eureka serviceUrl defaultZone value                                |
-| `SPRING_PROFILES`                                    | Yes       | default                                                                                                          | Spring active profiles                                             |
+| `ACTIVE_PROFILES_SPRING`                             | Yes       | default                                                                                                          | Spring active profiles                                             |
 | `KEYCLOAK_ENABLED`                                   | Yes       | false                                                                                                            | Enable or disable Keycloak integration                             |
 | `KEYCLOAK_CLIENT_NAME`                               | Yes       | atp2                                                                                                             | Keycloak resource name                                             |
 | `KEYCLOAK_SECRET`                                    | Yes       | f3e17149-94d0-47ed-a5b7-744c332fdf66                                                                             | keycloak secret    value                                           |

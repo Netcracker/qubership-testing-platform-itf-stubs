@@ -19,8 +19,8 @@ package org.qubership.automation.itf.integration.config.jms;
 
 import java.util.Map;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 import org.qubership.atp.multitenancy.interceptor.jms.AtpJmsTemplate;
 import org.springframework.jms.JmsException;

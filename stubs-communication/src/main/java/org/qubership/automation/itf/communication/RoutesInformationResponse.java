@@ -19,8 +19,9 @@ package org.qubership.automation.itf.communication;
 
 import java.util.Map;
 
+import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.StatefulService;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -39,15 +40,18 @@ public class RoutesInformationResponse {
     private Object routeId;
 
     /**
-     * Create simple representation of EventDrivenConsumerRoute.
+     * Create simple representation of Camel route.
      * @param route - route to simplify.
      */
-    public RoutesInformationResponse(EventDrivenConsumerRoute route) {
-        this.serviceStatus = route.getStatus();
+    public RoutesInformationResponse(Route route) {
+        if (route instanceof StatefulService) {
+            this.serviceStatus = ((StatefulService) route).getStatus();
+        } else {
+            this.serviceStatus = ServiceStatus.Stopped;
+        }
         this.consumer = route.getConsumer().toString();
         this.consumerClassName = route.getConsumer().getClass().getSimpleName();
         this.endpoint = route.getEndpoint().toString();
-        this.version = route.getVersion();
         this.routeProperties = route.getProperties();
         this.routeId = routeProperties.get("id");
     }

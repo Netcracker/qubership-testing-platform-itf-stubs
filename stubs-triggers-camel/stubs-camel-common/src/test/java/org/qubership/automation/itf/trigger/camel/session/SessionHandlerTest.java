@@ -17,17 +17,17 @@
 
 package org.qubership.automation.itf.trigger.camel.session;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.qubership.automation.itf.core.model.jpa.message.Message;
 import org.qubership.automation.itf.core.util.transport.service.SessionHandler;
 
 public class SessionHandlerTest {
 
-    @BeforeMethod
+    @BeforeEach
     public void addMessageBeforeGet() {
         Message message = new Message();
         message.setText("ZERO");
@@ -35,13 +35,14 @@ public class SessionHandlerTest {
     }
 
     @Test
-    public void getMessage() throws Exception {
+    public void getMessage() {
         Message message = SessionHandler.INSTANCE.getMessage("0");
+        Assertions.assertNotNull(message);
         assertEquals("ZERO", message.getText());
     }
 
     @Test
-    public void addMessage() throws Exception {
+    public void addMessage() {
         Message message = new Message();
         SessionHandler.INSTANCE.addMessage("1", message);
         Message message1 = SessionHandler.INSTANCE.getMessage("1");

@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 
 import org.qubership.automation.itf.CacheCleanerService;
 import org.qubership.automation.itf.core.stub.fast.FastResponseConfigsHolder;

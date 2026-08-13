@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.qubership.mockingbird</groupId>
         <artifactId>stubs-triggers-camel</artifactId>
-        <version>1.1.165-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>stubs-trigger-rest</artifactId>
@@ -64,21 +64,6 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
         </dependency>
-        <!--<dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
-            <scope>test</scope>
-        </dependency>-->
-        <!--<dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty-webapp-logging</artifactId>
-            <scope>test</scope>
-        </dependency>-->
-        <!--<dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty-util</artifactId>
-            <scope>test</scope>
-        </dependency>-->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>

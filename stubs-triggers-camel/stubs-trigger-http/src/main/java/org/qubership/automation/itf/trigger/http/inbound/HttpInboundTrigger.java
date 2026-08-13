@@ -32,7 +32,7 @@ import java.util.UUID;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.component.http4.HttpComponent;
+import org.apache.camel.component.http.HttpComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.qubership.automation.itf.JvmSettings;
@@ -211,7 +211,6 @@ public abstract class HttpInboundTrigger extends AbstractCamelTrigger {
             out.getHeaders().putAll(headers);
         }
         out.setBody(message.getFailedMessage());
-        out.setFault(true); // Let's notify SOAP/REST trigger that there was fault while processing
     }
 
     private void buildUnknownErrorResponse(Exchange exchange, String sessionId) {
@@ -238,7 +237,6 @@ public abstract class HttpInboundTrigger extends AbstractCamelTrigger {
         out.setBody(sb.toString());
         out.setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
         out.setHeader(Exchange.CONTENT_TYPE, "text/html");
-        out.setFault(true); // Let's notify SOAP/REST trigger that there was fault while processing
     }
 
     private void buildResponse(Exchange exchange, Message message) throws Exception {
@@ -275,10 +273,10 @@ public abstract class HttpInboundTrigger extends AbstractCamelTrigger {
             if (CAMEL_CONTEXT.getRoute(curId) == null) {
                 break;
             }
-            CAMEL_CONTEXT.stopRoute(curId);
+            CAMEL_CONTEXT.getRouteController().stopRoute(curId);
             CAMEL_CONTEXT.removeRoute(curId);
         }
-        CAMEL_CONTEXT.stopRoute(id);
+        CAMEL_CONTEXT.getRouteController().stopRoute(id);
         CAMEL_CONTEXT.removeRoute(id);
         CAMEL_CONTEXT.removeComponent(id);
         LOGGER.info("CAMEL_CONTEXT [{}] is deactivated successfully", id);
@@ -311,12 +309,9 @@ public abstract class HttpInboundTrigger extends AbstractCamelTrigger {
                 uriParams = uriParams + "?" + query;
             }
             addProperties.put("uriParams", java.net.URLDecoder.decode(uriParams, JvmSettings.CHARSET_NAME));
-            addProperties.put("method", exchange.getIn().getHeader("CamelHttpMethod").toString());
-            // DF also puts all headers to connectionProperties. I don't think we (camel) should do the same...
-            // Commented by Alexander Kapustin
-            //addProperties.put("headers", exchange.getIn().getHeaders());
+            addProperties.put("method", exchange.getIn().getHeader("CamelHttpMethod", "GET").toString());
         } catch (UnsupportedEncodingException ex) {
-            // Silently go away now. May be we should throw an exception or log it - it should be discussed
+            // Silently go away now. May be, we should throw an exception or log it - it should be discussed
         }
         return addProperties;
     }

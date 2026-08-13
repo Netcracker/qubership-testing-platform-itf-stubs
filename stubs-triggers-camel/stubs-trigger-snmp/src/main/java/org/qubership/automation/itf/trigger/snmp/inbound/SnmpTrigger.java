@@ -60,10 +60,8 @@ public class SnmpTrigger extends AbstractCamelTrigger {
             @Override
             public void configure() throws Exception {
                 UUID projectUuid = getTriggerConfigurationDescriptor().getProjectUuid();
-                SnmpEndpoint endpoint = new SnmpEndpoint(resolveEndpoint(),
-                        (SnmpComponent) camelContext.getComponent(SNMP_COMPONENT));
-                endpoint.setAddress(resolveEndpoint());
-                endpoint.setType(SnmpActionType.TRAP);
+                SnmpEndpoint endpoint = camelContext.getEndpoint(
+                        "snmp:" + resolveEndpoint() + "?protocol=udp&type=TRAP", SnmpEndpoint.class);
                 from(endpoint)
                     .process(exchange -> {
                         String sessionId = UUID.randomUUID().toString();

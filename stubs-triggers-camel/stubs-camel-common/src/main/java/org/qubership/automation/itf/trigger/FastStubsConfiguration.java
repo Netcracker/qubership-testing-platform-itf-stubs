@@ -17,7 +17,7 @@
 
 package org.qubership.automation.itf.trigger;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.jms.pool.PooledConnectionFactory;

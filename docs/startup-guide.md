@@ -51,7 +51,7 @@ spring.application.name=${SERVICE_NAME}
 eureka.client.enabled=${EUREKA_CLIENT_ENABLED}
 eureka.client.serviceUrl.defaultZone=${SERVICE_REGISTRY_URL}
 ##==================atp-auth-spring-boot-starter=======================
-spring.profiles.active=${SPRING_PROFILES}
+spring.profiles.active=${ACTIVE_PROFILES_SPRING}
 keycloak.enabled=${KEYCLOAK_ENABLED}
 ##==================Keycloak===========================================
 keycloak.resource=${KEYCLOAK_CLIENT_NAME}

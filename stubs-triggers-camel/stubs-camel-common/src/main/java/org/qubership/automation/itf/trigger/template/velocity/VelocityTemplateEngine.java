@@ -136,8 +136,8 @@ public class VelocityTemplateEngine implements TemplateEngine {
 
     private static FactoryConfiguration makeStrutsFactoryConfig() {
         FactoryConfiguration factoryConfiguration = new FactoryConfiguration();
-        factoryConfiguration.addData(fillData("boolean", "STRUTS_TOOLS_AVAILABLE", "true"));
-
+        factoryConfiguration.addData(fillData("boolean", "STRUTS_TOOLS_AVAILABLE", "false"));
+        /*
         ToolboxConfiguration requestToolboxConfiguration = new ToolboxConfiguration();
         requestToolboxConfiguration.setScope("request");
         requestToolboxConfiguration.setTools(makeToolsList(
@@ -149,13 +149,14 @@ public class VelocityTemplateEngine implements TemplateEngine {
                 "org.apache.velocity.tools.struts.TilesTool",
                 "org.apache.velocity.tools.struts.ValidatorTool"));
         factoryConfiguration.addToolbox(requestToolboxConfiguration);
+         */
         return factoryConfiguration;
     }
 
     private static FactoryConfiguration makeViewFactoryConfig() {
         FactoryConfiguration factoryConfiguration = new FactoryConfiguration();
-        factoryConfiguration.addData(fillData("boolean", "VIEW_TOOLS_AVAILABLE", "true"));
-
+        factoryConfiguration.addData(fillData("boolean", "VIEW_TOOLS_AVAILABLE", "false"));
+        /*
         ToolboxConfiguration requestToolboxConfiguration = new ToolboxConfiguration();
         requestToolboxConfiguration.setScope("request");
         requestToolboxConfiguration.setTools(makeToolsList(
@@ -168,12 +169,11 @@ public class VelocityTemplateEngine implements TemplateEngine {
                 "org.apache.velocity.tools.view.ViewContextTool",
                 "org.apache.velocity.tools.generic.ResourceTool"));
         factoryConfiguration.addToolbox(requestToolboxConfiguration);
-
+        */
         ToolboxConfiguration sessionToolboxConfiguration = new ToolboxConfiguration();
         sessionToolboxConfiguration.setScope("session");
         sessionToolboxConfiguration.setProperty("createSession", "false");
-        sessionToolboxConfiguration.setTools(makeToolsList(
-                "org.apache.velocity.tools.view.BrowserTool"));
+        sessionToolboxConfiguration.setTools(makeToolsList(/*"org.apache.velocity.tools.view.BrowserTool"*/));
         factoryConfiguration.addToolbox(sessionToolboxConfiguration);
         return factoryConfiguration;
     }

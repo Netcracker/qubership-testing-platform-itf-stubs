@@ -17,7 +17,7 @@
 
 package org.qubership.automation.itf.integration.config.jms.listener.factory;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQSession;
 import org.springframework.beans.factory.annotation.Value;

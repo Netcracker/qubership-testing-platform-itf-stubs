@@ -17,14 +17,14 @@
 
 package org.qubership.automation.itf.integration.config.jms.template.instance;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
-import org.jetbrains.annotations.NotNull;
 import org.qubership.atp.multitenancy.interceptor.jms.MultiTenantJmsTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
