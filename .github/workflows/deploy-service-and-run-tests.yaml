@@ -1,0 +1,41 @@
+---
+# The workflow to deploy snapshot artifact versions to GitHub packages
+# Fill free to adjust java version and additional mvn command-line parameters
+# The workflow will trigger on pushes into branches different from main and release
+# Please make sure that the version in the pom.xml file has the SNAPSHOT postfix
+
+# Please adjust pom.xml file for your project according to the instructions:
+# https://github.com/Netcracker/qubership-workflow-hub/blob/main/docs/maven-publish-pom-preparation_doc.md
+
+name: Rollout service on kuber
+
+on:
+  workflow_dispatch:
+    inputs:
+      docker_tag:
+        description: '[Mandatory] Docker image to rollout it on kuber'
+        required: true
+        default: ''
+        type: string
+      transfer_image:
+        description: '[Mandatory] Transfer image'
+        required: true
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  run-tests:
+    uses: netcracker/qubership-testing-platform-helm-hook-helper/.github/workflows/deploy-run-tests.yaml@main
+    with:
+      repository_name: ${{ github.event.repository.name }}
+      service_name: 'atp-itf-stubs'
+      namespace: 'stubs'
+      pipeline_branch: ${{ github.ref }}
+      docker_tag: ${{ inputs.docker_tag }}
+      transfer_image: ${{ inputs.transfer_image }}
+      activemq: enable
+      enable_test: enable
