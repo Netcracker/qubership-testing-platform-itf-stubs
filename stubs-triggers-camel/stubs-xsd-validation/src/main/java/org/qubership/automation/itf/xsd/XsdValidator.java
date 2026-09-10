@@ -71,7 +71,7 @@ public class XsdValidator {
         if (xsdPath != null && !xsdPath.isEmpty() && new File(xsdPath).exists()) {
             sources.add(new StreamSource(new File(xsdPath)));
         }
-        // Загружаем SOAP схему из ресурсов
+        // Load SOAP schema from resources
         InputStream soapXsdStream = getClass().getResourceAsStream("/soap-envelope.xsd");
         if (soapXsdStream != null) {
             sources.add(new StreamSource(soapXsdStream, SOAP_ENV));
