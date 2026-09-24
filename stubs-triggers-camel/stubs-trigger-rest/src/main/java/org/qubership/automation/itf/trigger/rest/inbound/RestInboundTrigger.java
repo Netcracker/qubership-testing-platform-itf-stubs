@@ -179,8 +179,8 @@ public class RestInboundTrigger extends HttpInboundTrigger {
         st.setCaseInsensitive(true);
     }
 
-    private void addClientAddressInHeader(Exchange exchange) {
-        ServletRequest servletRequest = (ServletRequest) exchange.getIn().getHeader("CamelHttpServletRequest");
+    void addClientAddressInHeader(Exchange exchange) {
+        ServletRequest servletRequest = ((HttpMessage) exchange.getIn()).getRequest();
         Helper.addClientCoordsToHeaders(exchange.getIn().getHeaders(), servletRequest);
         Helper.fixCoNamedHeaders(exchange.getIn().getHeaders(), servletRequest);
     }
