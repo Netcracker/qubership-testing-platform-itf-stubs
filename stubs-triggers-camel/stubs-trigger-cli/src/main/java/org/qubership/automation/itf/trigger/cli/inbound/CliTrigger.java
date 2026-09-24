@@ -29,7 +29,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.component.netty.ChannelHandlerFactories;
@@ -40,8 +39,6 @@ import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.support.service.ServiceSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.automation.itf.JvmSettings;
 import org.qubership.automation.itf.communication.TriggerExecutionMessageSender;
@@ -88,27 +85,21 @@ public class CliTrigger extends AbstractCamelTrigger {
                     getConnectionProperties().replace(CliConstants.REMOTE_IP, Config.getConfig().getRunningHostname());
                 }
 
+                String connectionType = getConnectionProperties().obtain(CliConstants.CONNECTION_TYPE);
+                String remoteIp = getConnectionProperties().obtain(CliConstants.REMOTE_IP);
+                String remotePort = getConnectionProperties().obtain(CliConstants.REMOTE_PORT);
                 String cmdDelimiter = getConnectionProperties().obtain(CliConstants.Inbound.COMMAND_DELIMITER);
-                String params = "?textline=true";
-                if (StringUtils.isNotBlank(cmdDelimiter) && !"\n".equals(cmdDelimiter)) {
-                    SimpleRegistry registry = new SimpleRegistry();
-                    ((DefaultCamelContext) context).getCamelContextExtension().setRegistry(registry);
-                    registry.bind("tcpStringEncoder", new StringEncoder());
-                    registry.bind("tcpStringDecoder", new StringDecoder());
-                    registry.bind("tcpDelimiterFrameDecoder", getDelimiterFrameDecoder(cmdDelimiter));
-                    params = "?allowDefaultCodec=false&decoders=#tcpDelimiterFrameDecoder,#tcpStringDecoder"
-                            + "&encoders=#tcpStringEncoder&autoAppendDelimiter=false";
-                }
 
-                Endpoint endpoint = nettyComponent.createEndpoint(getId()
-                    + ':' + getConnectionProperties().obtain(CliConstants.CONNECTION_TYPE)
-                    + "://" + getConnectionProperties().obtain(CliConstants.REMOTE_IP)
-                    + ':' + getConnectionProperties().obtain(CliConstants.REMOTE_PORT)
-                    + params);
+                NettyConfiguration configuration = buildNettyConfiguration(
+                        connectionType, remoteIp, remotePort, cmdDelimiter);
+
+                NettyEndpoint endpoint = new NettyEndpoint(
+                        getId() + ':' + connectionType + "://" + remoteIp + ':' + remotePort,
+                        nettyComponent, configuration);
+                endpoint.setCamelContext(context);
                 String endpointString = endpoint.toString();
 
                 if (!StringUtils.isBlank(getConnectionProperties().obtain(CliConstants.Inbound.GREETING))) {
-                    NettyConfiguration configuration = ((NettyEndpoint) endpoint).getConfiguration();
                     NettyConsumer consumer = (NettyConsumer) endpoint.createConsumer(null);
                     CliServerInitializerFactory serverInitializerFactory = new CliServerInitializerFactory(consumer,
                             getConnectionProperties());
@@ -121,7 +112,7 @@ public class CliTrigger extends AbstractCamelTrigger {
                             ? StringUtils.EMPTY : cmdDelimiter, isAllowedEmpty);
                 UUID projectUuid = getTriggerConfigurationDescriptor().getProjectUuid();
                 String brokerMessageSelectorValue = Helper.getBrokerMessageSelectorValue();
-                from(endpoint).routeId(getId())
+                from(endpoint)
                     .process(exchange -> {
                         String sessionId = UUID.randomUUID().toString();
                         MetricsAggregateService.putCommonMetrics(projectUuid, sessionId);
@@ -234,11 +225,11 @@ public class CliTrigger extends AbstractCamelTrigger {
     }
 
     private void startContext(CamelContext context) {
-        if (!((ServiceSupport) context).isStarted()) {
+        if (!context.isStarted()) {
             try {
                 //noinspection SynchronizationOnLocalVariableOrMethodParameter
                 synchronized (context) {
-                    if (!((ServiceSupport) context).isStarted()) {
+                    if (!context.isStarted()) {
                         DefaultErrorHandlerBuilder defaultErrorHandlerBuilder = new DefaultErrorHandlerBuilder();
                         CamelLogger camelLogger = new CamelLogger(LOGGER);
                         defaultErrorHandlerBuilder.setLoggerBean(camelLogger);
@@ -255,6 +246,30 @@ public class CliTrigger extends AbstractCamelTrigger {
     private ChannelHandlerFactory getDelimiterFrameDecoder(String cmdDelimiter) {
         ByteBuf[] delimiters = new ByteBuf[]{Unpooled.copiedBuffer(cmdDelimiter.getBytes(JvmSettings.CHARSET))};
         return ChannelHandlerFactories.newDelimiterBasedFrameDecoder(1024, delimiters, "tcp");
+    }
+
+    /**
+     * Builds the Netty endpoint configuration for the given connection settings.
+     *
+     * <p>Every field is set through {@link NettyConfiguration}'s own setters rather than through
+     * a query-string URI Camel would otherwise parse and bind by property name.</p>
+     */
+    NettyConfiguration buildNettyConfiguration(String connectionType, String remoteIp, String remotePort,
+                                                String cmdDelimiter) {
+        NettyConfiguration configuration = new NettyConfiguration();
+        configuration.setProtocol(connectionType);
+        configuration.setHost(remoteIp);
+        configuration.setPort(Integer.parseInt(remotePort));
+        if (StringUtils.isNotBlank(cmdDelimiter) && !"\n".equals(cmdDelimiter)) {
+            configuration.setAllowDefaultCodec(false);
+            configuration.setEncodersAsList(List.of(new StringEncoder()));
+            configuration.setDecodersAsList(List.of(getDelimiterFrameDecoder(cmdDelimiter), new StringDecoder()));
+            configuration.setAutoAppendDelimiter(false);
+        } else {
+            configuration.setTextline(true);
+        }
+        configuration.validateConfiguration();
+        return configuration;
     }
 
     /*  We need to add "\r" to the end of response body in order
