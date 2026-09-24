@@ -29,6 +29,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.DefaultExchange;
@@ -418,6 +419,27 @@ class SoapOverHttpTriggerIntegrationTest {
                 VALID_SOAP_REQUEST.getBytes(StandardCharsets.UTF_8));
         inMessage.setBody(bais);
         result = trigger.getStringBody(inMessage);
+        assertEquals(VALID_SOAP_REQUEST, result);
+    }
+
+    /**
+     * Fails when getStringBody() cannot convert a Camel-internal {@link java.io.InputStream}
+     * implementation to a {@link String}.
+     *
+     * <p>Regression test for the Camel 4.18.0 upgrade: getStringBody() used to check only for
+     * {@link ByteArrayInputStream}, and it threw {@code ClassCastException} once Camel's stream
+     * caching started wrapping the request body in {@link ByteArrayInputStreamCache} instead,
+     * which does not extend {@link ByteArrayInputStream}.</p>
+     */
+    @Test
+    void testGetStringBody_ByteArrayInputStreamCache() {
+        Message inMessage = new DefaultMessage(camelContext);
+        ByteArrayInputStream bais = new ByteArrayInputStream(
+                VALID_SOAP_REQUEST.getBytes(StandardCharsets.UTF_8));
+        inMessage.setBody(new ByteArrayInputStreamCache(bais));
+
+        String result = trigger.getStringBody(inMessage);
+
         assertEquals(VALID_SOAP_REQUEST, result);
     }
 
