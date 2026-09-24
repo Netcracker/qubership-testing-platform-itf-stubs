@@ -17,16 +17,16 @@
 
 package org.qubership.automation.itf.trigger.cli.inbound;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CliMessageBuilderTest {
+class CliMessageBuilderTest {
     @Test
-    public void testMatcherFoundWithFilledResult() {
+    void testMatcherFoundWithFilledResult() {
         CliMessageBuilder messageBuilder = new CliMessageBuilder("t$", false);
         messageBuilder.append("test\ntest");
         CliMessageBuilder.BuilderResult matches = messageBuilder.retrieveResult();
@@ -35,7 +35,7 @@ public class CliMessageBuilderTest {
     }
 
     @Test
-    public void testMatcherNotFoundWithEmptyResult() {
+    void testMatcherNotFoundWithEmptyResult() {
         CliMessageBuilder messageBuilder = new CliMessageBuilder("^a", false);
         messageBuilder.append("test\ntest");
         CliMessageBuilder.BuilderResult matches = messageBuilder.retrieveResult();
@@ -44,7 +44,7 @@ public class CliMessageBuilderTest {
     }
 
     @Test
-    public void testMatcherFoundAfterAppend() {
+    void testMatcherFoundAfterAppend() {
         CliMessageBuilder messageBuilder = new CliMessageBuilder("\r\n", false);
         messageBuilder.append("test\ntest");
         CliMessageBuilder.BuilderResult matches = messageBuilder.retrieveResult();
@@ -58,7 +58,7 @@ public class CliMessageBuilderTest {
     }
 
     @Test
-    public void testMatcherFoundTwoResultAfterAppend() {
+    void testMatcherFoundTwoResultAfterAppend() {
         CliMessageBuilder messageBuilder = new CliMessageBuilder("\n", false);
         CliMessageBuilder.BuilderResult matches;
         messageBuilder.append("test\ntest");
