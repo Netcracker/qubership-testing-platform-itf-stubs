@@ -225,9 +225,9 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
     String getStringBody(org.apache.camel.Message camelMessage) {
         Object messageBody = camelMessage.getBody();
         if (messageBody instanceof CxfPayload) {
-            return serializeCxfPayloadBody((CxfPayload)messageBody);
-        } else if (messageBody instanceof ByteArrayInputStream) {
-            return readBais((ByteArrayInputStream)messageBody);
+            return serializeCxfPayloadBody((CxfPayload) messageBody);
+        } else if (messageBody instanceof InputStream) {
+            return readInputStream((InputStream) messageBody);
         } else {
             return (String) messageBody;
         }
@@ -318,11 +318,13 @@ public class SoapOverHttpTrigger extends HttpInboundTrigger {
         return serializer.writeToString(elementList.getFirst());
     }
 
-    private String readBais(ByteArrayInputStream messageBody) {
-        int n = messageBody.available();
-        byte[] bytes = new byte[n];
-        messageBody.read(bytes, 0, n);
-        return new String(bytes, StandardCharsets.UTF_8);
+    private String readInputStream(InputStream messageBody) {
+        try {
+            return IOUtils.toString(messageBody, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            LOGGER.error("Unable to read message body from input stream", e);
+            return StringUtils.EMPTY;
+        }
     }
 
     private StreamSource[] collectNamespaces(CxfPayload cxfPayloadBody, String xsdPath) {
