@@ -1,4 +1,5 @@
 java -cp "lib/*" ^
+--add-opens=java.base/java.io=ALL-UNNAMED ^
 -Dserver.port=8280 ^
 -Dspring.config.location=application.properties ^
 -Dlogging.config=logback-spring.xml ^

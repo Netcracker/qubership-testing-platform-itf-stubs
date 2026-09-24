@@ -26,4 +26,4 @@ JAVA_OPTIONS="${JAVA_OPTIONS} -Dlog.graylog.host=$GRAYLOG_HOST"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Dlog.graylog.port=$GRAYLOG_PORT"
 JAVA_OPTIONS="${JAVA_OPTIONS} -Dhostname=$(hostname)"
 
-/usr/bin/java -Xverify:none -Xms128m -XX:MaxRAM="${MAX_RAM_SIZE:-3000m}" -XX:MaxRAMPercentage=75.0 ${JAVA_OPTIONS} -cp "./:./lib/*" org.qubership.automation.itf.Main
+/usr/bin/java --add-opens=java.base/java.io=ALL-UNNAMED -Xverify:none -Xms128m -XX:MaxRAM="${MAX_RAM_SIZE:-3000m}" -XX:MaxRAMPercentage=75.0 ${JAVA_OPTIONS} -cp "./:./lib/*" org.qubership.automation.itf.Main
