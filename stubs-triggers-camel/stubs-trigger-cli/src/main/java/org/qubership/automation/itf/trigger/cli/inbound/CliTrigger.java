@@ -87,7 +87,7 @@ public class CliTrigger extends AbstractCamelTrigger {
 
                 String connectionType = getConnectionProperties().obtain(CliConstants.CONNECTION_TYPE);
                 String remoteIp = getConnectionProperties().obtain(CliConstants.REMOTE_IP);
-                String remotePort = getConnectionProperties().obtain(CliConstants.REMOTE_PORT);
+                int remotePort = toPort(getConnectionProperties().obtain(CliConstants.REMOTE_PORT));
                 String cmdDelimiter = getConnectionProperties().obtain(CliConstants.Inbound.COMMAND_DELIMITER);
 
                 NettyConfiguration configuration = buildNettyConfiguration(
@@ -249,17 +249,31 @@ public class CliTrigger extends AbstractCamelTrigger {
     }
 
     /**
+     * Reads the {@code remote_port} connection property as an {@code int}.
+     *
+     * <p>{@code CLIInboundTransport} declares this property as an {@link Integer}, but
+     * {@link ConnectionProperties#obtain} casts to whatever type the caller assigns it to, so
+     * reading it as a {@code String} throws {@code ClassCastException} at runtime instead of
+     * failing to compile.</p>
+     */
+    static int toPort(Object remotePort) {
+        return remotePort instanceof Number
+                ? ((Number) remotePort).intValue()
+                : Integer.parseInt(remotePort.toString());
+    }
+
+    /**
      * Builds the Netty endpoint configuration for the given connection settings.
      *
      * <p>Every field is set through {@link NettyConfiguration}'s own setters rather than through
      * a query-string URI Camel would otherwise parse and bind by property name.</p>
      */
-    NettyConfiguration buildNettyConfiguration(String connectionType, String remoteIp, String remotePort,
+    NettyConfiguration buildNettyConfiguration(String connectionType, String remoteIp, int remotePort,
                                                 String cmdDelimiter) {
         NettyConfiguration configuration = new NettyConfiguration();
         configuration.setProtocol(connectionType);
         configuration.setHost(remoteIp);
-        configuration.setPort(Integer.parseInt(remotePort));
+        configuration.setPort(remotePort);
         if (StringUtils.isNotBlank(cmdDelimiter) && !"\n".equals(cmdDelimiter)) {
             configuration.setAllowDefaultCodec(false);
             configuration.setEncodersAsList(List.of(new StringEncoder()));

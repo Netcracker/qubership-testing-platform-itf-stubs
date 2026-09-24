@@ -82,7 +82,7 @@ class CliTriggerTest {
     void testBuildNettyConfiguration_NoDelimiter_UsesTextlineCodec() {
         trigger = new CliTrigger(descriptor("cli-config-textline"), baseProperties());
 
-        NettyConfiguration configuration = trigger.buildNettyConfiguration("TCP", "localhost", "0", null);
+        NettyConfiguration configuration = trigger.buildNettyConfiguration("TCP", "localhost", 0, null);
 
         assertEquals("TCP", configuration.getProtocol());
         assertEquals("localhost", configuration.getHost());
@@ -95,7 +95,7 @@ class CliTriggerTest {
     void testBuildNettyConfiguration_WithDelimiter_UsesCustomCodec() {
         trigger = new CliTrigger(descriptor("cli-config-delimiter"), baseProperties());
 
-        NettyConfiguration configuration = trigger.buildNettyConfiguration("TCP", "localhost", "0", ";");
+        NettyConfiguration configuration = trigger.buildNettyConfiguration("TCP", "localhost", 0, ";");
 
         assertFalse(configuration.isTextline());
         assertFalse(configuration.isAllowDefaultCodec());
@@ -104,11 +104,28 @@ class CliTriggerTest {
         assertEquals(2, configuration.getDecodersAsList().size());
     }
 
+    /**
+     * Fails when {@code toPort} cannot read the {@code remote_port} connection property from
+     * either the type {@code CLIInboundTransport} declares it as or a numeric string.
+     *
+     * <p>Regression test: {@code ConnectionProperties#obtain} casts its result to whatever type
+     * the caller assigns it to. {@code CLIInboundTransport} declares {@code remote_port} as an
+     * {@link Integer}, so reading it into a {@code String} variable threw {@code
+     * ClassCastException: class java.lang.Integer cannot be cast to class java.lang.String} the
+     * first time a real trigger configuration reached this code.</p>
+     */
+    @Test
+    void testToPort_AcceptsIntegerAndNumericString() {
+        assertEquals(8080, CliTrigger.toPort(8080));
+        assertEquals(8080, CliTrigger.toPort("8080"));
+    }
+
     private static ConnectionProperties baseProperties() {
         ConnectionProperties properties = new ConnectionProperties();
         properties.put(CliConstants.CONNECTION_TYPE, "TCP");
         properties.put(CliConstants.REMOTE_IP, "localhost");
-        properties.put(CliConstants.REMOTE_PORT, "0");
+        // CLIInboundTransport declares remote_port as an Integer; keep the fixture honest.
+        properties.put(CliConstants.REMOTE_PORT, 0);
         return properties;
     }
 
