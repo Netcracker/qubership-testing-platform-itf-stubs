@@ -74,6 +74,13 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
+        <dependency>
+            <!-- HK2 3.x of the application, which the WebLogic client test runs next to -->
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2-locator</artifactId>
+            <version>3.0.6</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
