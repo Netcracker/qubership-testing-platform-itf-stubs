@@ -42,7 +42,7 @@ jobs:
 
       - name: Maven Docker build
         id: maven_build
-        uses: netcracker/qubership-workflow-hub/actions/maven-snapshot-deploy@0eefd4976131d113c986281eed8bc642b6da303d # v2.8.1
+        uses: netcracker/qubership-workflow-hub/actions/maven-snapshot-deploy@e6afd0a6bcc4f24d73e3e4d5fb9a31ada009e3f1 # v2.8.2
         with:
           java-version: "21"
           additional-mvn-args: ${{ env.additional-mvn-args }}
@@ -103,7 +103,7 @@ jobs:
 
       - name: Metadata
         id: metadata
-        uses: netcracker/qubership-workflow-hub/actions/metadata-action@0eefd4976131d113c986281eed8bc642b6da303d #v2.8.1
+        uses: netcracker/qubership-workflow-hub/actions/metadata-action@e6afd0a6bcc4f24d73e3e4d5fb9a31ada009e3f1 #v2.8.2
         with:
           default-template: '{{ref-name}}-{{timestamp}}'
 
@@ -121,7 +121,7 @@ jobs:
 
       - name: Build and Publish Docker Image
         id: docker_build
-        uses: netcracker/qubership-workflow-hub/actions/docker-action@0eefd4976131d113c986281eed8bc642b6da303d #v2.8.1
+        uses: netcracker/qubership-workflow-hub/actions/docker-action@e6afd0a6bcc4f24d73e3e4d5fb9a31ada009e3f1 #v2.8.2
         with:
           ref: ${{ github.ref }}
           dry-run: false
