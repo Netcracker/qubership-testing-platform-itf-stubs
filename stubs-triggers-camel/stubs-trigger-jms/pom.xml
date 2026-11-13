@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.qubership.mockingbird</groupId>
         <artifactId>stubs-triggers-camel</artifactId>
-        <version>2.0.2-SNAPSHOT</version>
+        <version>2.0.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>stubs-trigger-jms</artifactId>
@@ -73,6 +73,13 @@
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <!-- HK2 3.x of the application, which the WebLogic client test runs next to -->
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2-locator</artifactId>
+            <version>3.0.6</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
