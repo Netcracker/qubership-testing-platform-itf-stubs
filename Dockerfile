@@ -14,32 +14,32 @@ WORKDIR $HOME_EX
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.23/community/" >/etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/v3.23/main/" >>/etc/apk/repositories && \
     apk add --update --no-cache --no-check-certificate \
-        bash=5.3.3-r1 \
-        curl=8.22.0-r0 \
-        font-dejavu=2.37-r6 \
-        fontconfig=2.17.1-r0 \
-        gcompat=1.1.0-r4 \
-        gettext=0.24.1-r1 \
-        git=2.52.0-r0 \
-        htop=3.4.1-r2 \
-        jq=1.8.2-r0 \
-        libpng=1.6.59-r0 \
-        libcrypto3=3.5.9-r0 \
-        libexpat=2.9.0-r0 \
-        libssl3=3.5.9-r0 \
-        musl=1.2.5-r23 \
-        musl-utils=1.2.5-r23 \
-        net-tools=2.10-r3 \
-        nss_wrapper=1.1.12-r1 \
-        pcre2=10.49-r0 \
-        procps-ng=4.0.5-r0 \
-        sops=3.11.0-r6 \
-        sysstat=12.7.8-r0 \
-        tcpdump=4.99.5-r1 \
-        wget=1.25.0-r2 \
-        xz-libs=5.8.4-r0 \
-        zip=3.0-r13 \
-        zlib=1.3.2-r0 && \
+        bash \
+        curl \
+        font-dejavu \
+        fontconfig \
+        gcompat \
+        gettext \
+        git \
+        htop \
+        jq \
+        libpng \
+        libcrypto3 \
+        libexpat \
+        libssl3 \
+        musl \
+        musl-utils \
+        net-tools \
+        nss_wrapper \
+        pcre2 \
+        procps-ng \
+        sops \
+        sysstat \
+        tcpdump \
+        wget \
+        xz-libs \
+        zip \
+        zlib && \
       rm -rf /var/cache/apk/*
 
 COPY deployments/install deployments/install
